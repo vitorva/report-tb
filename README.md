@@ -195,4 +195,3 @@ LaTeX est un langage de composition de document qui nécessite une phase de comp
 - [Petites leçons de typographie](https://jacques-andre.fr/faqtypo/lessons.pdf) de Jaques André
 - [Lexique des règles typographiques en usage à l’Imprimerie
 nationale](https://www.payot.ch/Detail/lexique_des_regles_typographiques_en_usage_a_limprimerie_nationale-collectif-9782743304829) de l'Imprimerie Nationale française. ISBN 2-7433-0482-0
-# report-tb
