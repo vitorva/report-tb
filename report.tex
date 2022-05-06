@@ -1,12 +1,13 @@
 \documentclass[
-    iai, % Saisir le nom de l'institut rattaché
-    eai, % Saisir le nom de l'orientation
+    iict, % Saisir le nom de l'institut rattaché
+    il, % Saisir le nom de l'orientation
     %confidential, % Décommentez si le travail est confidentiel
 ]{heig-tb}
 
 \usepackage[nooldvoltagedirection,european,americaninductors]{circuitikz}
+\usepackage{hyperref} 
 
-\signature{mbernasconi.svg}
+%\signature{mbernasconi.svg} TODO
 
 \makenomenclature
 \makenoidxglossaries
@@ -203,6 +204,64 @@ Lorsque vous mentionnez des quantités, utilisez les unités du système interna
 \mintinline{latex}{\SI{42.12}{\kilo\gram\metre\per\square\second}}\par
 %%fi
 
+\chapter*{Pré-étude}
+
+\section{L\textquotesingle implémentation de fonctionnalités}
+VsCode fournit la possibilité d’ajouter du support pour un nouveau langage de programmation au travers d’implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
+
+\section{Declarative language features}
+Elles ajoutent un support d'édition de texte de base pour un langage de programmation.
+Par exemple, les éléments suivants :
+
+\begin{itemize}
+    \item Syntax highlighting
+    \item Snippet completion
+    \item Bracket matching
+    \item Bracket autoclosing
+    \item Bracket autosurrounding
+    \item Comment toggling
+    \item Auto indentation
+    \item Folding (by markers)
+\end{itemize}
+
+Il s’agit de fonctionnalités implémentées à l’aide de fichier de configuration.
+Puis, elles doivent être enregistrées dans le fichier package.json du projet sous le champ \guillemotleft contributes\guillemotright \space \href{https://code.visualstudio.com/api/references/contribution-points}{ Contribution Point}.
+
+\section{Programmatic language features}
+Il s’agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : \guillemotleft Hovers\guillemotright, \guillemotleft Go to Definition\guillemotright, \guillemotleft diagnostic errors\guillemotright, \guillemotleft IntelliSense\guillemotright \space et \guillemotleft CodeLens\guillemotright) et qui nécessite soit d’utiliser l’api vscode.languages.* qui expose des interfaces permettant de réaliser directement leur implémentation ou soit de les implémenter nous-mêmes au travers d’un langage serveur. 
+Les avantages souvent mentionnés de la deuxième solution et que le langage server peut être écrit avec le langage que l’on souhaite et que cela permet aussi à d’autres éditeurs de texte compatibles avec le langage server d’utiliser ses fonctionnalités sans devoir les implémenter de nouveau. Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n’est pas un choix primordial.
+
+\subsection*{Langage server}
+Pour être utiliser sur VSCode, un langage server à 2 partis :
+\begin{itemize}
+    \item \textbf{Un client} : C’est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode
+    \item \textbf{Langage server} : Un outil d'analyse linguistique fonctionnant dans un processus séparé lancé
+\end{itemize}
+
+Le client et le serveur communiquent à l’aide du protocole LSP (pour \guillemotleft language server\guillemotright) dès que des informations riches devraient être fournies à l’éditeur.
+Le langage server devrait donc ensuite pouvoir \guillemotleft consommer\guillemotright un parser pour traiter les fonctionnalités. C’est-à-dire être capable d’analyser un AST et de fournir une réponse adéquate.
+L’implémentation d’un tel serveur peut être libre, mais des implémentations existent déjà. Telle que \guillemotleft LSP4\guillemotright implémenté en Java ou \guillemotleft Vscode-languageserver-node\guillemotright implémenté en Typescript qui n’est pas exclusivement réservé à VsCode comme son nom pourrait l’indiquer.
+On remarque donc avec cette approche que 2 composantes existent (Le client et le serveur)
+Un langage server peut être utilisé sur d’autre éditeur compatible. Mais le client devra être implémenté de nouveau.
+
+\subsection*{Parser}
+Pour pouvoir analyser le code saisi par l’utilisateur, la création d’un parser est une approche souvent utilisée.
+Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être \guillemotleft fault tolerant\guillemotright. C’est-à-dire que comme un parser normal, il doit générer un AST (abstract syntax tree), mais lors du parsing du code, il ne devrait pas s’arrêter dès la première erreur.
+Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect, mais les développeurs s'attendent tout de même à ce que la complétion automatique et les autres fonctions de la langue fonctionnent.
+
+....
+
+\chapter*{VsCode API (Direct implementation)}
+Contrairement à l’approche d’un langage serveur, on peut communiquer directement avec l’api en s’inscrivant à des providers.
+The editor will make requests to the providers when semantic tokens are needed
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/api-vscode.png}
+    \end{center}
+    \caption[API]{\label{test} blabla...}
+\end{figure}
+
 \chapter{Conclusion}
 
 %%if
@@ -214,10 +273,10 @@ Il est de coutume de signer la conclusion...
 \vfil
 \hspace{8cm}\makeatletter\@author\makeatother\par
 \hspace{8cm}\begin{minipage}{5cm}
-%%if
+    %%if
     % Place pour signature numérique
     \printsignature
-%%fi
+    %%fi
 \end{minipage}
 \clearpage
 
