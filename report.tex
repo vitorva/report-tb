@@ -253,7 +253,7 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l’implémentation de fonctionnalités. Nous allons voir également les outils utilisés ainsi que le déploiement de l’extension sur le marketplace.
-Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l’unique manière de procéder. 
+Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l’unique manière de procéder.
 
 \section{Code}
 Le code de l’implémentation est disponible sur le dépôt public suivant : \textbf{[pour l’instant privé]}
@@ -261,7 +261,91 @@ Est hébergé sous l’organisation : \textbf{[TODO]}
 \textbf{Remarque} : L’implémentation détaillée dans ce rapport pourrait ne plus représenter l’état du dépôt, car ce projet est sujet à évoluer.
 
 \section{Extension}
-\dots
+\textbf{Squelette de base}
+VsCode permet de générer un squelette (boilerplate) pour la réalisation d’une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
+
+\begin{lstlisting}
+npm install -g yo generator-code
+\end{lstlisting}
+
+Puis il suffit de saisir la commande :
+
+\begin{lstlisting}
+yo code
+\end{lstlisting}
+
+et de compléter ce qui est attendu dans le terminal.
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=5cm]{assets/figures/yo-code.png}
+    \end{center}
+    \caption[Yo Code generator]{\label{yo-code}Yo Code generator}
+\end{figure}
+
+Cela nous crée l’arborescence suivante :
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=5cm]{assets/figures/project-tree.png}
+    \end{center}
+    \caption[Arborescence du projet]{\label{project-tree}Arborescence du projet}
+\end{figure}
+
+Quelques remarques concernant des fichiers et dossiers :
+\begin{itemize}
+    \item \textbf{.vscode} : Ce trouve le code permettant de lancer l’extension en debug mode dans une nouvelle instance Vscode.
+    \item \textbf{.vscodeignore} : Liste les fichiers à ignorer lors de la publication de l’extension.
+    \item \textbf{Entension.js} : Fichier principal qui contient la logique de notre extension.
+    \item \textbf{CHANGELOG.md} : Écrire ici les modifications apportées lorsqu’on publie une nouvelle version.
+    \item \textbf{README.md} : Le readme qui est publié avec l’extension (toutes les infos que l’on voit sur la page sur le marketplace).
+\end{itemize}
+
+\subsection{Lancement de l’extension en debug}
+On peut lancer une nouvelle fenêtre (f5) qui va contenir notre extension.
+
+Par défaut, l’application généré vient avec du code permettant d’afficher le message suivant : « Hello World from [nom de l’extension] » en bas de l’écran. On l’affiche au travers du command pannel (CTRL + SHIFT + P). On peut s’assurer comme cela que l’implémentation de base fonctionne correctement.
+On constate donc que l’on peut lancer notre application au travers d’une commande, mais pour notre cas il sera plus intéressant que vscode nous propose les fonctionnalités à l’ouverture d’un fichier. uon.
+Pour cela, il faut donc remplacer le code dans le fichier package.json :
+
+\subsection{Déploiement sur le Marketplace}
+
+\textbf{Prérequis} : Posséder un compte Azure.
+Il faut récupérer un Personal Access Token , pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
+Puis, créer un access token avec ces paramètres :
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=5cm]{assets/figures/access-token.png}
+    \end{center}
+    \caption[Access Token]{\label{access-token}Access Token}
+\end{figure}
+
+Créer un publisher avec le même compte qui a créé l’organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}
+
+Ajouter la propriété « publisher » et saisir l’id de celui-ci dans le package.json :
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=5cm]{assets/figures/json-publisher.png}
+    \end{center}
+    \caption[Ajout du publisher dans le fichier package.json]{\label{json-publisher} Ajout du publisher dans le fichier package.json}
+\end{figure}
+
+Puis saisir dans le terminal : "vsce login [le nom du publisher]"
+Puis "Vsce publish" et "accept"
+
+\textbf{Remarque} : Attention au terminal utilisé. Le terminal de node (git.bash) ne propose pas toujours les options de sélections à l’utilisateur. Dans mon cas il était impossible de saisir le PAT et donc une erreur est affichée.
+Il est facile en suite de manager l’extension au travers de la page web :
+L’extension apparaitra automatiquement dans le marketplace si elle est publié.
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/manage-publisher.png}
+    \end{center}
+    \caption[Interface web pour manager l'extension]{\label{manage-publisher} Interface web pour manager l'extension}
+\end{figure}
+
+
+
 
 \section{Parser}
 Une approche souvent prévilégié pour l’implémentation de fonctionnalités de langage est la génération d’un AST pour en tirer des informations et les utiliser. Pour le générer, un parseur est nécessaire. Étant donné que ce n’est pas le sujet de notre TB, je vais m’aider d’outil existant pour extraire le plus possible de complexité concernant ce sujet.
@@ -565,53 +649,9 @@ Il est de coutume de signer la conclusion...
 \end{minipage}
 \clearpage
 
-\appendix
-\appendixpage
-\addappheadtotoc
 
 %%if
-\chapter{Première annexe}
+\chapter{Annexe}
 
-Les annexes n'ont pas un contenu \underline{normatif} mais \underline{descriptif}. Tout contenu annexé ne doit pas être nécessaire à la bonne compréhension du travail.
-
-Les annexes contiennent généralement :
-
-\begin{itemize}
-    \item les dessins mécaniques (mises en plan);
-    \item les schémas électriques détaillés;
-    \item des photographies du projet;
-    \item des scripts et des extraits de code source;
-    \item des documents techniques \pex \emph{datasheet};
-    \item des développements mathématiques.
-\end{itemize}
-\section{Sous section}
-\lipsum[1]
-%%fi
-
-\let\cleardoublepage\clearpage
-\backmatter
-
-\label{glossaire}
-\printnoidxglossary
-\printbibliography
-\label{index}
-\printindex
-
-%%if
-\clearpage
-\Large\textbf{Colophon :}\par\normalsize
-\thispagestyle{empty}
-La qualité de cet ouvrage repose que le moteur \LaTeX. La mise en page et le format sont inspirés d'ouvrages scientifiques tels que le modèle de thèse de l'EPFL et celui des publications O'Reilly.
-
-Les diagrammes et les illustrations sont édités depuis l'outil en ligne draw.io. Certaines illustrations ont été reprises dans Adobe Illustrator. Les représentations 3D sont exportées de SolidWorks et certains graphiques sont générés à la volée depuis un code source Python.
-
-L'auteur fictive de ce document \emph{Maria Bernasconi} est un nom emprunté, par amusement, aux spécimens publiés par Postfinance.
-
-Ce document a été compilé avec XeLaTeX.
-
-La famille de police de caractères utilisée est \emph{Computed Modern} créée par Donald Knuth avec son logiciel METAFONT.
-\vfil
-Le Colophon est le dernier élément d'un document qui contient des notes de l'auteur concernant la mise en page et l'édition du document : il est parfaitement optionnel.
-%%fi
 
 \end{document}
