@@ -338,12 +338,14 @@ Supervisé par :\\
 \end{center}%
 \par%
 \vskip 1.5em%
+\let\cleardoublepage\clearpage
 }
 
 % Preamble
 \newcommand{\preamblename}{Préambule}
 \newcommand\preamble{
 \chapter*{\preamblename}
+\let\cleardoublepage\clearpage
 \addcontentsline{toc}{chapter}{\preamblename}
 
 Ce travail de Bachelor (ci-après \textbf{TB}) est réalisé en fin de cursus d'études, en vue de l'obtention du titre de Bachelor of Science HES-SO en \@field.

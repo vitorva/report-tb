@@ -31,7 +31,9 @@
 
 %% Requis par les dispositions générales des travaux de Bachelor
 \preamble
+\let\cleardoublepage\clearpage
 \authentification
+\let\cleardoublepage\clearpage
 
 %% Résumé / Version abbrégée
 \begin{abstract}
@@ -54,17 +56,19 @@
 \clearemptydoublepage
 \pagenumbering{arabic}
 
+
 %% Contenu
 \mainmatter
 \chapter{Introduction}
 Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VsCode. Ce projet se veut expérimental. C’est-à-dire qu’aucun cadre précis sur sa réalisation n’a été établi et que les approches choisis sont libres tant qu’elles respectent le cahier des charges.
-Dans les chapitres suivants, nous allons voir ce qui est fourni par VsCode pour élaborer et déployer une extension. 
+Dans les chapitres suivants, nous allons voir ce qui est fourni par VsCode pour élaborer et déployer une extension.
 Les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
 Les aspects du langage UON à considérer dans le cadre de ce projet.
 Et présenterons en détail l’implémentation d’une extension ainsi que ses fonctionnalités. Puis détaillerons les tests effectués.
 
+\let\cleardoublepage\clearpage
 
-\chapter*{Cahier des charges}
+\chapter{Cahier des charges}
 Voici ci-dessous un résumé du cahier des charges :
 
 \textbf{Extension}
@@ -94,7 +98,7 @@ Il a donc été décidé de le réaliser en Typescript étant donné que VS Code
 Nous avons choisi les fonctionnalités attendues en choisissant celles paraissant utiles à avoir dans un premier temps et en prenant en considération la contrainte de temps.
 
 
-\chapter*{Pré-étude}
+\chapter{Pré-étude}
 
 \section{L\textquotesingle implémentation de fonctionnalités}
 VsCode fournit la possibilité d’ajouter du support pour un nouveau langage de programmation au travers d’implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
@@ -121,7 +125,7 @@ Puis, elles doivent être enregistrées dans le fichier package.json du projet s
 Il s’agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : \guillemotleft Hovers\guillemotright, \guillemotleft Go to Definition\guillemotright, \guillemotleft diagnostic errors\guillemotright, \guillemotleft IntelliSense\guillemotright \space et \guillemotleft CodeLens\guillemotright) et qui nécessite soit d’utiliser l’api vscode.languages.* qui expose des interfaces permettant de réaliser directement leur implémentation ou soit de les implémenter nous-mêmes au travers d’un langage serveur. 
 Les avantages souvent mentionnés de la deuxième solution et que le langage server peut être écrit avec le langage que l’on souhaite et que cela permet aussi à d’autres éditeurs de texte compatibles avec le langage server d’utiliser ses fonctionnalités sans devoir les implémenter de nouveau. Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n’est pas un choix primordial.
 
-\subsection*{Langage server}
+\subsection{Langage server}
 Pour être utiliser sur VSCode, un langage server à 2 partis :
 \begin{itemize}
     \item \textbf{Un client} : C’est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode
@@ -134,7 +138,7 @@ L’implémentation d’un tel serveur peut être libre, mais des implémentatio
 On remarque donc avec cette approche que 2 composantes existent (Le client et le serveur)
 Un langage server peut être utilisé sur d’autre éditeur compatible. Mais le client devra être implémenté de nouveau.
 
-\subsection*{VsCode API (Direct implementation)}
+\subsection{VsCode API (Direct implementation)}
 L’autre approche et donc de communiquer directement avec l’api en s’inscrivant à des providers.
 L’éditeur fera les requêtes aux providers lorsque nécessaire.
 
@@ -157,37 +161,37 @@ Beaucoup de possibilités et donc fourni, mais nous utiliserons uniquement les p
           \subitem Pour afficher les éléments dans la Outline View
 \end{itemize}
 
-\subsection*{Parser}
+\subsection{Parser}
 Pour pouvoir analyser le code saisi par l’utilisateur, la création d’un parser est une approche souvent utilisée.
 Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être \guillemotleft fault tolerant\guillemotright. C’est-à-dire que comme un parser normal, il doit générer un AST (abstract syntax tree), mais lors du parsing du code, il ne devrait pas s’arrêter dès la première erreur.
 Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect, mais les développeurs s'attendent tout de même à ce que la complétion automatique et les autres fonctions de la langue fonctionnent.
 
 
-\subsection*{Grammaire}
+\subsection{Grammaire}
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
 Pour faciliter l’étape de l’analyse syntaxique (« Parsing »), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux). Ainsi si l’utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n’avons pas à traiter ce type d’erreur.
 
-\section*{Recherche d'extensions similaires}
+\section{Recherche d'extensions similaires}
 Fournir du support pour un nouveau langage est une tâche relativement courante.
 Il est donc relativement simple de trouver des extensions proposant un objectif similaire sur la marketplace.
 Évidemment c’est donc une des premières choses qui ont été faites. Regarder les extensions similaires et particulièrement ceux touchant à des langages de sérialisation.
 
-\subsection*{Yaml}
+\subsection{Yaml}
 UON étant un langage proche de YAML c’est vers son extension que je me suis dirigée en premier. Car il n’existe pas d’extension officielle, similaire pour le langage JSON.
 Cependant j’ai vite compris que cela n’allait pas forcément être aussi évident. Car contrairement à JSON et YAML, UON intègre directement dans son langage des types définis. Ce qui fait que l’auto-complétion fournit par des JSON Schema dans l’extension YAML n’est pas vraiment applicable pour notre cas.
 Aussi pour l’outline view. La création d’un symbol tree se fait à l’aide de fonction utilitaire très « privée » et complexe à reprendre est à adapté. En cherchant, j’ai vu que JSON utilise ces mêmes fonctions.
 Cette direction a donc été écarté.
 
-\section*{Choix technologiques}
+\section{Choix technologiques}
 Comme expliqué précédemment, la catégorie d’une fonctionnalité va influencer son implémentation sous VsCode. Mais certaines de ces fonctionnalités pourraient être implémentées selon l’une ou l’autre approche en fonction de la complexité souhaitée, par exemple le  \guillemotleft code folding\guillemotright ou \guillemotleft autocompletion\guillemotright. Il est donc possible que lors du déroulement du projet que la solution jugée la plus intéressante soit privilégiée.
 
-\subsection*{Grammaire}
+\subsection{Grammaire}
 Une grammaire simplifiée de UON sera l’approche privilégiée au départ. Si nécessaire, elle pourrait être étendue.
 
-\subsection*{Parser}
+\subsection{Parser}
 Des outils permettant la génération d’un parser en fonction d’une grammaire existent et seront privilégiés. Si cette approche échoue alors soit l’implémentation d’un parser simple sera effectuée ou il faudra envisager une piste alternative.
 
-\subsection*{API}
+\subsection{API}
 L’implémentation d’un langage serveur n’étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l’approche de contacter directement l’api de VsCode sera choisi. Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server. 
 
 \section{Vscode}
@@ -196,7 +200,7 @@ Presque tout est customisable. Ce rapport ne va pas entrer en détail sur tout c
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML. Il fournit des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs.
 
-\subsection*{Pourquoi ?}
+\subsection{Pourquoi ?}
 Son rôle est d’être utilisé dans l’industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l’IoT (Internet of Things).
 Beaucoup d’informations circulent entre ces composants et leurs ressources sont limitées.
 C’est ici que ce langage est intéressant. Car il a pour objectif d’encapsuler et représenter l’information avec le plus petit payload possible.
@@ -207,10 +211,10 @@ Pour cela UON permet :
 \end{itemize}
 Son rôle est donc de représenter des données sous forme la plus minimale pour permettre l'interopérabilité entre machines.
 
-\subsection*{Design}
+\subsection{Design}
 UON est complètement conforme avec JSON et partiellement avec YAML.
 
-\subsection*{Types}
+\subsection{Types}
 Chaque élément est composé d’un type. Et chacun de ces types peut avoir des propriétés.
 3 types de propriétés existent :
 \begin{itemize}
@@ -219,16 +223,16 @@ Chaque élément est composé d’un type. Et chacun de ces types peut avoir des
     \item Application properties
 \end{itemize}
 
-\subsection*{Schéma de Validation}
+\subsection{Schéma de Validation}
 Une des propriétés uniques de UON est l’usage de schéma directement intégré dans le langage.
 Le rôle de ce schéma et que les machines se mettent d’accord entre elles sur le format des données à respecter, diminuant ainsi le payload total et s’assurant de la validité des données.
 
-\subsection*{Liens}
+\subsection{Liens}
 La spécification comète du projet se trouve ici : \href{https://github.com/uon-language/specification/}{https://github.com/uon-language/specification/}
 Et le dépôt du projet : \href{https://github.com/uon-language/specification}{https://github.com/uon-language/specification}
 
 
-\chapter*{Scope de la grammaire}
+\chapter{Scope de la grammaire}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera. Il est donc important préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
 Nous allons donc partir d’une grammaire la plus minimale possible tout en faisant attention à son extensibilité par la suite.
 Cette grammaire se trouve dans le fichier UON.g4.
@@ -243,8 +247,63 @@ Les fonctionnalités implémentées s’appuieront sur cette grammaire. Ceci dan
 \textbf{Rappel}
 La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D’ajouter des propriétés à des types et également la possibilité de définir un schéma.
 
-\section*{Modification}
+\section{Modification}
 \textbf{[TODO]}
+
+
+\chapter{Implémentation}
+Dans ce chapitre, nous allons explorer les aspects techniques concernant l’implémentation de fonctionnalités. Nous allons voir également les outils utilisés ainsi que le déploiement de l’extension sur le marketplace.
+Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l’unique manière de procéder. 
+
+\section{Code}
+Le code de l’implémentation est disponible sur le dépôt public suivant : \textbf{[pour l’instant privé]}
+Est hébergé sous l’organisation : \textbf{[TODO]}
+\textbf{Remarque} : L’implémentation détaillée dans ce rapport pourrait ne plus représenter l’état du dépôt, car ce projet est sujet à évoluer.
+
+\section{Extension}
+\dots
+
+\section{Parser}
+Une approche souvent prévilégié pour l’implémentation de fonctionnalités de langage est la génération d’un AST pour en tirer des informations et les utiliser. Pour le générer, un parseur est nécessaire. Étant donné que ce n’est pas le sujet de notre TB, je vais m’aider d’outil existant pour extraire le plus possible de complexité concernant ce sujet.
+
+\subsection{ANTLR}
+L’utilisation de ANTLR (ANother Tool for Language Recognition) comme générateur de parser a été choisie pour les raisons suivantes :
+\begin{itemize}
+    \item C’est un outil populaire est encore utilisé.
+    \item Il est disponible en Typescript (\href{https://github.com/tunnelvisionlabs/antlr4ts}{antlr4ts}).
+    \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l’auto-complétion (\href{https://github.com/mike-lischke/antlr4-c3}{antlr4-c3})
+    \item Quelques exemples existent d’implémentation.
+    \item La génération est simple. Pour générer un parser (et d’autres fichiers utiles), il suffit d’écrire un fichier contenant une grammaire valide.
+\end{itemize}
+
+\subsubsection{Grammaire}
+Le fichier de grammaire doit respecter les points suivants : \textbf{[TODO]}
+
+\textbf{Attention} : Utiliser des majuscules pour une règle, correspond à définir un \guillemotleft Lexer rule\guillemotright et utiliser des minuscules à un \guillemotleft Parser rule\guillemotright.
+
+Quand le fichier de grammaire est écrit, il suffit de lancer le code suivant :
+
+\begin{lstlisting}
+    antlr4ts UON.g4 -no-listener -no-visitor -o generated -Xexact-output-dir
+\end{lstlisting}
+
+Il nous génère les fichiers suivants :
+\begin{itemize}
+    \item UON.interp
+    \item UON.tokens
+    \item UONLexer.interp
+    \item UONLexer.tokens
+    \item UONLexer.ts
+    \item UONParser.ts
+\end{itemize}
+
+\subsection{Arbre (CST)}
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/tree.png}
+    \end{center}
+    \caption[uon-tree]{\label{test2} blabla...}
+\end{figure}
 
 
 \chapter{Conclusion}

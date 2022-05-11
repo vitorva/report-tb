@@ -1,0 +1,1 @@
+antlr4ts UON.g4 -no-listener -no-visitor -o generated -Xexact-output-dir
