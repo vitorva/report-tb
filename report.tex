@@ -119,10 +119,10 @@ Par exemple, les éléments suivants :
 \end{itemize}
 
 Il s’agit de fonctionnalités implémentées à l’aide de fichier de configuration.
-Puis, elles doivent être enregistrées dans le fichier package.json du projet sous le champ \guillemotleft contributes\guillemotright \space \href{https://code.visualstudio.com/api/references/contribution-points}{ Contribution Point}.
+Puis, elles doivent être enregistrées dans le fichier package.json du projet sous le champ "contributes" \space \href{https://code.visualstudio.com/api/references/contribution-points}{ Contribution Point}.
 
 \section{Programmatic language features}
-Il s’agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : \guillemotleft Hovers\guillemotright, \guillemotleft Go to Definition\guillemotright, \guillemotleft diagnostic errors\guillemotright, \guillemotleft IntelliSense\guillemotright \space et \guillemotleft CodeLens\guillemotright) et qui nécessite soit d’utiliser l’api vscode.languages.* qui expose des interfaces permettant de réaliser directement leur implémentation ou soit de les implémenter nous-mêmes au travers d’un langage serveur. 
+Il s’agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens" et qui nécessite soit d’utiliser l’api vscode.languages.* qui expose des interfaces permettant de réaliser directement leur implémentation ou soit de les implémenter nous-mêmes au travers d’un langage serveur. 
 Les avantages souvent mentionnés de la deuxième solution et que le langage server peut être écrit avec le langage que l’on souhaite et que cela permet aussi à d’autres éditeurs de texte compatibles avec le langage server d’utiliser ses fonctionnalités sans devoir les implémenter de nouveau. Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n’est pas un choix primordial.
 
 \subsection{Langage server}
@@ -132,9 +132,9 @@ Pour être utiliser sur VSCode, un langage server à 2 partis :
     \item \textbf{Langage server} : Un outil d'analyse linguistique fonctionnant dans un processus séparé lancé
 \end{itemize}
 
-Le client et le serveur communiquent à l’aide du protocole LSP (pour \guillemotleft language server\guillemotright) dès que des informations riches devraient être fournies à l’éditeur.
-Le langage server devrait donc ensuite pouvoir \guillemotleft consommer\guillemotright un parser pour traiter les fonctionnalités. C’est-à-dire être capable d’analyser un AST et de fournir une réponse adéquate.
-L’implémentation d’un tel serveur peut être libre, mais des implémentations existent déjà. Telle que \guillemotleft LSP4\guillemotright implémenté en Java ou \guillemotleft Vscode-languageserver-node\guillemotright implémenté en Typescript qui n’est pas exclusivement réservé à VsCode comme son nom pourrait l’indiquer.
+Le client et le serveur communiquent à l’aide du protocole LSP (pour "language server") dès que des informations riches devraient être fournies à l’éditeur.
+Le langage server devrait donc ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C’est-à-dire être capable d’analyser un AST et de fournir une réponse adéquate.
+L’implémentation d’un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "Vscode-languageserver-node" implémenté en Typescript qui n’est pas exclusivement réservé à VsCode comme son nom pourrait l’indiquer.
 On remarque donc avec cette approche que 2 composantes existent (Le client et le serveur)
 Un langage server peut être utilisé sur d’autre éditeur compatible. Mais le client devra être implémenté de nouveau.
 
@@ -163,7 +163,7 @@ Beaucoup de possibilités et donc fourni, mais nous utiliserons uniquement les p
 
 \subsection{Parser}
 Pour pouvoir analyser le code saisi par l’utilisateur, la création d’un parser est une approche souvent utilisée.
-Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être \guillemotleft fault tolerant\guillemotright. C’est-à-dire que comme un parser normal, il doit générer un AST (abstract syntax tree), mais lors du parsing du code, il ne devrait pas s’arrêter dès la première erreur.
+Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être "fault tolerant". C’est-à-dire que comme un parser normal, il doit générer un AST (abstract syntax tree), mais lors du parsing du code, il ne devrait pas s’arrêter dès la première erreur.
 Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect, mais les développeurs s'attendent tout de même à ce que la complétion automatique et les autres fonctions de la langue fonctionnent.
 
 
@@ -183,7 +183,7 @@ Aussi pour l’outline view. La création d’un symbol tree se fait à l’aide
 Cette direction a donc été écarté.
 
 \section{Choix technologiques}
-Comme expliqué précédemment, la catégorie d’une fonctionnalité va influencer son implémentation sous VsCode. Mais certaines de ces fonctionnalités pourraient être implémentées selon l’une ou l’autre approche en fonction de la complexité souhaitée, par exemple le  \guillemotleft code folding\guillemotright ou \guillemotleft autocompletion\guillemotright. Il est donc possible que lors du déroulement du projet que la solution jugée la plus intéressante soit privilégiée.
+Comme expliqué précédemment, la catégorie d’une fonctionnalité va influencer son implémentation sous VsCode. Mais certaines de ces fonctionnalités pourraient être implémentées selon l’une ou l’autre approche en fonction de la complexité souhaitée, par exemple le  "code folding" ou "autocompletion". Il est donc possible que lors du déroulement du projet que la solution jugée la plus intéressante soit privilégiée.
 
 \subsection{Grammaire}
 Une grammaire simplifiée de UON sera l’approche privilégiée au départ. Si nécessaire, elle pourrait être étendue.
@@ -279,7 +279,7 @@ L’utilisation de ANTLR (ANother Tool for Language Recognition) comme générat
 \subsubsection{Grammaire}
 Le fichier de grammaire doit respecter les points suivants : \textbf{[TODO]}
 
-\textbf{Attention} : Utiliser des majuscules pour une règle, correspond à définir un \guillemotleft Lexer rule\guillemotright et utiliser des minuscules à un \guillemotleft Parser rule\guillemotright.
+\textbf{Attention} : Utiliser des majuscules pour une règle, correspond à définir un "Lexer rule" et utiliser des minuscules à un  "Parser rule".
 
 Quand le fichier de grammaire est écrit, il suffit de lancer le code suivant :
 
@@ -300,13 +300,254 @@ Il nous génère les fichiers suivants :
 \subsection{Arbre (CST)}
 \begin{figure}[!ht]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/tree.png}
+        \includegraphics[width=5cm]{assets/figures/tree.png}
     \end{center}
-    \caption[uon-tree]{\label{test2} blabla...}
+    \caption[UON CST]{\label{test2} UON CST}
 \end{figure}
 
+\textbf{[TODO]}
+
+\section{Syntax highlighting}
+La coloration syntaxique permet que chaque élément du texte soit affiché dans l’éditeur avec une coloration et un style en fonction de son type.
+Il y a 2 composantes principales.
+\begin{itemize}
+    \item La tokenisation qui consiste à séparer le texte en une liste de token.
+    \item La thémisation (Theming) qui permet d’attribuer à un token une couleur et un style.
+\end{itemize}
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/basic-uon.png}
+    \end{center}
+    \caption[code UON]{\label{basic-uon} Exemple basique en UON}
+\end{figure}
+
+Ces 2 mécanismes sont possibles sous VSCode à l’aide d’un fichier "TextMate grammars". C’est un fichier qui contient une liste structurée d’expressions régulière et qui permet d’associer un scope à un token.
+
+Le but de ce fichier est évidemment de permettre la coloration syntaxique, mais il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le curseur. Cela permet d’avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
+Notre fichier de grammaire (uon.tmLanguage.json) se trouve dans le dossier "syntax" à la racine du projet.
+Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
+
+\subsection{Scope}
+Un scope défini le contexte du token et peut-être considéré comme son type.
+TextMate fourni une liste de scope communs que de nombreux thèmes ciblent déjà et recommande de les utiliser. Ceci dans le but de permettre à notre langage d’être supporté le plus possible partout. 
+Les scopes sont souvent imbriqués et c’est le plus spécifique qui est utilisé pour le choix du thème.
+Il est possible d’analyser notre code à l’aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/scope-inspector.png}
+    \end{center}
+    \caption[Scope inspector]{\label{basic-uon} Le scope inspector sur un exemple de code en UON}
+\end{figure}
+
+La section "textmate scopes" montre la liste des scopes utilisés pour le token courant. Le plus spécialisé se trouve au sommet.
+
+Cette fonctionnalité n’est pas considérée comme un "programmatic language feature" et donc n’est pas géré par un langage serveur ou depuis l’api de Vscode. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
+
+\subsection{Stratégie concernant les noms}
+Pour respecter au maximum les conventions attendues et s’assurer qu’une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut). Et de réutiliser les scopes.
+
+Ce fichier se trouve sur le dépôt suivant : \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}
+Mais peut être également généré depuis le contrôle panel.
+
+\subsection{Forcer le choix des couleurs}
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/manual-settings-color.png}
+    \end{center}
+    \caption[Choix manuel des couleurs]{\label{manual-settings-color} Choix manuel des couleurs}
+\end{figure}
+
+On peut manuellement définir une couleur à un scope dans le fichier package.json.
+Cela peut -être intéressant si aucun thème n’est associé de base à un scope.
+Il est également possible de créer directement un fichier de thème.
+
+\subsection{Fonctionnement}
+\textbf{Exemple simple}
+
+Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le mécanisme général utilisé dans notre fichier uontmLanguage.json :
+\begin{lstlisting}
+ 1  {  scopeName = 'source.untitled';
+ 2     patterns = (
+ 3        {  name = 'keyword.control.untitled';
+ 4           match = '\b(if|while|for|return)\b';
+ 5        },
+ 6        {  name = 'string.quoted.double.untitled';
+ 7           begin = '"';
+ 8           end = '"';
+ 9           patterns = (
+10              {  name = 'constant.character.escape.untitled';
+11                 match = '\\.';
+12              }
+13           );
+14        },
+14     );
+15  }
+\end{lstlisting}
+
+\textbf{"scopeName"} (ligne 1) : Identifiant unique
+\textbf{"patterns"} (ligne 2) : C’est un tableau contenant les règles actuelles utilisé pour parser le document. Elles sont appliquées dans l’ordre.
+Ces règles peuvent être directement écrites à cet emplacement, mais il est aussi possible de les définir dans le "repository". Puis de les inclure.
+\textbf{"repository"} : Un dictionnaire (clé-valeur) de règles.
+\textbf{"name"} : Nom du scope.
+
+Contrairement à la première règle qui ne faisait qu’un match, la deuxième définit un début et une fin sur laquelle seront appliquées les règles se trouvant dans le "patterns" suivant (à la ligne 12) . On voit qu’il est donc possible d’imbriquer les règles.
+
+\subsection{Semantic Highlight}
+
+Un point important et qu’il ne faut pas confondre la coloration syntaxique avec ce que l’on nomme "semantic highlighting" qui est une couche que l’on rajoute sur la précédente pour l’améliorer si nécessaire.
+Il s’agit d’obtenir des informations plus avancées en analysant plus en détail du code pour fournir une coloration plus précise.
+Par exemple avec du code Typescript :
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/semantic-coloration-with.png}
+    \end{center}
+    \caption[Avec coloration sémantique ]{\label{semantic-coloration-with} Avec coloration sémantique }
+\end{figure}
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/semantic-coloration-without.png}
+    \end{center}
+    \caption[Sans coloration sémantique]{\label{semantic-coloration-without} Sans coloration sémantique}
+\end{figure}
+
+On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d’une fonction.
+Cela est donc intéressant pour des langages plus complexes dans leur nature qu’un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas. Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
+
+\section{Auto-completion}
+Cette fonctionnalité est souvent mentionnée au travers de l’appellation \href{https://code.visualstudio.com/docs/editor/intellisense}{"IntelliSense"} qui un terme général désignant diverses fonctions d'édition de code.
+
+Une approche typique pour implémenter de la complétion est d’utiliser directement un parser du langage.
+Cependant il faut prendre en compte plusieurs difficultés, car le code en train d’être écrit est souvent syntaxiquement incorrect lorsque l’on le saisi.  Et c’est dans ce moment que l’on aimerait avoir des suggestions de complétion. 
+De plus on pourrait penser qu’avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d’un AST. Cependant ce n’est pas le cas pour la plupart des scénarios. Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent. Par exemple des noms de classe, des objets de base de données, des membres de classes, des fonctions, etc. ne sont pas représentés dans la grammaire. 
+
+À la place, nous utiliserons donc "Antlr4-c3" (Code Completion Core for Antlr4). Qui avec un mécanisme de machine à état ATN (Augmented Transition Network) nous permet d’obtenir des suggestions possibles à une position donnée, dans notre cas la position du curseur.
+Ci-dessous Un ATN d’une séquence :
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/seq_ATN.png}
+    \end{center}
+    \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
+\end{figure}
+
+La seule contrainte est qu’il est nécessaire que tout le code se trouvant avant le curseur soit correct. Mais ce qui se trouve à la suite peut être erroné. 
+Ainsi, nous pouvons revenir n’importe où dans le code, car la partie se trouvant après le curseur n’est pas prise en compte et la rédaction du code précédente est normalement correcte.
+De plus, actuellement, nous n’avons pas de suggestions qui dépendrais de ce qui se trouve après le curseur.
+Car par exemple dans l’exemple suivant pour du code SQL :
+
+\begin{lstlisting}
+SELECT | FROM USER // ("|" étant le curseur)
+\end{lstlisting}
+
+Dans ce scénario des suggestions liées à la table USER devrait être proposé et donc un traitement particulier devrait être fait.
+La seule chose qui doit donc être correcte est la structure du code. C’est-à-dire que l’ordre des éléments attendus est respecté.
+Il semble normal que la complétion n’ait pas lieu si le code précédent est gravement erroné pouvant être un indice à l’utilisateur. Cependant il doit quand même supporter une certaine marge d’erreur. Dans notre cas, les erreurs sur les valeurs (par exemple une propriété "max : 12a") pourraient être omises en utilisant une grammaire qui nous permet d’avoir des types supportant le plus de symboles possibles. Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le processus de l’auto-complétion.
+
+\subsection{Mécanisme automatique}
+VsCode va automatiquement filtrer les suggestions pendant la saisie.
+Par défaut il propose également des symboles déjà existants dans le code dans ses suggestions.
+
+\subsection{Gestion des erreurs}
+On peut ajouter au parser un "ErrorListener".
+Par défaut c’est cette stratégie d’erreur qui est appliquée :
+\href{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}
+
+Mais on peut l’étendre pour redéfinir les fonctions.
+\textbf{[TODO]}
+
+\subsection{Problème}
+Dans certains cas lorsque l’on trigger de l’autocomplétion quand le curseur se trouve collé à du texte. L’éditeur affiche le message « no suggestions » alors que le provider contient une liste de suggestions possible.
+\textbf{[TODO]}
+
+\subsection{Snippets}
+Il est possible d’ajouter des snippets sous Vscode. C’est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
+C’est utile si à un moment donné on a le choix entre plusieurs suggestions et que l’on veut tous les avoir d’un coup.
+Par exemple, on peut en UON, ajouter des attributs à un schéma :
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/snippet-suggestion.png}
+    \end{center}
+    \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
+\end{figure}
+
+Cependant toute la difficulté et de proposer ces suggestions au bon moment, car ne faisant pas partie du moteur de complétions d’antlr. Une idée et de se baser sur le dernier token reconnu. On pourrait ici savoir qu’il est le moment d’ajouter ce snippet, si le dernier token est de type "!schema".
+
+\subsection{Triggers}
+L’éditeur va trigger automatiquement l’autocomplétions en appelant le provider lorsque l’on saisit plusieurs caractères. Il aussi possible de l’activer manuellement en exécutant la commande "ctr + space".
+On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s’agit seulement d’une appréciation personnelle.
+
+\subsection{Candidats}
+Actuellement pour connaitre le prochain candidat, on récupère le flux des tokens trouvé lors du parsing dans le tokenStream. On récupère dans un tableau chaque token individuellement (y compris les espaces).  Grâce à la taille du tableau on peut déduire l’indice du ou des prochains tokens que l’on souhaitera afficher.
+Cependant lorsque l’utilisateur écrit et que cela trigger l’autocomplétion. Souvent le texte parsé est faux, car non terminé. Dans certains, quand il arrive quand même à comprendre. Le texte parsé se termine alors avec un token de type <EOF> (end of line).
+Mais parfois il n’arrive pas à le faire correctement et le texte et ne termine pas avec ce token mais seulement avec le mot que l’on est en train d’écrire ou uniquement des caractères vide, ou même les deux.
+Ce comportement a été observé de manière empirique. Une solution a été mise en place pour traiter ces cas particuliers.
+\textbf{[Actuellement train de chercher la cause]}
+
+\subsubsection{Index du candidat}
+L’indexation est gérée de 2 manières différentes. En fonction de la prise en compte de l’espace ou non.
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/candidat-index.png}
+    \end{center}
+    \caption[Indexation des candidats]{\label{candidat-index} Indexation des candidats}
+\end{figure}
+
+\textbf{[TODO]}
+
+\section{Document outlining}
+\textbf{[TODO]}
+
+\section{Info on Hover}
+\textbf{[TODO]}
+
+\section{Fonctionnalités triviales}
+Il s’agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n’a donc pas été mentionnée dans le cahier des charges.
+
+Les suivantes ont été implémentées :
+\textbf{Comment}
+\begin{itemize}
+    \item Il est possible de commenter du code sous forme de ligne.
+    \item Il est possible de commenter et décommenter du code (Toggling)
+\end{itemize}
+
+\textbf{Symbol pairs}
+\begin{itemize}
+    \item Il est possible de faire la correspondance pour certaines paires de symboles à l’aide d’une indication visuelle. (Matching)
+    \item Certains symboles du langage doivent être automatiquement complétés si l’utilisateur saisit le premier élément de celle-ci. (Autoclosing)
+\end{itemize}
+
+\textbf{Code folding}
+\begin{itemize}
+    \item Cacher un bloc de code sur une ligne en fonction de son niveau d’indentation.
+\end{itemize}
+
+Pour pouvoir les implémenter, il suffit d’éditer un fichier de configuration json (language-configuration.json) puis  éditer le fichier package.json afin qu’il référence ce fichier sous le point "contribution".
+
+\chapter{Intégration continue}
+
+\section{Autocomplétion}
+Applique la même méthodologie de antlr4-ts : \href{https://github.com/mike-lischke/antlr4-c3/tree/master/test}{https://github.com/mike-lischke/antlr4-c3/tree/master/test}
+\textbf{[TODO]}
+
+\section{Syntax highlight}
+\textbf{[TODO]}
+
+\section{Outline view}
+Teste que l’arbre syntaxique reçu est celui attendu pour un code.
+\textbf{[TODO]}
+
+\section{Information Hover}
+Tester que l’élément on Hover soit celui attendu
+\textbf{[TODO]}
 
 \chapter{Conclusion}
+\textbf{[TODO]}
 
 %%if
 Bien que non nécessaire dans un rapport de Bachelor, la discussion finale d'un projet résume les résultats obtenus et dresse une conclusion objective du projet. Un manager de société est souvent amené à lire de nombreux rapport, il ne s'intéresse généralement qu'à l'introduction au contexte de l'étude et à sa conclusion.
