@@ -5,7 +5,7 @@
 ]{heig-tb}
 
 \usepackage[nooldvoltagedirection,european,americaninductors]{circuitikz}
-\usepackage{hyperref} 
+\usepackage{hyperref}
 
 %\signature{mbernasconi.svg} TODO
 
@@ -60,11 +60,11 @@
 %% Contenu
 \mainmatter
 \chapter{Introduction}
-Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VsCode. Ce projet se veut expérimental. C’est-à-dire qu’aucun cadre précis sur sa réalisation n’a été établi et que les approches choisis sont libres tant qu’elles respectent le cahier des charges.
+Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VsCode. Ce projet se veut expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisis sont libres tant qu'elles respectent le cahier des charges.
 Dans les chapitres suivants, nous allons voir ce qui est fourni par VsCode pour élaborer et déployer une extension.
 Les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
 Les aspects du langage UON à considérer dans le cadre de ce projet.
-Et présenterons en détail l’implémentation d’une extension ainsi que ses fonctionnalités. Puis détaillerons les tests effectués.
+Et présenterons en détail l'implémentation d'une extension ainsi que ses fonctionnalités. Puis détaillerons les tests effectués.
 
 \let\cleardoublepage\clearpage
 
@@ -93,7 +93,7 @@ Voici ci-dessous un résumé du cahier des charges :
     \item Converter
 \end{itemize}
 
-Ce projet se focalise uniquement sur l’éditeur de code VScode.
+Ce projet se focalise uniquement sur l'éditeur de code VScode.
 Il a donc été décidé de le réaliser en Typescript étant donné que VS Code extensions supporte 2 langages principaux (Javascript et Typescript).
 Nous avons choisi les fonctionnalités attendues en choisissant celles paraissant utiles à avoir dans un premier temps et en prenant en considération la contrainte de temps.
 
@@ -101,7 +101,7 @@ Nous avons choisi les fonctionnalités attendues en choisissant celles paraissan
 \chapter{Pré-étude}
 
 \section{L\textquotesingle implémentation de fonctionnalités}
-VsCode fournit la possibilité d’ajouter du support pour un nouveau langage de programmation au travers d’implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
+VsCode fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
 
 \section{Declarative language features}
 Elles ajoutent un support d'édition de texte de base pour un langage de programmation.
@@ -118,29 +118,29 @@ Par exemple, les éléments suivants :
     \item Folding (by markers)
 \end{itemize}
 
-Il s’agit de fonctionnalités implémentées à l’aide de fichier de configuration.
+Il s'agit de fonctionnalités implémentées à l'aide de fichier de configuration.
 Puis, elles doivent être enregistrées dans le fichier package.json du projet sous le champ "contributes" \space \href{https://code.visualstudio.com/api/references/contribution-points}{ Contribution Point}.
 
 \section{Programmatic language features}
-Il s’agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens" et qui nécessite soit d’utiliser l’api vscode.languages.* qui expose des interfaces permettant de réaliser directement leur implémentation ou soit de les implémenter nous-mêmes au travers d’un langage serveur. 
-Les avantages souvent mentionnés de la deuxième solution et que le langage server peut être écrit avec le langage que l’on souhaite et que cela permet aussi à d’autres éditeurs de texte compatibles avec le langage server d’utiliser ses fonctionnalités sans devoir les implémenter de nouveau. Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n’est pas un choix primordial.
+Il s'agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens" et qui nécessite soit d'utiliser l'api vscode.languages.* qui expose des interfaces permettant de réaliser directement leur implémentation ou soit de les implémenter nous-mêmes au travers d'un langage serveur. 
+Les avantages souvent mentionnés de la deuxième solution et que le langage server peut être écrit avec le langage que l'on souhaite et que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ses fonctionnalités sans devoir les implémenter de nouveau. Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n'est pas un choix primordial.
 
 \subsection{Langage server}
 Pour être utiliser sur VSCode, un langage server à 2 partis :
 \begin{itemize}
-    \item \textbf{Un client} : C’est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode
+    \item \textbf{Un client} : C'est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode
     \item \textbf{Langage server} : Un outil d'analyse linguistique fonctionnant dans un processus séparé lancé
 \end{itemize}
 
-Le client et le serveur communiquent à l’aide du protocole LSP (pour "language server") dès que des informations riches devraient être fournies à l’éditeur.
-Le langage server devrait donc ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C’est-à-dire être capable d’analyser un AST et de fournir une réponse adéquate.
-L’implémentation d’un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "Vscode-languageserver-node" implémenté en Typescript qui n’est pas exclusivement réservé à VsCode comme son nom pourrait l’indiquer.
+Le client et le serveur communiquent à l'aide du protocole LSP (pour "language server") dès que des informations riches devraient être fournies à l'éditeur.
+Le langage server devrait donc ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C'est-à-dire être capable d'analyser un AST et de fournir une réponse adéquate.
+L'implémentation d'un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "Vscode-languageserver-node" implémenté en Typescript qui n'est pas exclusivement réservé à VsCode comme son nom pourrait l'indiquer.
 On remarque donc avec cette approche que 2 composantes existent (Le client et le serveur)
-Un langage server peut être utilisé sur d’autre éditeur compatible. Mais le client devra être implémenté de nouveau.
+Un langage server peut être utilisé sur d'autre éditeur compatible. Mais le client devra être implémenté de nouveau.
 
 \subsection{VsCode API (Direct implementation)}
-L’autre approche et donc de communiquer directement avec l’api en s’inscrivant à des providers.
-L’éditeur fera les requêtes aux providers lorsque nécessaire.
+L'autre approche et donc de communiquer directement avec l'api en s'inscrivant à des providers.
+L'éditeur fera les requêtes aux providers lorsque nécessaire.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -162,52 +162,52 @@ Beaucoup de possibilités et donc fourni, mais nous utiliserons uniquement les p
 \end{itemize}
 
 \subsection{Parser}
-Pour pouvoir analyser le code saisi par l’utilisateur, la création d’un parser est une approche souvent utilisée.
-Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être "fault tolerant". C’est-à-dire que comme un parser normal, il doit générer un AST (abstract syntax tree), mais lors du parsing du code, il ne devrait pas s’arrêter dès la première erreur.
+Pour pouvoir analyser le code saisi par l'utilisateur, la création d'un parser est une approche souvent utilisée.
+Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être "fault tolerant". C'est-à-dire que comme un parser normal, il doit générer un AST (abstract syntax tree), mais lors du parsing du code, il ne devrait pas s'arrêter dès la première erreur.
 Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect, mais les développeurs s'attendent tout de même à ce que la complétion automatique et les autres fonctions de la langue fonctionnent.
 
 
 \subsection{Grammaire}
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
-Pour faciliter l’étape de l’analyse syntaxique (« Parsing »), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux). Ainsi si l’utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n’avons pas à traiter ce type d’erreur.
+Pour faciliter l'étape de l'analyse syntaxique (« Parsing »), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux). Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
 
 \section{Recherche d'extensions similaires}
 Fournir du support pour un nouveau langage est une tâche relativement courante.
 Il est donc relativement simple de trouver des extensions proposant un objectif similaire sur la marketplace.
-Évidemment c’est donc une des premières choses qui ont été faites. Regarder les extensions similaires et particulièrement ceux touchant à des langages de sérialisation.
+Évidemment c'est donc une des premières choses qui ont été faites. Regarder les extensions similaires et particulièrement ceux touchant à des langages de sérialisation.
 
 \subsection{Yaml}
-UON étant un langage proche de YAML c’est vers son extension que je me suis dirigée en premier. Car il n’existe pas d’extension officielle, similaire pour le langage JSON.
-Cependant j’ai vite compris que cela n’allait pas forcément être aussi évident. Car contrairement à JSON et YAML, UON intègre directement dans son langage des types définis. Ce qui fait que l’auto-complétion fournit par des JSON Schema dans l’extension YAML n’est pas vraiment applicable pour notre cas.
-Aussi pour l’outline view. La création d’un symbol tree se fait à l’aide de fonction utilitaire très « privée » et complexe à reprendre est à adapté. En cherchant, j’ai vu que JSON utilise ces mêmes fonctions.
+UON étant un langage proche de YAML c'est vers son extension que je me suis dirigée en premier. Car il n'existe pas d'extension officielle, similaire pour le langage JSON.
+Cependant j'ai vite compris que cela n'allait pas forcément être aussi évident. Car contrairement à JSON et YAML, UON intègre directement dans son langage des types définis. Ce qui fait que l'auto-complétion fournit par des JSON Schema dans l'extension YAML n'est pas vraiment applicable pour notre cas.
+Aussi pour l'outline view. La création d'un symbol tree se fait à l'aide de fonction utilitaire très « privée » et complexe à reprendre est à adapté. En cherchant, j'ai vu que JSON utilise ces mêmes fonctions.
 Cette direction a donc été écarté.
 
 \section{Choix technologiques}
-Comme expliqué précédemment, la catégorie d’une fonctionnalité va influencer son implémentation sous VsCode. Mais certaines de ces fonctionnalités pourraient être implémentées selon l’une ou l’autre approche en fonction de la complexité souhaitée, par exemple le  "code folding" ou "autocompletion". Il est donc possible que lors du déroulement du projet que la solution jugée la plus intéressante soit privilégiée.
+Comme expliqué précédemment, la catégorie d'une fonctionnalité va influencer son implémentation sous VsCode. Mais certaines de ces fonctionnalités pourraient être implémentées selon l'une ou l'autre approche en fonction de la complexité souhaitée, par exemple le  "code folding" ou "autocompletion". Il est donc possible que lors du déroulement du projet que la solution jugée la plus intéressante soit privilégiée.
 
 \subsection{Grammaire}
-Une grammaire simplifiée de UON sera l’approche privilégiée au départ. Si nécessaire, elle pourrait être étendue.
+Une grammaire simplifiée de UON sera l'approche privilégiée au départ. Si nécessaire, elle pourrait être étendue.
 
 \subsection{Parser}
-Des outils permettant la génération d’un parser en fonction d’une grammaire existent et seront privilégiés. Si cette approche échoue alors soit l’implémentation d’un parser simple sera effectuée ou il faudra envisager une piste alternative.
+Des outils permettant la génération d'un parser en fonction d'une grammaire existent et seront privilégiés. Si cette approche échoue alors soit l'implémentation d'un parser simple sera effectuée ou il faudra envisager une piste alternative.
 
 \subsection{API}
-L’implémentation d’un langage serveur n’étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l’approche de contacter directement l’api de VsCode sera choisi. Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server. 
+L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi. Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server. 
 
 \section{Vscode}
-Presque tout est customisable. Ce rapport ne va pas entrer en détail sur tout ce qui est possible de faire. Si besoin, VsCode fourni une multitude d’explication bien détaillée et fournie en exemple.
+Presque tout est customisable. Ce rapport ne va pas entrer en détail sur tout ce qui est possible de faire. Si besoin, VsCode fourni une multitude d'explication bien détaillée et fournie en exemple.
 
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML. Il fournit des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs.
 
 \subsection{Pourquoi ?}
-Son rôle est d’être utilisé dans l’industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l’IoT (Internet of Things).
-Beaucoup d’informations circulent entre ces composants et leurs ressources sont limitées.
-C’est ici que ce langage est intéressant. Car il a pour objectif d’encapsuler et représenter l’information avec le plus petit payload possible.
+Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l'IoT (Internet of Things).
+Beaucoup d'informations circulent entre ces composants et leurs ressources sont limitées.
+C'est ici que ce langage est intéressant. Car il a pour objectif d'encapsuler et représenter l'information avec le plus petit payload possible.
 Pour cela UON permet :
 \begin{itemize}
     \item De représenter les données sous forme humaine et binaire.
-    \item Décrire le payload à travers d’un schéma de validation.
+    \item Décrire le payload à travers d'un schéma de validation.
 \end{itemize}
 Son rôle est donc de représenter des données sous forme la plus minimale pour permettre l'interopérabilité entre machines.
 
@@ -215,7 +215,7 @@ Son rôle est donc de représenter des données sous forme la plus minimale pour
 UON est complètement conforme avec JSON et partiellement avec YAML.
 
 \subsection{Types}
-Chaque élément est composé d’un type. Et chacun de ces types peut avoir des propriétés.
+Chaque élément est composé d'un type. Et chacun de ces types peut avoir des propriétés.
 3 types de propriétés existent :
 \begin{itemize}
     \item Presenentation properties.
@@ -224,8 +224,8 @@ Chaque élément est composé d’un type. Et chacun de ces types peut avoir des
 \end{itemize}
 
 \subsection{Schéma de Validation}
-Une des propriétés uniques de UON est l’usage de schéma directement intégré dans le langage.
-Le rôle de ce schéma et que les machines se mettent d’accord entre elles sur le format des données à respecter, diminuant ainsi le payload total et s’assurant de la validité des données.
+Une des propriétés uniques de UON est l'usage de schéma directement intégré dans le langage.
+Le rôle de ce schéma et que les machines se mettent d'accord entre elles sur le format des données à respecter, diminuant ainsi le payload total et s'assurant de la validité des données.
 
 \subsection{Liens}
 La spécification comète du projet se trouve ici : \href{https://github.com/uon-language/specification/}{https://github.com/uon-language/specification/}
@@ -234,35 +234,35 @@ Et le dépôt du projet : \href{https://github.com/uon-language/specification}{h
 
 \chapter{Scope de la grammaire}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera. Il est donc important préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
-Nous allons donc partir d’une grammaire la plus minimale possible tout en faisant attention à son extensibilité par la suite.
+Nous allons donc partir d'une grammaire la plus minimale possible tout en faisant attention à son extensibilité par la suite.
 Cette grammaire se trouve dans le fichier UON.g4.
 
-Elle est une adaptation de la grammaire écrite en Lark par l’ancien élève Stéphane Selim pour son travail de bachelor « Parser for a serialization language UON ». Son travail se trouve sur : 
+Elle est une adaptation de la grammaire écrite en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor « Parser for a serialization language UON ». Son travail se trouve sur : 
 \href{https://github.com/uon-language/uon-parser}{https://github.com/uon-language/uon-parser}
 
 Elle sera complétée et améliorée après la mise en place des fonctionnalités attendus et si le temps le permet.
 
-Les fonctionnalités implémentées s’appuieront sur cette grammaire. Ceci dans le but de rester cohérents entre eux.
+Les fonctionnalités implémentées s'appuieront sur cette grammaire. Ceci dans le but de rester cohérents entre eux.
 
 \textbf{Rappel}
-La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D’ajouter des propriétés à des types et également la possibilité de définir un schéma.
+La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma.
 
 \section{Modification}
 \textbf{[TODO]}
 
 
 \chapter{Implémentation}
-Dans ce chapitre, nous allons explorer les aspects techniques concernant l’implémentation de fonctionnalités. Nous allons voir également les outils utilisés ainsi que le déploiement de l’extension sur le marketplace.
-Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l’unique manière de procéder.
+Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
+Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
 
 \section{Code}
-Le code de l’implémentation est disponible sur le dépôt public suivant : \textbf{[pour l’instant privé]}
-Est hébergé sous l’organisation : \textbf{[TODO]}
-\textbf{Remarque} : L’implémentation détaillée dans ce rapport pourrait ne plus représenter l’état du dépôt, car ce projet est sujet à évoluer.
+Le code de l'implémentation est disponible sur le dépôt public suivant : \textbf{[pour l'instant privé]}
+Est hébergé sous l'organisation : \textbf{[TODO]}
+\textbf{Remarque} : L'implémentation détaillée dans ce rapport pourrait ne plus représenter l'état du dépôt, car ce projet est sujet à évoluer.
 
 \section{Extension}
 \textbf{Squelette de base}
-VsCode permet de générer un squelette (boilerplate) pour la réalisation d’une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
+VsCode permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
 
 \begin{lstlisting}
 npm install -g yo generator-code
@@ -283,7 +283,7 @@ et de compléter ce qui est attendu dans le terminal.
     \caption[Yo Code generator]{\label{yo-code}Yo Code generator}
 \end{figure}
 
-Cela nous crée l’arborescence suivante :
+Cela nous crée l'arborescence suivante :
 \begin{figure}[!ht]
     \begin{center}
         \includegraphics[width=5cm]{assets/figures/project-tree.png}
@@ -293,18 +293,18 @@ Cela nous crée l’arborescence suivante :
 
 Quelques remarques concernant des fichiers et dossiers :
 \begin{itemize}
-    \item \textbf{.vscode} : Ce trouve le code permettant de lancer l’extension en debug mode dans une nouvelle instance Vscode.
-    \item \textbf{.vscodeignore} : Liste les fichiers à ignorer lors de la publication de l’extension.
+    \item \textbf{.vscode} : Ce trouve le code permettant de lancer l'extension en debug mode dans une nouvelle instance Vscode.
+    \item \textbf{.vscodeignore} : Liste les fichiers à ignorer lors de la publication de l'extension.
     \item \textbf{Entension.js} : Fichier principal qui contient la logique de notre extension.
-    \item \textbf{CHANGELOG.md} : Écrire ici les modifications apportées lorsqu’on publie une nouvelle version.
-    \item \textbf{README.md} : Le readme qui est publié avec l’extension (toutes les infos que l’on voit sur la page sur le marketplace).
+    \item \textbf{CHANGELOG.md} : Écrire ici les modifications apportées lorsqu'on publie une nouvelle version.
+    \item \textbf{README.md} : Le readme qui est publié avec l'extension (toutes les infos que l'on voit sur la page sur le marketplace).
 \end{itemize}
 
-\subsection{Lancement de l’extension en debug}
+\subsection{Lancement de l'extension en debug}
 On peut lancer une nouvelle fenêtre (f5) qui va contenir notre extension.
 
-Par défaut, l’application généré vient avec du code permettant d’afficher le message suivant : « Hello World from [nom de l’extension] » en bas de l’écran. On l’affiche au travers du command pannel (CTRL + SHIFT + P). On peut s’assurer comme cela que l’implémentation de base fonctionne correctement.
-On constate donc que l’on peut lancer notre application au travers d’une commande, mais pour notre cas il sera plus intéressant que vscode nous propose les fonctionnalités à l’ouverture d’un fichier. uon.
+Par défaut, l'application généré vient avec du code permettant d'afficher le message suivant : « Hello World from [nom de l'extension] » en bas de l'écran. On l'affiche au travers du command pannel (CTRL + SHIFT + P). On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
+On constate donc que l'on peut lancer notre application au travers d'une commande, mais pour notre cas il sera plus intéressant que vscode nous propose les fonctionnalités à l'ouverture d'un fichier. uon.
 Pour cela, il faut donc remplacer le code dans le fichier package.json :
 
 \subsection{Déploiement sur le Marketplace}
@@ -319,9 +319,9 @@ Puis, créer un access token avec ces paramètres :
     \caption[Access Token]{\label{access-token}Access Token}
 \end{figure}
 
-Créer un publisher avec le même compte qui a créé l’organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}
+Créer un publisher avec le même compte qui a créé l'organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}
 
-Ajouter la propriété « publisher » et saisir l’id de celui-ci dans le package.json :
+Ajouter la propriété « publisher » et saisir l'id de celui-ci dans le package.json :
 
 \begin{figure}[!ht]
     \begin{center}
@@ -333,9 +333,9 @@ Ajouter la propriété « publisher » et saisir l’id de celui-ci dans le pack
 Puis saisir dans le terminal : "vsce login [le nom du publisher]"
 Puis "Vsce publish" et "accept"
 
-\textbf{Remarque} : Attention au terminal utilisé. Le terminal de node (git.bash) ne propose pas toujours les options de sélections à l’utilisateur. Dans mon cas il était impossible de saisir le PAT et donc une erreur est affichée.
-Il est facile en suite de manager l’extension au travers de la page web :
-L’extension apparaitra automatiquement dans le marketplace si elle est publié.
+\textbf{Remarque} : Attention au terminal utilisé. Le terminal de node (git.bash) ne propose pas toujours les options de sélections à l'utilisateur. Dans mon cas il était impossible de saisir le PAT et donc une erreur est affichée.
+Il est facile en suite de manager l'extension au travers de la page web :
+L'extension apparaitra automatiquement dans le marketplace si elle est publié.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -345,19 +345,17 @@ L’extension apparaitra automatiquement dans le marketplace si elle est publié
 \end{figure}
 
 
-
-
 \section{Parser}
-Une approche souvent prévilégié pour l’implémentation de fonctionnalités de langage est la génération d’un AST pour en tirer des informations et les utiliser. Pour le générer, un parseur est nécessaire. Étant donné que ce n’est pas le sujet de notre TB, je vais m’aider d’outil existant pour extraire le plus possible de complexité concernant ce sujet.
+Une approche souvent prévilégié pour l'implémentation de fonctionnalités de langage est la génération d'un AST pour en tirer des informations et les utiliser. Pour le générer, un parseur est nécessaire. Étant donné que ce n'est pas le sujet de notre TB, je vais m'aider d'outil existant pour extraire le plus possible de complexité concernant ce sujet.
 
 \subsection{ANTLR}
-L’utilisation de ANTLR (ANother Tool for Language Recognition) comme générateur de parser a été choisie pour les raisons suivantes :
+L'utilisation de ANTLR (ANother Tool for Language Recognition) comme générateur de parser a été choisie pour les raisons suivantes :
 \begin{itemize}
-    \item C’est un outil populaire est encore utilisé.
+    \item C'est un outil populaire est encore utilisé.
     \item Il est disponible en Typescript (\href{https://github.com/tunnelvisionlabs/antlr4ts}{antlr4ts}).
-    \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l’auto-complétion (\href{https://github.com/mike-lischke/antlr4-c3}{antlr4-c3})
-    \item Quelques exemples existent d’implémentation.
-    \item La génération est simple. Pour générer un parser (et d’autres fichiers utiles), il suffit d’écrire un fichier contenant une grammaire valide.
+    \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l'auto-complétion (\href{https://github.com/mike-lischke/antlr4-c3}{antlr4-c3})
+    \item Quelques exemples existent d'implémentation.
+    \item La génération est simple. Pour générer un parser (et d'autres fichiers utiles), il suffit d'écrire un fichier contenant une grammaire valide.
 \end{itemize}
 
 \subsubsection{Grammaire}
@@ -392,11 +390,11 @@ Il nous génère les fichiers suivants :
 \textbf{[TODO]}
 
 \section{Syntax highlighting}
-La coloration syntaxique permet que chaque élément du texte soit affiché dans l’éditeur avec une coloration et un style en fonction de son type.
+La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a 2 composantes principales.
 \begin{itemize}
     \item La tokenisation qui consiste à séparer le texte en une liste de token.
-    \item La thémisation (Theming) qui permet d’attribuer à un token une couleur et un style.
+    \item La thémisation (Theming) qui permet d'attribuer à un token une couleur et un style.
 \end{itemize}
 
 \begin{figure}[!ht]
@@ -406,17 +404,17 @@ Il y a 2 composantes principales.
     \caption[code UON]{\label{basic-uon} Exemple basique en UON}
 \end{figure}
 
-Ces 2 mécanismes sont possibles sous VSCode à l’aide d’un fichier "TextMate grammars". C’est un fichier qui contient une liste structurée d’expressions régulière et qui permet d’associer un scope à un token.
+Ces 2 mécanismes sont possibles sous VSCode à l'aide d'un fichier "TextMate grammars". C'est un fichier qui contient une liste structurée d'expressions régulière et qui permet d'associer un scope à un token.
 
-Le but de ce fichier est évidemment de permettre la coloration syntaxique, mais il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le curseur. Cela permet d’avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
+Le but de ce fichier est évidemment de permettre la coloration syntaxique, mais il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le curseur. Cela permet d'avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
 Notre fichier de grammaire (uon.tmLanguage.json) se trouve dans le dossier "syntax" à la racine du projet.
 Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
 
 \subsection{Scope}
 Un scope défini le contexte du token et peut-être considéré comme son type.
-TextMate fourni une liste de scope communs que de nombreux thèmes ciblent déjà et recommande de les utiliser. Ceci dans le but de permettre à notre langage d’être supporté le plus possible partout. 
-Les scopes sont souvent imbriqués et c’est le plus spécifique qui est utilisé pour le choix du thème.
-Il est possible d’analyser notre code à l’aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
+TextMate fourni une liste de scope communs que de nombreux thèmes ciblent déjà et recommande de les utiliser. Ceci dans le but de permettre à notre langage d'être supporté le plus possible partout. 
+Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
+Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -427,12 +425,12 @@ Il est possible d’analyser notre code à l’aide du "Scope Inspector" pour vi
 
 La section "textmate scopes" montre la liste des scopes utilisés pour le token courant. Le plus spécialisé se trouve au sommet.
 
-Cette fonctionnalité n’est pas considérée comme un "programmatic language feature" et donc n’est pas géré par un langage serveur ou depuis l’api de Vscode. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
+Cette fonctionnalité n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par un langage serveur ou depuis l'api de Vscode. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
 
 \subsection{Stratégie concernant les noms}
-Pour respecter au maximum les conventions attendues et s’assurer qu’une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut). Et de réutiliser les scopes.
+Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut). Et de réutiliser les scopes.
 
-Ce fichier se trouve sur le dépôt suivant : \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}
+Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
 Mais peut être également généré depuis le contrôle panel.
 
 \subsection{Forcer le choix des couleurs}
@@ -444,7 +442,7 @@ Mais peut être également généré depuis le contrôle panel.
 \end{figure}
 
 On peut manuellement définir une couleur à un scope dans le fichier package.json.
-Cela peut -être intéressant si aucun thème n’est associé de base à un scope.
+Cela peut -être intéressant si aucun thème n'est associé de base à un scope.
 Il est également possible de créer directement un fichier de thème.
 
 \subsection{Fonctionnement}
@@ -471,17 +469,17 @@ Voici ci-dessous un exemple relativement simple, mais permettant de comprendre l
 \end{lstlisting}
 
 \textbf{"scopeName"} (ligne 1) : Identifiant unique
-\textbf{"patterns"} (ligne 2) : C’est un tableau contenant les règles actuelles utilisé pour parser le document. Elles sont appliquées dans l’ordre.
+\textbf{"patterns"} (ligne 2) : C'est un tableau contenant les règles actuelles utilisé pour parser le document. Elles sont appliquées dans l'ordre.
 Ces règles peuvent être directement écrites à cet emplacement, mais il est aussi possible de les définir dans le "repository". Puis de les inclure.
 \textbf{"repository"} : Un dictionnaire (clé-valeur) de règles.
 \textbf{"name"} : Nom du scope.
 
-Contrairement à la première règle qui ne faisait qu’un match, la deuxième définit un début et une fin sur laquelle seront appliquées les règles se trouvant dans le "patterns" suivant (à la ligne 12) . On voit qu’il est donc possible d’imbriquer les règles.
+Contrairement à la première règle qui ne faisait qu'un match, la deuxième définit un début et une fin sur laquelle seront appliquées les règles se trouvant dans le "patterns" suivant (à la ligne 12) . On voit qu'il est donc possible d'imbriquer les règles.
 
 \subsection{Semantic Highlight}
 
-Un point important et qu’il ne faut pas confondre la coloration syntaxique avec ce que l’on nomme "semantic highlighting" qui est une couche que l’on rajoute sur la précédente pour l’améliorer si nécessaire.
-Il s’agit d’obtenir des informations plus avancées en analysant plus en détail du code pour fournir une coloration plus précise.
+Un point important et qu'il ne faut pas confondre la coloration syntaxique avec ce que l'on nomme "semantic highlighting" qui est une couche que l'on rajoute sur la précédente pour l'améliorer si nécessaire.
+Il s'agit d'obtenir des informations plus avancées en analysant plus en détail du code pour fournir une coloration plus précise.
 Par exemple avec du code Typescript :
 
 \begin{figure}[!ht]
@@ -498,18 +496,18 @@ Par exemple avec du code Typescript :
     \caption[Sans coloration sémantique]{\label{semantic-coloration-without} Sans coloration sémantique}
 \end{figure}
 
-On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d’une fonction.
-Cela est donc intéressant pour des langages plus complexes dans leur nature qu’un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas. Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
+On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d'une fonction.
+Cela est donc intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas. Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
 
 \section{Auto-completion}
-Cette fonctionnalité est souvent mentionnée au travers de l’appellation \href{https://code.visualstudio.com/docs/editor/intellisense}{"IntelliSense"} qui un terme général désignant diverses fonctions d'édition de code.
+Cette fonctionnalité est souvent mentionnée au travers de l'appellation \href{https://code.visualstudio.com/docs/editor/intellisense}{"IntelliSense"} qui un terme général désignant diverses fonctions d'édition de code.
 
-Une approche typique pour implémenter de la complétion est d’utiliser directement un parser du langage.
-Cependant il faut prendre en compte plusieurs difficultés, car le code en train d’être écrit est souvent syntaxiquement incorrect lorsque l’on le saisi.  Et c’est dans ce moment que l’on aimerait avoir des suggestions de complétion. 
-De plus on pourrait penser qu’avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d’un AST. Cependant ce n’est pas le cas pour la plupart des scénarios. Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent. Par exemple des noms de classe, des objets de base de données, des membres de classes, des fonctions, etc. ne sont pas représentés dans la grammaire. 
+Une approche typique pour implémenter de la complétion est d'utiliser directement un parser du langage.
+Cependant il faut prendre en compte plusieurs difficultés, car le code en train d'être écrit est souvent syntaxiquement incorrect lorsque l'on le saisi.  Et c'est dans ce moment que l'on aimerait avoir des suggestions de complétion. 
+De plus on pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST. Cependant ce n'est pas le cas pour la plupart des scénarios. Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent. Par exemple des noms de classe, des objets de base de données, des membres de classes, des fonctions, etc. ne sont pas représentés dans la grammaire. 
 
-À la place, nous utiliserons donc "Antlr4-c3" (Code Completion Core for Antlr4). Qui avec un mécanisme de machine à état ATN (Augmented Transition Network) nous permet d’obtenir des suggestions possibles à une position donnée, dans notre cas la position du curseur.
-Ci-dessous Un ATN d’une séquence :
+À la place, nous utiliserons donc "Antlr4-c3" (Code Completion Core for Antlr4). Qui avec un mécanisme de machine à état ATN (Augmented Transition Network) nous permet d'obtenir des suggestions possibles à une position donnée, dans notre cas la position du curseur.
+Ci-dessous Un ATN d'une séquence :
 
 \begin{figure}[!ht]
     \begin{center}
@@ -518,18 +516,18 @@ Ci-dessous Un ATN d’une séquence :
     \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
 \end{figure}
 
-La seule contrainte est qu’il est nécessaire que tout le code se trouvant avant le curseur soit correct. Mais ce qui se trouve à la suite peut être erroné. 
-Ainsi, nous pouvons revenir n’importe où dans le code, car la partie se trouvant après le curseur n’est pas prise en compte et la rédaction du code précédente est normalement correcte.
-De plus, actuellement, nous n’avons pas de suggestions qui dépendrais de ce qui se trouve après le curseur.
-Car par exemple dans l’exemple suivant pour du code SQL :
+La seule contrainte est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct. Mais ce qui se trouve à la suite peut être erroné. 
+Ainsi, nous pouvons revenir n'importe où dans le code, car la partie se trouvant après le curseur n'est pas prise en compte et la rédaction du code précédente est normalement correcte.
+De plus, actuellement, nous n'avons pas de suggestions qui dépendrais de ce qui se trouve après le curseur.
+Car par exemple dans l'exemple suivant pour du code SQL :
 
 \begin{lstlisting}
 SELECT | FROM USER // ("|" étant le curseur)
 \end{lstlisting}
 
 Dans ce scénario des suggestions liées à la table USER devrait être proposé et donc un traitement particulier devrait être fait.
-La seule chose qui doit donc être correcte est la structure du code. C’est-à-dire que l’ordre des éléments attendus est respecté.
-Il semble normal que la complétion n’ait pas lieu si le code précédent est gravement erroné pouvant être un indice à l’utilisateur. Cependant il doit quand même supporter une certaine marge d’erreur. Dans notre cas, les erreurs sur les valeurs (par exemple une propriété "max : 12a") pourraient être omises en utilisant une grammaire qui nous permet d’avoir des types supportant le plus de symboles possibles. Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le processus de l’auto-complétion.
+La seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
+Il semble normal que la complétion n'ait pas lieu si le code précédent est gravement erroné pouvant être un indice à l'utilisateur. Cependant il doit quand même supporter une certaine marge d'erreur. Dans notre cas, les erreurs sur les valeurs (par exemple une propriété "max : 12a") pourraient être omises en utilisant une grammaire qui nous permet d'avoir des types supportant le plus de symboles possibles. Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le processus de l'auto-complétion.
 
 \subsection{Mécanisme automatique}
 VsCode va automatiquement filtrer les suggestions pendant la saisie.
@@ -537,19 +535,19 @@ Par défaut il propose également des symboles déjà existants dans le code dan
 
 \subsection{Gestion des erreurs}
 On peut ajouter au parser un "ErrorListener".
-Par défaut c’est cette stratégie d’erreur qui est appliquée :
+Par défaut c'est cette stratégie d'erreur qui est appliquée :
 \href{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}
 
-Mais on peut l’étendre pour redéfinir les fonctions.
+Mais on peut l'étendre pour redéfinir les fonctions.
 \textbf{[TODO]}
 
 \subsection{Problème}
-Dans certains cas lorsque l’on trigger de l’autocomplétion quand le curseur se trouve collé à du texte. L’éditeur affiche le message « no suggestions » alors que le provider contient une liste de suggestions possible.
+Dans certains cas lorsque l'on trigger de l'autocomplétion quand le curseur se trouve collé à du texte. L'éditeur affiche le message « no suggestions » alors que le provider contient une liste de suggestions possible.
 \textbf{[TODO]}
 
 \subsection{Snippets}
-Il est possible d’ajouter des snippets sous Vscode. C’est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
-C’est utile si à un moment donné on a le choix entre plusieurs suggestions et que l’on veut tous les avoir d’un coup.
+Il est possible d'ajouter des snippets sous Vscode. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
+C'est utile si à un moment donné on a le choix entre plusieurs suggestions et que l'on veut tous les avoir d'un coup.
 Par exemple, on peut en UON, ajouter des attributs à un schéma :
 
 \begin{figure}[!ht]
@@ -559,21 +557,21 @@ Par exemple, on peut en UON, ajouter des attributs à un schéma :
     \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
 \end{figure}
 
-Cependant toute la difficulté et de proposer ces suggestions au bon moment, car ne faisant pas partie du moteur de complétions d’antlr. Une idée et de se baser sur le dernier token reconnu. On pourrait ici savoir qu’il est le moment d’ajouter ce snippet, si le dernier token est de type "!schema".
+Cependant toute la difficulté et de proposer ces suggestions au bon moment, car ne faisant pas partie du moteur de complétions d'antlr. Une idée et de se baser sur le dernier token reconnu. On pourrait ici savoir qu'il est le moment d'ajouter ce snippet, si le dernier token est de type "!schema".
 
 \subsection{Triggers}
-L’éditeur va trigger automatiquement l’autocomplétions en appelant le provider lorsque l’on saisit plusieurs caractères. Il aussi possible de l’activer manuellement en exécutant la commande "ctr + space".
-On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s’agit seulement d’une appréciation personnelle.
+L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space".
+On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s'agit seulement d'une appréciation personnelle.
 
 \subsection{Candidats}
-Actuellement pour connaitre le prochain candidat, on récupère le flux des tokens trouvé lors du parsing dans le tokenStream. On récupère dans un tableau chaque token individuellement (y compris les espaces).  Grâce à la taille du tableau on peut déduire l’indice du ou des prochains tokens que l’on souhaitera afficher.
-Cependant lorsque l’utilisateur écrit et que cela trigger l’autocomplétion. Souvent le texte parsé est faux, car non terminé. Dans certains, quand il arrive quand même à comprendre. Le texte parsé se termine alors avec un token de type <EOF> (end of line).
-Mais parfois il n’arrive pas à le faire correctement et le texte et ne termine pas avec ce token mais seulement avec le mot que l’on est en train d’écrire ou uniquement des caractères vide, ou même les deux.
+Actuellement pour connaitre le prochain candidat, on récupère le flux des tokens trouvé lors du parsing dans le tokenStream. On récupère dans un tableau chaque token individuellement (y compris les espaces).  Grâce à la taille du tableau on peut déduire l'indice du ou des prochains tokens que l'on souhaitera afficher.
+Cependant lorsque l'utilisateur écrit et que cela trigger l'autocomplétion. Souvent le texte parsé est faux, car non terminé. Dans certains, quand il arrive quand même à comprendre. Le texte parsé se termine alors avec un token de type <EOF> (end of line).
+Mais parfois il n'arrive pas à le faire correctement et le texte et ne termine pas avec ce token mais seulement avec le mot que l'on est en train d'écrire ou uniquement des caractères vide, ou même les deux.
 Ce comportement a été observé de manière empirique. Une solution a été mise en place pour traiter ces cas particuliers.
 \textbf{[Actuellement train de chercher la cause]}
 
 \subsubsection{Index du candidat}
-L’indexation est gérée de 2 manières différentes. En fonction de la prise en compte de l’espace ou non.
+L'indexation est gérée de 2 manières différentes. En fonction de la prise en compte de l'espace ou non.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -591,7 +589,7 @@ L’indexation est gérée de 2 manières différentes. En fonction de la prise 
 \textbf{[TODO]}
 
 \section{Fonctionnalités triviales}
-Il s’agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n’a donc pas été mentionnée dans le cahier des charges.
+Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
 
 Les suivantes ont été implémentées :
 \textbf{Comment}
@@ -602,16 +600,16 @@ Les suivantes ont été implémentées :
 
 \textbf{Symbol pairs}
 \begin{itemize}
-    \item Il est possible de faire la correspondance pour certaines paires de symboles à l’aide d’une indication visuelle. (Matching)
-    \item Certains symboles du langage doivent être automatiquement complétés si l’utilisateur saisit le premier élément de celle-ci. (Autoclosing)
+    \item Il est possible de faire la correspondance pour certaines paires de symboles à l'aide d'une indication visuelle. (Matching)
+    \item Certains symboles du langage doivent être automatiquement complétés si l'utilisateur saisit le premier élément de celle-ci. (Autoclosing)
 \end{itemize}
 
 \textbf{Code folding}
 \begin{itemize}
-    \item Cacher un bloc de code sur une ligne en fonction de son niveau d’indentation.
+    \item Cacher un bloc de code sur une ligne en fonction de son niveau d'indentation.
 \end{itemize}
 
-Pour pouvoir les implémenter, il suffit d’éditer un fichier de configuration json (language-configuration.json) puis  éditer le fichier package.json afin qu’il référence ce fichier sous le point "contribution".
+Pour pouvoir les implémenter, il suffit d'éditer un fichier de configuration json (language-configuration.json) puis  éditer le fichier package.json afin qu'il référence ce fichier sous le point "contribution".
 
 \chapter{Intégration continue}
 
@@ -623,38 +621,38 @@ Applique la même méthodologie de antlr4-ts : \href{https://github.com/mike-lis
 \textbf{[TODO]}
 
 \section{Outline view}
-Teste que l’arbre syntaxique reçu est celui attendu pour un code.
+Teste que l'arbre syntaxique reçu est celui attendu pour un code.
 \textbf{[TODO]}
 
 \section{Information Hover}
-Tester que l’élément on Hover soit celui attendu
+Tester que l'élément on Hover soit celui attendu
 \textbf{[TODO]}
 
 \chapter{Conclusion}
 \textbf{[TODO]}
 
-\vfil
-\hspace{8cm}\makeatletter\@author\makeatother\par
-\hspace{8cm}\begin{minipage}{5cm}
-    %%if
-    % Place pour signature numérique
-    \printsignature
-    %%fi
-\end{minipage}
-\clearpage
+%% \vfil
+%% \hspace{8cm}\makeatletter\@author\makeatother\par
+%% \hspace{8cm}\begin{minipage}{5cm}
+%%if
+% Place pour signature numérique
+%%\printsignature
+%%fi
+%% \end{minipage}
+%% \clearpage
 
 
 %%if
 \chapter{Annexe}
 \dots
 
-\let\cleardoublepage\clearpage
-\backmatter
+%% \let\cleardoublepage\clearpage
+%% \backmatter
 
-\label{glossaire}
-\printnoidxglossary
-\printbibliography
-\label{index}
-\printindex
+%% \label{glossaire}
+%% \printnoidxglossary
+%% \printbibliography
+%% \label{index}
+%% \printindex
 
 \end{document}
