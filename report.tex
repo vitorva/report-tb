@@ -169,7 +169,7 @@ Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement
 
 \subsection{Grammaire}
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
-Pour faciliter l'étape de l'analyse syntaxique (« Parsing »), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux). Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
+Pour faciliter l'étape de l'analyse syntaxique ("Parsing"), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux). Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
 
 \section{Recherche d'extensions similaires}
 Fournir du support pour un nouveau langage est une tâche relativement courante.
@@ -179,7 +179,7 @@ Il est donc relativement simple de trouver des extensions proposant un objectif 
 \subsection{Yaml}
 UON étant un langage proche de YAML c'est vers son extension que je me suis dirigée en premier. Car il n'existe pas d'extension officielle, similaire pour le langage JSON.
 Cependant j'ai vite compris que cela n'allait pas forcément être aussi évident. Car contrairement à JSON et YAML, UON intègre directement dans son langage des types définis. Ce qui fait que l'auto-complétion fournit par des JSON Schema dans l'extension YAML n'est pas vraiment applicable pour notre cas.
-Aussi pour l'outline view. La création d'un symbol tree se fait à l'aide de fonction utilitaire très « privée » et complexe à reprendre est à adapté. En cherchant, j'ai vu que JSON utilise ces mêmes fonctions.
+Aussi pour l'outline view. La création d'un symbol tree se fait à l'aide de fonction utilitaire très "privée" et complexe à reprendre est à adapté. En cherchant, j'ai vu que JSON utilise ces mêmes fonctions.
 Cette direction a donc été écarté.
 
 \section{Choix technologiques}
@@ -237,7 +237,7 @@ Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de 
 Nous allons donc partir d'une grammaire la plus minimale possible tout en faisant attention à son extensibilité par la suite.
 Cette grammaire se trouve dans le fichier UON.g4.
 
-Elle est une adaptation de la grammaire écrite en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor « Parser for a serialization language UON ». Son travail se trouve sur : 
+Elle est une adaptation de la grammaire écrite en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON". Son travail se trouve sur :
 \href{https://github.com/uon-language/uon-parser}{https://github.com/uon-language/uon-parser}
 
 Elle sera complétée et améliorée après la mise en place des fonctionnalités attendus et si le temps le permet.
@@ -303,7 +303,7 @@ Quelques remarques concernant des fichiers et dossiers :
 \subsection{Lancement de l'extension en debug}
 On peut lancer une nouvelle fenêtre (f5) qui va contenir notre extension.
 
-Par défaut, l'application généré vient avec du code permettant d'afficher le message suivant : « Hello World from [nom de l'extension] » en bas de l'écran. On l'affiche au travers du command pannel (CTRL + SHIFT + P). On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
+Par défaut, l'application généré vient avec du code permettant d'afficher le message suivant : "Hello World from [nom de l'extension]" en bas de l'écran. On l'affiche au travers du command pannel (CTRL + SHIFT + P). On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
 On constate donc que l'on peut lancer notre application au travers d'une commande, mais pour notre cas il sera plus intéressant que vscode nous propose les fonctionnalités à l'ouverture d'un fichier. uon.
 Pour cela, il faut donc remplacer le code dans le fichier package.json :
 
@@ -321,7 +321,7 @@ Puis, créer un access token avec ces paramètres :
 
 Créer un publisher avec le même compte qui a créé l'organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}
 
-Ajouter la propriété « publisher » et saisir l'id de celui-ci dans le package.json :
+Ajouter la propriété "publisher" et saisir l'id de celui-ci dans le package.json :
 
 \begin{figure}[!ht]
     \begin{center}
@@ -382,9 +382,9 @@ Il nous génère les fichiers suivants :
 \subsection{Arbre (CST)}
 \begin{figure}[!ht]
     \begin{center}
-        \includegraphics[width=5cm]{assets/figures/tree.png}
+        \includegraphics[width=2cm]{assets/figures/tree.png}
     \end{center}
-    \caption[UON CST]{\label{test2} UON CST}
+    \caption[UON CST]{\label{uon-tree} UON CST}
 \end{figure}
 
 \textbf{[TODO]}
@@ -542,7 +542,7 @@ Mais on peut l'étendre pour redéfinir les fonctions.
 \textbf{[TODO]}
 
 \subsection{Problème}
-Dans certains cas lorsque l'on trigger de l'autocomplétion quand le curseur se trouve collé à du texte. L'éditeur affiche le message « no suggestions » alors que le provider contient une liste de suggestions possible.
+Dans certains cas lorsque l'on trigger de l'autocomplétion quand le curseur se trouve collé à du texte. L'éditeur affiche le message "no suggestions" alors que le provider contient une liste de suggestions possible.
 \textbf{[TODO]}
 
 \subsection{Snippets}
