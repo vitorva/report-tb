@@ -93,10 +93,15 @@ Voici ci-dessous un résumé du cahier des charges :
     \item Converter
 \end{itemize}
 
-Ce projet se focalise uniquement sur l'éditeur de code VScode.
-Il a donc été décidé de le réaliser en Typescript étant donné que VS Code extensions supporte 2 langages principaux (Javascript et Typescript).
-Nous avons choisi les fonctionnalités attendues en choisissant celles paraissant utiles à avoir dans un premier temps et en prenant en considération la contrainte de temps.
+\vspace{\parskip}
 
+Ce projet se focalise uniquement sur l'éditeur de code VScode.
+
+Une extension peut être écrite en Typescript ou en Javascript.
+Nous choisirons le Typescript car Vscode recommande ce langage.
+
+Concernant les fonctionnalités à implémenter. Il n'y avait pas de contraintes de choix.
+Nous avons donc séléctionner les fonctionnalités attendues en choisissant celles paraissant utiles à avoir dans un premier temps et en prenant en considération la contrainte de temps.
 
 \chapter{Pré-étude}
 
@@ -104,8 +109,8 @@ Nous avons choisi les fonctionnalités attendues en choisissant celles paraissan
 Visual Studio Code (ou VScode) est un éditeur de code qui est pensé pour être extensible (De L'UI à l'expérience utilisateur).
 Presque tout peut être customisé et améliorer à travers de \href{https://code.visualstudio.com/api/extension-capabilities/overview}{L'Extension API}.
 
-L'Extension API nous permet, par exemple de faire du theming, étendre le Workbench, Webview, Extension de langage, Extendion pour debugger)
-On se focalisera sur le theming et l'extension de language.
+L'Extension API nous permet donc gérér un certain nombre de choses.
+On se focalisera sur le theming , les fonctionnalités de langages, la publication de l'extension et les tests.
 
 VScode fourni pleins de documentations détaillées sur plein de sujets, guides, ainsi que des examples de codes.
 Il s'agit donc évidemment de la source principales des explications données dans ce document concernant ce qui touche à cette éditeur.
@@ -464,15 +469,18 @@ Il y a 2 composantes principales.
     \caption[code UON]{\label{basic-uon} Exemple basique en UON}
 \end{figure}
 
-Ces 2 mécanismes sont possibles sous VSCode à l'aide d'un fichier "TextMate grammars". C'est un fichier qui contient une liste structurée d'expressions régulière et qui permet d'associer un scope à un token.
 
-Le but de ce fichier est évidemment de permettre la coloration syntaxique, mais il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le curseur. Cela permet d'avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
-Notre fichier de grammaire (uon.tmLanguage.json) se trouve dans le dossier "syntax" à la racine du projet.
+VS code utilise \href{https://macromates.com/manual/en/language_grammars}{Textmate grammars} comme le moteur de tokénisation de la syntaxe.
+Cette grammaire a été inventé par l'éditeur TextMate est a été adopté par de nombreux éditeur et IDE.
+Elle contient une liste structurée d'expressions régulière qui permet d'associer un scope à un token.
+Nous définissons notre grammaire TextMate dans le fichier "uon.tmLanguage.json" qui  se trouve dans le dossier "syntax" à la racine du projet.
 Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
+
+Le but de ce fichier en plus de permettre la coloration syntaxique, et qu'il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le caret. Cela permet d'avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
 
 \subsection{Scope}
 Un scope défini le contexte du token et peut-être considéré comme son type.
-TextMate fourni une liste de scope communs que de nombreux thèmes ciblent déjà et recommande de les utiliser. Ceci dans le but de permettre à notre langage d'être supporté le plus possible partout. 
+TextMate fourni une liste de scope communs que de nombreux thèmes ciblent déjà et recommande de les utiliser. Ceci dans le but de permettre à notre langage d'être supporté le plus possible partout.
 Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
 Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
 
