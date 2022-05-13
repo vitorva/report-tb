@@ -100,7 +100,54 @@ Nous avons choisi les fonctionnalités attendues en choisissant celles paraissan
 
 \chapter{Pré-étude}
 
-\section{L\textquotesingle implémentation de fonctionnalités}
+\section{VScode}
+Visual Studio Code (ou VScode) est un éditeur de code qui est pensé pour être extensible (De L'UI à l'expérience utilisateur).
+Presque tout peut être customisé et améliorer à travers de \href{https://code.visualstudio.com/api/extension-capabilities/overview}{L'Extension API}.
+
+VScode fourni pleins de documentations détaillées sur plein de sujets, guides, ainsi que des examples de codes.
+Il s'agit donc évidemment de la source principales des explications données dans ce document concernant ce qui touche à cette éditeur.
+
+\subsection{Extension Anatomy}
+Il y a 3 concepts crucials à comprendre pour réaliser une extension.
+\begin{itemize}
+    \item \textbf{Activation Events}: Des événements à partir desquels l'extension devient active.
+    \item \textbf{Contribution Points}: Des déclarations statiques qui sont faitent dans le manifeste d'extension "package.json" pour étendre l'extension.
+    \item \textbf{VS Code API}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code.
+\end{itemize}
+
+En général, l'extension est une combinaison de plusieurs Conntribution Point et de VS code API pour étendre les fonctionnalité de VSCode.
+
+\subsubsection{Extension File Structure}
+La structure d'une extension est la suivante :
+\begin{lstlisting}
+    .
+    ├── .vscode
+    │   ├── launch.json     // Config for launching and debugging the extension
+    │   └── tasks.json      // Config for build task that compiles TypeScript
+    ├── .gitignore          // Ignore build output and node_modules
+    ├── README.md           // Readable description of your extension's functionality
+    ├── src
+    │   └── extension.ts    // Extension source code
+    ├── package.json        // Extension manifest
+    ├── tsconfig.json       // TypeScript configuration
+\end{lstlisting}
+
+Extension Manifest(package.json):
+Chaque extension doit contenir un fichier package.json. En plus des champs propre à Node.js, on peut spécifier des scripts, dépendances de dévelopement et des champs spécifiques à Vscode.
+
+Extension Entry File(Extension.js) :
+Il s'agit du fichier prinicpale de l'extension.
+De base il contient 2 fonctions : "activate" et "deactivate".
+La fonction activate est executé à l'activation de notre extension par un Activation Event. On définira ici le code à exécuter.
+La fonction deactivate  ext exécuté lorsque l'application devient innactive. Et sert principalement à nettoyer le code avant la désactivation de l'extension
+
+\textbf{Remarque} : Le niveau de customisation est assez élevé. La seul limitation souvent indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
+
+Nous avons donc vu les briques de bases pour la conception d'une extension. Cette base est suffisante pour nous dans un premier temps.
+
+Si vous souhaitez vous renseinger d'avantages, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
+
+\subsection{Support de langage}
 VsCode fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
 
 \section{Declarative language features}
