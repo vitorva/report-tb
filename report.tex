@@ -104,6 +104,9 @@ Nous avons choisi les fonctionnalités attendues en choisissant celles paraissan
 Visual Studio Code (ou VScode) est un éditeur de code qui est pensé pour être extensible (De L'UI à l'expérience utilisateur).
 Presque tout peut être customisé et améliorer à travers de \href{https://code.visualstudio.com/api/extension-capabilities/overview}{L'Extension API}.
 
+L'Extension API nous permet, par exemple de faire du theming, étendre le Workbench, Webview, Extension de langage, Extendion pour debugger)
+On se focalisera sur le theming et l'extension de language.
+
 VScode fourni pleins de documentations détaillées sur plein de sujets, guides, ainsi que des examples de codes.
 Il s'agit donc évidemment de la source principales des explications données dans ce document concernant ce qui touche à cette éditeur.
 
@@ -145,7 +148,7 @@ La fonction deactivate  ext exécuté lorsque l'application devient innactive. E
 
 Nous avons donc vu les briques de bases pour la conception d'une extension. Cette base est suffisante pour nous dans un premier temps.
 
-Si vous souhaitez vous renseinger d'avantages, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
+Ce rapport n'ayant pas pour vocation d'expliquer tout ce qui est possible de faire. Si vous souhaitez vous renseinger d'avantages sur ce sujet, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
 
 \subsection{Support de langage}
 VsCode fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
@@ -169,7 +172,10 @@ Il s'agit de fonctionnalités implémentées à l'aide de fichier de configurati
 Puis, elles doivent être enregistrées dans le fichier package.json du projet sous le champ "contributes" \space \href{https://code.visualstudio.com/api/references/contribution-points}{ Contribution Point}.
 
 \section{Programmatic language features}
-Il s'agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens" et qui nécessite soit d'utiliser l'api vscode.languages.* qui expose des interfaces permettant de réaliser directement leur implémentation ou soit de les implémenter nous-mêmes au travers d'un langage serveur. 
+Il s'agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
+Il y a 2 approches pour les implémenter.
+La première est d'utiliser l'api \href{https://code.visualstudio.com/api/references/vscode-api#languages}{vscode.languages.*} qui expose des interfaces permettant de réaliser directement les fonctionnalités.
+La seconde est de fournir nous-mêmes ces fonctions au travers d'un langage serveur.
 Les avantages souvent mentionnés de la deuxième solution et que le langage server peut être écrit avec le langage que l'on souhaite et que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ses fonctionnalités sans devoir les implémenter de nouveau. Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n'est pas un choix primordial.
 
 \subsection{Langage server}
@@ -209,10 +215,13 @@ Beaucoup de possibilités et donc fourni, mais nous utiliserons uniquement les p
 \end{itemize}
 
 \subsection{Parser}
-Pour pouvoir analyser le code saisi par l'utilisateur, la création d'un parser est une approche souvent utilisée.
-Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être "fault tolerant". C'est-à-dire que comme un parser normal, il doit générer un AST (abstract syntax tree), mais lors du parsing du code, il ne devrait pas s'arrêter dès la première erreur.
-Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect, mais les développeurs s'attendent tout de même à ce que la complétion automatique et les autres fonctions de la langue fonctionnent.
+Pour fournir des fonctionnalités de langue, une approche souvent pratiqué et l'utilisation d'un parser.
+Car les fonctionnalité se baseront sur L'AST qu'il générera.
 
+Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générér un AST (abstract syntax tree) qui à du sens depuis du code incomplet.
+
+Il ne devrait pas s'arrêter dès la première erreur. Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect.
+Et les développeurs s'attendent tout de même à ce que la complétion automatique et et d'autres fonctions de langue fonctionnent.
 
 \subsection{Grammaire}
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
@@ -240,9 +249,6 @@ Des outils permettant la génération d'un parser en fonction d'une grammaire ex
 
 \subsection{API}
 L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi. Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server. 
-
-\section{Vscode}
-Presque tout est customisable. Ce rapport ne va pas entrer en détail sur tout ce qui est possible de faire. Si besoin, VsCode fourni une multitude d'explication bien détaillée et fournie en exemple.
 
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML. Il fournit des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs.
@@ -427,6 +433,13 @@ Il nous génère les fichiers suivants :
 \end{itemize}
 
 \subsection{Arbre (CST)}
+étape intérmédiraire.
+Antlr va génrer un arbre parsé. (CST pour concrete syntax tree)
+Il contient tous les noeuds de la grammaires. Certains sont superflu pour en tirer un sens
+
+Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre + simple.
+
+
 \begin{figure}[!ht]
     \begin{center}
         \includegraphics[width=2cm]{assets/figures/tree.png}
@@ -547,13 +560,26 @@ On voit à la ligne 10 que la colorisation de la fonction a changé et correspon
 Cela est donc intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas. Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
 
 \section{Auto-completion}
-Cette fonctionnalité est souvent mentionnée au travers de l'appellation \href{https://code.visualstudio.com/docs/editor/intellisense}{"IntelliSense"} qui un terme général désignant diverses fonctions d'édition de code.
+Cette fonctionnalité fait parti de ce qu'on appelle plus communément \href{https://code.visualstudio.com/docs/editor/intellisense}{"IntelliSense"} qui un terme général désignant diverses fonctions d'édition de code.
 
-Une approche typique pour implémenter de la complétion est d'utiliser directement un parser du langage.
-Cependant il faut prendre en compte plusieurs difficultés, car le code en train d'être écrit est souvent syntaxiquement incorrect lorsque l'on le saisi.  Et c'est dans ce moment que l'on aimerait avoir des suggestions de complétion. 
-De plus on pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST. Cependant ce n'est pas le cas pour la plupart des scénarios. Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent. Par exemple des noms de classe, des objets de base de données, des membres de classes, des fonctions, etc. ne sont pas représentés dans la grammaire. 
+Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser directement un parser du langage.
 
-À la place, nous utiliserons donc "Antlr4-c3" (Code Completion Core for Antlr4). Qui avec un mécanisme de machine à état ATN (Augmented Transition Network) nous permet d'obtenir des suggestions possibles à une position donnée, dans notre cas la position du curseur.
+Mais en complément nous allons utiliser en plus "Antlr4-c3" (Code Completion Core for Antlr4, aussi simplement nommé c3).
+
+Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
+
+Avant il n'y a avait que des solutions customs. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
+
+Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la strucuture de la grammaire directement disponible dans le parser via
+un mécanisme de machine à état ATN (Augmented Transition Network).
+
+Dans la configuration la plus simple, il suffit de lui donner une instance du parser et une position de caret (notre curseur) pour qu'il renvoie les candidats correspondants.
+
+On constate donc que c'est un outil relativement puissant et qui nous simplifie grandement la tâche.
+
+\textbf{Remarque}: On pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST. Cependant ce n'est pas le cas pour la plupart des scénarios.
+Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent. Par exemple des noms de classe, des objets de base de données, des membres de classes, des fonctions, etc. ne sont pas représentés dans la grammaire. 
+
 Ci-dessous Un ATN d'une séquence :
 
 \begin{figure}[!ht]
