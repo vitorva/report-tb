@@ -4,8 +4,16 @@
     %confidential, % Décommentez si le travail est confidentiel
 ]{heig-tb}
 
+\usepackage{titlesec}
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}{}{0pt}{\Huge}
+
+
 \usepackage[nooldvoltagedirection,european,americaninductors]{circuitikz}
 \usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
 
 %\signature{mbernasconi.svg} TODO
 
@@ -55,6 +63,24 @@
 \printnomenclature
 \clearemptydoublepage
 \pagenumbering{arabic}
+
+\pagestyle{fancy}
+
+\fancyhf{}
+\renewcommand\headrulewidth{1pt}
+
+\fancyhead[R]{Support du langage UON}
+\fancyhead[L]{\itshape\nouppercase{\leftmark}}
+
+\renewcommand\footrulewidth{1pt}
+
+\fancypagestyle{plain}{%
+    \fancyfoot[R]{Page \thepage/\pageref{LastPage}}
+}
+\fancyfoot[R]{Page \thepage/\pageref{LastPage}}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
 
 
 %% Contenu
@@ -322,7 +348,7 @@ Est hébergé sous l'organisation : \textbf{[TODO]}
 \textbf{Squelette de base}
 VsCode permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={generator-code},label={generator-code}]
 npm install -g yo generator-code
 \end{lstlisting}
 
@@ -598,7 +624,7 @@ Ci-dessous Un ATN d'une séquence :
     \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
 \end{figure}
 
-La seule contrainte est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct. Mais ce qui se trouve à la suite peut être erroné. 
+La seule contrainte est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct. Mais ce qui se trouve à la suite peut être erroné.
 Ainsi, nous pouvons revenir n'importe où dans le code, car la partie se trouvant après le curseur n'est pas prise en compte et la rédaction du code précédente est normalement correcte.
 De plus, actuellement, nous n'avons pas de suggestions qui dépendrais de ce qui se trouve après le curseur.
 Car par exemple dans l'exemple suivant pour du code SQL :
