@@ -179,8 +179,7 @@ La fonction deactivate  ext exécuté lorsque l'application devient innactive. E
 \textbf{Remarque} : Le niveau de customisation est assez élevé. La seul limitation souvent indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
 
 Nous avons donc vu les briques de bases pour la conception d'une extension. Cette base est suffisante pour nous dans un premier temps.
-
-Ce rapport n'ayant pas pour vocation d'expliquer tout ce qui est possible de faire. Si vous souhaitez vous renseinger d'avantages sur ce sujet, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
+Comme ce rapport n'a pas pour vocation d'expliquer tout ce qui est possible de faire dans une extension. Si vous souhaitez vous renseinger d'avantages sur ce sujet, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
 
 \subsection{Support de langage}
 VsCode fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
@@ -205,13 +204,22 @@ Il s'agit de fonctionnalités implémentées à l'aide de fichier de configurati
 Puis, elles doivent être enregistrées comme Contribute Point.
 
 \section{Programmatic language features}
-Il s'agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
-Il y a 2 approches pour les implémenter.
-La première est d'utiliser l'api \href{https://code.visualstudio.com/api/references/vscode-api#languages}{vscode.languages.*} qui expose des interfaces permettant de réaliser directement les fonctionnalités.
-La seconde est de fournir nous-mêmes ces fonctions au travers d'un langage serveur.
-Les avantages souvent mentionnés de la deuxième solution et que le langage server peut être écrit avec le langage que l'on souhaite et que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ses fonctionnalités sans devoir les implémenter de nouveau. Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n'est pas un choix primordial.
+Il s'agit de fonctionnalité plus riche donc plus complexe à mettre en place (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
+Il y a 2 approches pour les implémenter que nous allons voir ci-dessous.
+
+\subsection{VsCode API (Direct implementation)}
+La première solution est d'utiliser l'api \href{https://code.visualstudio.com/api/references/vscode-api#languages}{vscode.languages.*} qui expose des interfaces
+permettant de réaliser directement les fonctionnalités.
+
+Elle vont nous permettre de nous s'inscires à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
 
 \subsection{Langage server}
+La seconde solution est de fournir nous-mêmes ces méthodes en respectant \href{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/}{la spécifiation LSP} au travers d'un langage serveur.
+Les avantages souvent mentionnés ce cette approche et que le langage server peut être écrit avec le langage que l'on souhaite et
+que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ses fonctionnalités sans devoir les implémenter de nouveau.
+
+Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n'est pas un choix primordial.
+
 Pour être utiliser sur VSCode, un langage server à 2 partis :
 \begin{itemize}
     \item \textbf{Un client} : C'est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode
@@ -224,25 +232,17 @@ L'implémentation d'un tel serveur peut être libre, mais des implémentations e
 On remarque donc avec cette approche que 2 composantes existent (Le client et le serveur)
 Un langage server peut être utilisé sur d'autre éditeur compatible. Mais le client devra être implémenté de nouveau.
 
-\subsection{VsCode API (Direct implementation)}
-L'autre approche et donc de communiquer directement avec l'api en s'inscrivant à des providers.
-L'éditeur fera les requêtes aux providers lorsque nécessaire.
+\subsection{API vs LSP}\label{api vs lsp}
+
+Ce schéma ci-dessus montre la correspondance des méthodes entre la première et seconde approche.
+Cette liste est non exhaustive mais permet de montrer que les 2 approches sont relativement bien supporté.
 
 \begin{figure}[!ht]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/api-vscode.png}
     \end{center}
-    \caption[API]{\label{test} blabla...}
+    \caption[API vs LSP]{\label{api vs lsp} VS Code API vs LSP method}
 \end{figure}
-
-Ce schéma ci-dessus montre la correspondance des méthodes entre la première et seconde approche.
-Beaucoup de possibilités et donc fourni, mais nous utiliserons uniquement les providers suivants :
-
-\begin{itemize}
-    \item \textbf{registerCompletionItemProvider} :  Pour afficher des suggestions de complétions
-    \item \textbf{registerHoverProvider} : Pour gérer le hover
-    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View
-\end{itemize}
 
 \subsection{Parser}
 Pour fournir des fonctionnalités de langue, une approche souvent pratiqué et l'utilisation d'un parser.
@@ -279,7 +279,16 @@ L'implémentation de son parser n'a pas été prévilégié car il aurait été 
 Et Antlr semble être un choix plus naturelle dans notre environnement vscode.
 
 \subsection{Direct implementation}
-L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi. Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server. 
+L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi.
+Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server.
+
+Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
+
+\begin{itemize}
+    \item \textbf{registerCompletionItemProvider} :  Pour afficher des suggestions de complétions
+    \item \textbf{registerHoverProvider} : Pour gérer le hover
+    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View
+\end{itemize}
 
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML. Il fournit des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs.
