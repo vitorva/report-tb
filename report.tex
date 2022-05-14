@@ -143,15 +143,16 @@ Il s'agit donc évidemment de la source principales des explications données da
 
 \subsection{Extension Anatomy}
 Il y a 3 concepts crucials à comprendre pour réaliser une extension.
+
 \begin{itemize}
-    \item \textbf{Activation Events}: Des événements à partir desquels l'extension devient active.
-    \item \textbf{Contribution Points}: Des déclarations statiques qui sont faitent dans le manifeste d'extension "package.json" pour étendre l'extension.
-    \item \textbf{VS Code API}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code.
+    \item \textbf{\href{https://code.visualstudio.com/api/references/activation-events}{Activation Events}}: Des événements à partir desquels l'extension devient active.
+    \item \textbf{\href{https://code.visualstudio.com/api/references/contribution-points}{Contribution Points}}: Des déclarations statiques qui sont faitent dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes".
+    \item \textbf{\href{https://code.visualstudio.com/api/references/vscode-api}{VS Code API}}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code.
 \end{itemize}
 
 En général, l'extension est une combinaison de plusieurs Conntribution Point et de VS code API pour étendre les fonctionnalité de VSCode.
 
-\subsubsection{Extension File Structure}
+\subsubsection{Extension File Structure}\label{Extension File Structure}
 La structure d'une extension est la suivante :
 \begin{lstlisting}
     .
@@ -166,11 +167,11 @@ La structure d'une extension est la suivante :
     ├── tsconfig.json       // TypeScript configuration
 \end{lstlisting}
 
-Extension Manifest(package.json):
-Chaque extension doit contenir un fichier package.json. En plus des champs propre à Node.js, on peut spécifier des scripts, dépendances de dévelopement et des champs spécifiques à Vscode.
+\textbf{Extension Manifest} :
+Chaque extension doit contenir un fichier "package.json". En plus des champs propre à Node.js, on peut spécifier des scripts, dépendances de dévelopement et des champs spécifiques à Vscode.
 
-Extension Entry File(Extension.js) :
-Il s'agit du fichier prinicpale de l'extension.
+\textbf{Extension Entry File} :
+Il s'agit du fichier prinicipale de l'extension (Extension.js).
 De base il contient 2 fonctions : "activate" et "deactivate".
 La fonction activate est executé à l'activation de notre extension par un Activation Event. On définira ici le code à exécuter.
 La fonction deactivate  ext exécuté lorsque l'application devient innactive. Et sert principalement à nettoyer le code avant la désactivation de l'extension
@@ -200,7 +201,8 @@ Par exemple, les éléments suivants :
 \end{itemize}
 
 Il s'agit de fonctionnalités implémentées à l'aide de fichier de configuration.
-Puis, elles doivent être enregistrées dans le fichier package.json du projet sous le champ "contributes" \space \href{https://code.visualstudio.com/api/references/contribution-points}{ Contribution Point}.
+
+Puis, elles doivent être enregistrées comme Contribute Point.
 
 \section{Programmatic language features}
 Il s'agit de fonctionnalité plus riche donc plus complexe à implémenter (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
@@ -237,12 +239,9 @@ Ce schéma ci-dessus montre la correspondance des méthodes entre la première e
 Beaucoup de possibilités et donc fourni, mais nous utiliserons uniquement les providers suivants :
 
 \begin{itemize}
-    \item \textbf{registerCompletionItemProvider}
-          \subitem Pour afficher des suggestions de complétions
-    \item \textbf{registerHoverProvider}
-          \subitem Pour gérer le hover
-    \item \textbf{registerDocumentSymbolProvider}
-          \subitem Pour afficher les éléments dans la Outline View
+    \item \textbf{registerCompletionItemProvider} :  Pour afficher des suggestions de complétions
+    \item \textbf{registerHoverProvider} : Pour gérer le hover
+    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View
 \end{itemize}
 
 \subsection{Parser}
@@ -258,27 +257,28 @@ Et les développeurs s'attendent tout de même à ce que la complétion automati
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
 Pour faciliter l'étape de l'analyse syntaxique ("Parsing"), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux). Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
 
-\section{Recherche d'extensions similaires}
-Fournir du support pour un nouveau langage est une tâche relativement courante.
-Il est donc relativement simple de trouver des extensions proposant un objectif similaire sur la marketplace.
-Évidemment c'est donc une des premières choses qui ont été faites. Regarder les extensions similaires et particulièrement ceux touchant à des langages de sérialisation.
-
-\subsection{Yaml}
-UON étant un langage proche de YAML c'est vers son extension que je me suis dirigée en premier. Car il n'existe pas d'extension officielle, similaire pour le langage JSON.
-Cependant j'ai vite compris que cela n'allait pas forcément être aussi évident. Car contrairement à JSON et YAML, UON intègre directement dans son langage des types définis. Ce qui fait que l'auto-complétion fournit par des JSON Schema dans l'extension YAML n'est pas vraiment applicable pour notre cas.
-Aussi pour l'outline view. La création d'un symbol tree se fait à l'aide de fonction utilitaire très "privée" et complexe à reprendre est à adapté. En cherchant, j'ai vu que JSON utilise ces mêmes fonctions.
-Cette direction a donc été écarté.
-
 \section{Choix technologiques}
-Comme expliqué précédemment, la catégorie d'une fonctionnalité va influencer son implémentation sous VsCode. Mais certaines de ces fonctionnalités pourraient être implémentées selon l'une ou l'autre approche en fonction de la complexité souhaitée, par exemple le  "code folding" ou "autocompletion". Il est donc possible que lors du déroulement du projet que la solution jugée la plus intéressante soit privilégiée.
+Nous allons mentionner les technologies et approches choisis et expliquer la raison.
 
-\subsection{Grammaire}
-Une grammaire simplifiée de UON sera l'approche privilégiée au départ. Si nécessaire, elle pourrait être étendue.
+\subsection{ANTLR}
+\subsubsection{Parser}
+Étant donné que ce n'est pas le sujet de notre Travail de Bachelor, je vais m'aider d'outil existant pour extraire le plus possible de complexité concernant ce sujet.
+Plein d'outils permettant la génération existe à partir d'une grammaire. Mais allors choisir le générateur de parser d'ANTLR (ANother Tool for Language Recognition) car :
 
-\subsection{Parser}
-Des outils permettant la génération d'un parser en fonction d'une grammaire existent et seront privilégiés. Si cette approche échoue alors soit l'implémentation d'un parser simple sera effectuée ou il faudra envisager une piste alternative.
+\begin{itemize}
+    \item C'est un outil populaire est encore utilisé.
+    \item Il est disponible directement en Typescript (\href{https://github.com/tunnelvisionlabs/antlr4ts}{antlr4ts}).
+    \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l'auto-complétion (\href{https://github.com/mike-lischke/antlr4-c3}{antlr4-c3})
+    \item Quelques exemples existent d'implémentation.
+    \item La génération est simple. Pour générer un parser (et d'autres fichiers utiles), il suffit d'écrire un fichier contenant une grammaire valide.
+\end{itemize}
 
-\subsection{API}
+\textbf{Remarque} :
+Comme mentionner au point \hyperref[grammar scope]{Scope de la grammaire}. Mon précesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
+L'implémentation de son parser n'a pas été prévilégié car il aurait été nécessaire de créer l'infrastructure permettant d'utiliser son parser.
+Et Antlr semble être un choix plus naturelle dans notre environnement vscode.
+
+\subsection{Direct implementation}
 L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi. Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server. 
 
 \section{UON}
@@ -316,7 +316,7 @@ La spécification comète du projet se trouve ici : \href{https://github.com/uon
 Et le dépôt du projet : \href{https://github.com/uon-language/specification}{https://github.com/uon-language/specification}
 
 
-\chapter{Scope de la grammaire}
+\chapter{Scope de la grammaire}\label{grammar scope}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera. Il est donc important préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
 Nous allons donc partir d'une grammaire la plus minimale possible tout en faisant attention à son extensibilité par la suite.
 Cette grammaire se trouve dans le fichier UON.g4.
@@ -329,23 +329,25 @@ Elle sera complétée et améliorée après la mise en place des fonctionnalité
 Les fonctionnalités implémentées s'appuieront sur cette grammaire. Ceci dans le but de rester cohérents entre eux.
 
 \textbf{Rappel}
-La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma.
+La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
 
 \section{Modification}
 \textbf{[TODO]}
 
 
 \chapter{Implémentation}
-Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
+Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
 Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
 
 \section{Code}
-Le code de l'implémentation est disponible sur le dépôt public suivant : \textbf{[pour l'instant privé]}
-Est hébergé sous l'organisation : \textbf{[TODO]}
+Le code de l'implémentation est disponible sur le dépôt public \href{https://github.com/vitorva/vscode-uon}{suivant}.
+
 \textbf{Remarque} : L'implémentation détaillée dans ce rapport pourrait ne plus représenter l'état du dépôt, car ce projet est sujet à évoluer.
 
 \section{Extension}
-\textbf{Squelette de base}
+Nous allons voir maintenant, la procédure pour créer et publier son extension.
+
+\subsection{Génération de l'extension}
 VsCode permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
 
 \begin{lstlisting}[caption={generator-code},label={generator-code}]
@@ -367,22 +369,7 @@ et de compléter ce qui est attendu dans le terminal.
     \caption[Yo Code generator]{\label{yo-code}Yo Code generator}
 \end{figure}
 
-Cela nous crée l'arborescence suivante :
-\begin{figure}[!ht]
-    \begin{center}
-        \includegraphics[width=5cm]{assets/figures/project-tree.png}
-    \end{center}
-    \caption[Arborescence du projet]{\label{project-tree}Arborescence du projet}
-\end{figure}
-
-Quelques remarques concernant des fichiers et dossiers :
-\begin{itemize}
-    \item \textbf{.vscode} : Ce trouve le code permettant de lancer l'extension en debug mode dans une nouvelle instance Vscode.
-    \item \textbf{.vscodeignore} : Liste les fichiers à ignorer lors de la publication de l'extension.
-    \item \textbf{Entension.js} : Fichier principal qui contient la logique de notre extension.
-    \item \textbf{CHANGELOG.md} : Écrire ici les modifications apportées lorsqu'on publie une nouvelle version.
-    \item \textbf{README.md} : Le readme qui est publié avec l'extension (toutes les infos que l'on voit sur la page sur le marketplace).
-\end{itemize}
+Cela nous créera l'arborescence mentionné précédement au point \hyperref[Extension File Structure]{Extension File Structure}.
 
 \subsection{Lancement de l'extension en debug}
 On peut lancer une nouvelle fenêtre (f5) qui va contenir notre extension.
@@ -429,19 +416,7 @@ L'extension apparaitra automatiquement dans le marketplace si elle est publié.
 \end{figure}
 
 
-\section{Parser}
-Une approche souvent prévilégié pour l'implémentation de fonctionnalités de langage est la génération d'un AST pour en tirer des informations et les utiliser. Pour le générer, un parseur est nécessaire. Étant donné que ce n'est pas le sujet de notre TB, je vais m'aider d'outil existant pour extraire le plus possible de complexité concernant ce sujet.
-
-\subsection{ANTLR}
-L'utilisation de ANTLR (ANother Tool for Language Recognition) comme générateur de parser a été choisie pour les raisons suivantes :
-\begin{itemize}
-    \item C'est un outil populaire est encore utilisé.
-    \item Il est disponible en Typescript (\href{https://github.com/tunnelvisionlabs/antlr4ts}{antlr4ts}).
-    \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l'auto-complétion (\href{https://github.com/mike-lischke/antlr4-c3}{antlr4-c3})
-    \item Quelques exemples existent d'implémentation.
-    \item La génération est simple. Pour générer un parser (et d'autres fichiers utiles), il suffit d'écrire un fichier contenant une grammaire valide.
-\end{itemize}
-
+\section{Génération du Parser ANTLR}
 \subsubsection{Grammaire}
 Le fichier de grammaire doit respecter les points suivants : \textbf{[TODO]}
 
@@ -517,7 +492,7 @@ Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visual
     \caption[Scope inspector]{\label{basic-uon} Le scope inspector sur un exemple de code en UON}
 \end{figure}
 
-La section "textmate scopes" montre la liste des scopes utilisés pour le token courant. Le plus spécialisé se trouve au sommet.
+La section "textmate scopes" montre la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
 
 Cette fonctionnalité n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par un langage serveur ou depuis l'api de Vscode. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
 
@@ -635,7 +610,10 @@ SELECT | FROM USER // ("|" étant le curseur)
 
 Dans ce scénario des suggestions liées à la table USER devrait être proposé et donc un traitement particulier devrait être fait.
 La seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
-Il semble normal que la complétion n'ait pas lieu si le code précédent est gravement erroné pouvant être un indice à l'utilisateur. Cependant il doit quand même supporter une certaine marge d'erreur. Dans notre cas, les erreurs sur les valeurs (par exemple une propriété "max : 12a") pourraient être omises en utilisant une grammaire qui nous permet d'avoir des types supportant le plus de symboles possibles. Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le processus de l'auto-complétion.
+Il semble normal que la complétion n'ait pas lieu si le code précédent est gravement erroné. Cependant il devrait être tolérent sur des erreurs qui ne péjore pas la comprhéension du code.
+Par exemple dans notre cas, les erreurs sur les valeurs (par exemple une propriété "max : 12a") pourraient être omises en utilisant une grammaire qui nous permet d'avoir des types supportant le plus de symboles possibles.
+Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le processus de l'auto-complétion.
+Toutefois pour signaler à l'utilsiateur que la saisie est incorrect. On peut s'aider en parallele de la coloration syntaxique.
 
 \subsection{Mécanisme automatique}
 VsCode va automatiquement filtrer les suggestions pendant la saisie.
@@ -643,15 +621,12 @@ Par défaut il propose également des symboles déjà existants dans le code dan
 
 \subsection{Gestion des erreurs}
 On peut ajouter au parser un "ErrorListener".
-Par défaut c'est cette stratégie d'erreur qui est appliquée :
-\href{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}
+Par défaut c'est la stratégie de la classe se trouvant dans le fichier \href{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}{suivant} qui est appliquée.
 
 Mais on peut l'étendre pour redéfinir les fonctions.
-\textbf{[TODO]}
-
-\subsection{Problème}
-Dans certains cas lorsque l'on trigger de l'autocomplétion quand le curseur se trouve collé à du texte. L'éditeur affiche le message "no suggestions" alors que le provider contient une liste de suggestions possible.
-\textbf{[TODO]}
+Car normalement en cas d'erreur, le parser va essayé de continuer le parsing jusqu'à trouver un token valide.
+Cependant comme il se peut qu'il n'y ait rien après. C'est presque tout le temps le cas lorsqu'on est en train d'écire.
+On va donc juste s'arrêter.
 
 \subsection{Snippets}
 Il est possible d'ajouter des snippets sous Vscode. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
