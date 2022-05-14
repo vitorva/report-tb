@@ -579,9 +579,10 @@ Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteu
 Avant il n'y a avait que des solutions customs. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
 
 Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la strucuture de la grammaire directement disponible dans le parser via
-un mécanisme de machine à état ATN (Augmented Transition Network).
+un mécanisme de machine à état ATN (Augmented Transition Network). C'est ce méchanisme qui est en coeur du fonctionnement du moteur.
 
-Dans la configuration la plus simple, il suffit de lui donner une instance du parser et une position de caret (notre curseur) pour qu'il renvoie les candidats correspondants.
+Dans la configuration la plus simple pour l'utiliser, il suffit de lui donner une instance du parser et une position de caret (notre curseur) pour qu'il renvoie les candidats correspondants.
+Cette position est l'indice du candidats. L'explication pour le trouver ce trouve dans la séction \hyperref[candidates]{\textbf{Candidats}}
 
 On constate donc que c'est un outil relativement puissant et qui nous simplifie grandement la tâche.
 
@@ -644,12 +645,14 @@ Cependant toute la difficulté et de proposer ces suggestions au bon moment, car
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space".
 On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s'agit seulement d'une appréciation personnelle.
 
-\subsection{Candidats}
-Actuellement pour connaitre le prochain candidat, on récupère le flux des tokens trouvé lors du parsing dans le tokenStream. On récupère dans un tableau chaque token individuellement (y compris les espaces).  Grâce à la taille du tableau on peut déduire l'indice du ou des prochains tokens que l'on souhaitera afficher.
-Cependant lorsque l'utilisateur écrit et que cela trigger l'autocomplétion. Souvent le texte parsé est faux, car non terminé. Dans certains, quand il arrive quand même à comprendre. Le texte parsé se termine alors avec un token de type <EOF> (end of line).
-Mais parfois il n'arrive pas à le faire correctement et le texte et ne termine pas avec ce token mais seulement avec le mot que l'on est en train d'écrire ou uniquement des caractères vide, ou même les deux.
-Ce comportement a été observé de manière empirique. Une solution a été mise en place pour traiter ces cas particuliers.
-\textbf{[Actuellement train de chercher la cause]}
+\subsection{Candidats}\label{candidates}
+
+Actuellement pour connaitre l'indice du ou des prochains candidats, on récupère le flux des tokens (tokenStream) trouvé lors du parsing.
+Puis, on récupère dans un tableau chaque token individuellement (y compris les espaces).
+
+Cependant lorsque l'utilisateur écrit et que cela trigger l'autocomplétion, le texte parsé est souvent inccorect, car le dernier élément saisi n'est pas encore complet.
+
+Grâce à la taille du tableau et en se basant sur les erreurs qui ont été généré, on peut déduire l'indice du ou des prochains tokens que l'on peut afficher.
 
 \subsubsection{Index du candidat}
 L'indexation est gérée de 2 manières différentes. En fonction de la prise en compte de l'espace ou non.
@@ -661,7 +664,8 @@ L'indexation est gérée de 2 manières différentes. En fonction de la prise en
     \caption[Indexation des candidats]{\label{candidat-index} Indexation des candidats}
 \end{figure}
 
-\textbf{[TODO]}
+Cela va dépendre si on décide d'ignorer ou non les espaces dans la grammaire g4.
+Les dévelopeurs de c3 recommandent de pas ignorer les espaces. Car cela permet de gérer plus de cas particuliers.
 
 \section{Document outlining}
 \textbf{[TODO]}
