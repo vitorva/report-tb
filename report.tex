@@ -181,7 +181,9 @@ La fonction deactivate  ext exécuté lorsque l'application devient innactive. E
 \textbf{Remarque} : Le niveau de customisation est assez élevé. La seul limitation souvent indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
 
 Nous avons donc vu les briques de bases pour la conception d'une extension. Cette base est suffisante pour nous dans un premier temps.
-Comme ce rapport n'a pas pour vocation d'expliquer tout ce qui est possible de faire dans une extension. Si vous souhaitez vous renseinger d'avantages sur ce sujet, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
+Comme ce rapport n'a pas pour vocation d'expliquer tout ce qui est possible de faire dans une extension. Si vous souhaitez vous renseigner d'avantages sur ce sujet, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
+
+La même remarque concerne aussi les fonctionnalités général de l'éditeur VScode. Pour plus de détail, consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \subsection{Support de langage}
 VsCode fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
@@ -257,10 +259,23 @@ Et les développeurs s'attendent tout de même à ce que la complétion automati
 
 \subsection{Grammaire}
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
-Pour faciliter l'étape de l'analyse syntaxique ("Parsing"), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux). Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
+Pour faciliter l'étape de l'analyse syntaxique ("Parsing"), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux).
+Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
 
 \section{Choix technologiques}
 Nous allons mentionner les technologies et approches choisis et expliquer la raison.
+
+\subsection{Direct implementation}
+L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi.
+Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server.
+
+Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
+
+\begin{itemize}
+    \item \textbf{registerCompletionItemProvider} :  Pour afficher des suggestions de complétions
+    \item \textbf{registerHoverProvider} : Pour gérer le hover
+    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View
+\end{itemize}
 
 \subsection{ANTLR}
 \subsubsection{Parser}
@@ -279,18 +294,6 @@ Plein d'outils permettant la génération existe à partir d'une grammaire. Mais
 Comme mentionner au point \hyperref[grammar scope]{Scope de la grammaire}. Mon précesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
 L'implémentation de son parser n'a pas été prévilégié car il aurait été nécessaire de créer l'infrastructure permettant d'utiliser son parser.
 Et Antlr semble être un choix plus naturelle dans notre environnement vscode.
-
-\subsection{Direct implementation}
-L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi.
-Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server.
-
-Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
-
-\begin{itemize}
-    \item \textbf{registerCompletionItemProvider} :  Pour afficher des suggestions de complétions
-    \item \textbf{registerHoverProvider} : Pour gérer le hover
-    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View
-\end{itemize}
 
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML. Il fournit des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs.
@@ -344,7 +347,6 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 
 \section{Modification}
 \textbf{[TODO]}
-
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
@@ -450,12 +452,10 @@ Il nous génère les fichiers suivants :
 \end{itemize}
 
 \subsection{Arbre (CST)}
-étape intérmédiraire.
-Antlr va génrer un arbre parsé. (CST pour concrete syntax tree)
+Antlr va génrer un arbre parsé. Plus précisement un CST (concrete syntax tree)
 Il contient tous les noeuds de la grammaires. Certains sont superflu pour en tirer un sens
 
-Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre + simple.
-
+Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre plus simple.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -558,8 +558,12 @@ Contrairement à la première règle qui ne faisait qu'un match, la deuxième d�
 
 \subsection{Semantic Highlight}
 
-Un point important et qu'il ne faut pas confondre la coloration syntaxique avec ce que l'on nomme "semantic highlighting" qui est une couche que l'on rajoute sur la précédente pour l'améliorer si nécessaire.
-Il s'agit d'obtenir des informations plus avancées en analysant plus en détail du code pour fournir une coloration plus précise.
+Un point important et qu'il ne faut pas confondre la coloration syntaxique avec ce que l'on nomme la coloration sémantique. Car il s'agit d'une couche que l'éditeur rajoute sur la précédente pour l'améliorer si nécessaire.
+La tokénisation sémantique permet de fournir des informations supplémentaires sur les tokens en se basant sur une compréhension profonde du langage.
+De manière à résoudre les symboles dans le contexte d'un projet.
+
+Il s'agit donc d'obtenir des informations contextualisé afin fournir une coloration plus précise pour un token.
+
 Par exemple avec du code Typescript :
 
 \begin{figure}[!ht]
@@ -577,7 +581,8 @@ Par exemple avec du code Typescript :
 \end{figure}
 
 On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d'une fonction.
-Cela est donc intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas. Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
+Cela est donc intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas.
+Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
 
 \section{Auto-completion}
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément \href{https://code.visualstudio.com/docs/editor/intellisense}{"IntelliSense"} qui un terme général désignant diverses fonctions d'édition de code.
@@ -621,16 +626,25 @@ SELECT | FROM USER // ("|" étant le curseur)
 
 Dans ce scénario des suggestions liées à la table USER devrait être proposé et donc un traitement particulier devrait être fait.
 La seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
-Il semble normal que la complétion n'ait pas lieu si le code précédent est gravement erroné. Cependant il devrait être tolérent sur des erreurs qui ne péjore pas la comprhéension du code.
-Par exemple dans notre cas, les erreurs sur les valeurs (par exemple une propriété "max : 12a") pourraient être omises en utilisant une grammaire qui nous permet d'avoir des types supportant le plus de symboles possibles.
+
+\subsection{Tolérance}
+Il semble normal que la complétion n'ait pas lieu si le code saisie est gravement erroné.
+Cependant il devrait être tolérent à une certain mesure sur des erreurs qui ne péjore pas la compréhension du code.
+Une possiblité et de traiter les erreurs lors de l'analyse syntaxique, ce sujet est abordé dans la section \hyperref[error handle]{Gestion des erreurs} ci-dessous.
+
+Mais on peut imaginer supprimer des cas potentiels d'erreurs lors de la conception de notre grammaire.
+Par exemple, les erreurs sur les valeurs attendues. Une stratégie serait d'avoir un type seul qui supporterait le plus de symboles possibles.
+Imaginons que l'on donnerait en entré un type incorrect à une propriété, selon la spécification officielle du langage UON.
+Par exemple (max : 12a), l'erreur pourrait tout simplement ne pas exister.
 Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le processus de l'auto-complétion.
-Toutefois pour signaler à l'utilsiateur que la saisie est incorrect. On peut s'aider en parallele de la coloration syntaxique.
+
+Pour signaler à l'utilisateur que la saisie est tout de même incorrect. On peut s'aider en parallele de la coloration syntaxique.
 
 \subsection{Mécanisme automatique}
 VsCode va automatiquement filtrer les suggestions pendant la saisie.
 Par défaut il propose également des symboles déjà existants dans le code dans ses suggestions.
 
-\subsection{Gestion des erreurs}
+\subsection{Gestion des erreurs}\label{error handle}
 On peut ajouter au parser un "ErrorListener".
 Par défaut c'est la stratégie de la classe se trouvant dans le fichier \href{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}{suivant} qui est appliquée.
 
