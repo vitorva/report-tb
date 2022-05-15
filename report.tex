@@ -49,23 +49,18 @@
 \end{abstract}
 
 %% Sommaire et tables
-\clearemptydoublepage
-{
-    \tableofcontents
-    \let\cleardoublepage\clearpage
-    \listoffigures
-    \let\cleardoublepage\clearpage
-    \listoftables
-    \let\cleardoublepage\clearpage
-    \listoflistings
-}
+\listoffigures
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoflistings
+\addcontentsline{toc}{chapter}{Liste des codes sources}
+
+\tableofcontents
 
 \printnomenclature
 \clearemptydoublepage
 \pagenumbering{arabic}
 
 \pagestyle{fancy}
-
 \fancyhf{}
 \renewcommand\headrulewidth{1pt}
 
@@ -373,6 +368,7 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 
 \section{Modification}
 \textbf{[TODO]}
+\cite{test}
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
@@ -778,17 +774,13 @@ Tester que l'élément on Hover soit celui attendu
 %% \end{minipage}
 %% \clearpage
 
-
-%%if
-\chapter{Annexe}
-\dots
-
 %% \let\cleardoublepage\clearpage
 %% \backmatter
 
 %% \label{glossaire}
 %% \printnoidxglossary
-%% \printbibliography
+\printbibliography
+\addcontentsline{toc}{chapter}{Bibliographie}
 %% \label{index}
 %% \printindex
 
