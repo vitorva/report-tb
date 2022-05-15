@@ -84,7 +84,7 @@
 %% Contenu
 \mainmatter
 \chapter{Introduction}
-Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VsCode. Ce projet se veut expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisis sont libres tant qu'elles respectent le cahier des charges.
+Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VsCode. Ce projet se veut expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisies sont libres tant qu'elles respectent le cahier des charges.
 Dans les chapitres suivants, nous allons voir ce qui est fourni par VsCode pour élaborer et déployer une extension.
 Les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
 Les aspects du langage UON à considérer dans le cadre de ce projet.
@@ -125,30 +125,30 @@ Une extension peut être écrite en Typescript ou en Javascript.
 Nous choisirons le Typescript car Vscode recommande ce langage.
 
 Concernant les fonctionnalités à implémenter. Il n'y avait pas de contraintes de choix.
-Nous avons donc séléctionner les fonctionnalités attendues en choisissant celles paraissant utiles à avoir dans un premier temps et en prenant en considération la contrainte de temps.
+Nous avons donc séléctionné les fonctionnalités attendues en choisissant celles paraissant utiles à avoir dans un premier temps et en prenant en considération la contrainte de temps.
 
 \chapter{Pré-étude}
 
 \section{VScode}
-Visual Studio Code (ou VScode) est un éditeur de code qui est pensé pour être extensible (De L'UI à l'expérience utilisateur).
-Presque tout peut être customisé et améliorer à travers de \href{https://code.visualstudio.com/api/extension-capabilities/overview}{L'Extension API}.
+Visual Studio Code (ou VScode) est un éditeur de code qui est pensé pour être extensible (de L'UI à l'expérience utilisateur).
+Presque tout peut être customisé et amélioré à travers de \href{https://code.visualstudio.com/api/extension-capabilities/overview}{L'Extension API}.
 
-L'Extension API nous permet donc gérér un certain nombre de choses.
+L'Extension API nous permet donc de gérér un certain nombre de choses.
 On se focalisera sur le theming , les fonctionnalités de langages, la publication de l'extension et les tests.
 
-VScode fourni pleins de documentations détaillées sur plein de sujets, guides, ainsi que des examples de codes.
-Il s'agit donc évidemment de la source principales des explications données dans ce document concernant ce qui touche à cette éditeur.
+VScode fournit plein de documentations détaillées sur plein de sujets, guides, ainsi que des exemples de codes.
+Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cette éditeur.
 
 \subsection{Extension Anatomy}
-Il y a 3 concepts crucials à comprendre pour réaliser une extension.
+Il y a 3 concepts cruciaux à comprendre pour réaliser une extension.
 
 \begin{itemize}
     \item \textbf{\href{https://code.visualstudio.com/api/references/activation-events}{Activation Events}}: Des événements à partir desquels l'extension devient active.
-    \item \textbf{\href{https://code.visualstudio.com/api/references/contribution-points}{Contribution Points}}: Des déclarations statiques qui sont faitent dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes".
+    \item \textbf{\href{https://code.visualstudio.com/api/references/contribution-points}{Contribution Points}}: Des déclarations statiques qui sont faites dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes".
     \item \textbf{\href{https://code.visualstudio.com/api/references/vscode-api}{VS Code API}}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code.
 \end{itemize}
 
-En général, l'extension est une combinaison de plusieurs Conntribution Point et de VS code API pour étendre les fonctionnalité de VSCode.
+En général, l'extension est une combinaison de plusieurs Conntribution Point et de VS code API pour étendre les fonctionnalités de VSCode.
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 La structure d'une extension est la suivante :
@@ -166,20 +166,20 @@ La structure d'une extension est la suivante :
 \end{lstlisting}
 
 \textbf{Extension Manifest} :
-Chaque extension doit contenir un fichier "package.json". En plus des champs propre à Node.js, on peut spécifier des scripts, dépendances de dévelopement et des champs spécifiques à Vscode.
+Chaque extension doit contenir un fichier "package.json". En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à Vscode.
 
 \textbf{Extension Entry File} :
-Il s'agit du fichier prinicipale de l'extension (Extension.js).
+Il s'agit du fichier prinicipal de l'extension (Extension.js).
 De base il contient 2 fonctions : "activate" et "deactivate".
-La fonction activate est executé à l'activation de notre extension par un Activation Event. On définira ici le code à exécuter.
-La fonction deactivate  ext exécuté lorsque l'application devient innactive. Et sert principalement à nettoyer le code avant la désactivation de l'extension
+La fonction activate est executée à l'activation de notre extension par un Activation Event. On définira ici le code à exécuter.
+La fonction deactivate est exécutée lorsque l'application devient inactive et sert principalement à nettoyer le code avant la désactivation de l'extension
 
-\textbf{Remarque} : Le niveau de customisation est assez élevé. La seul limitation souvent indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
+\textbf{Remarque} : Le niveau de customisation est assez élevé. La seule limitation souvent indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
 
 Nous avons donc vu les briques de bases pour la conception d'une extension. Cette base est suffisante pour nous dans un premier temps.
-Comme ce rapport n'a pas pour vocation d'expliquer tout ce qui est possible de faire dans une extension. Si vous souhaitez vous renseigner d'avantages sur ce sujet, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
+Comme ce rapport n'a pas pour vocation d'expliquer tout ce qu'il est possible de faire dans une extension. Si vous souhaitez vous renseigner d'avantages sur ce sujet, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
 
-La même remarque concerne aussi les fonctionnalités général de l'éditeur VScode. Pour plus de détail, consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
+La même remarque concerne aussi les fonctionnalités générales de l'éditeur VScode. Pour plus de détail, consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \subsection{Support de langage}
 VsCode fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
@@ -211,7 +211,7 @@ Il y a 2 approches pour les implémenter que nous allons voir ci-dessous.
 La première solution est d'utiliser l'api \href{https://code.visualstudio.com/api/references/vscode-api#languages}{vscode.languages.*} qui expose des interfaces
 permettant de réaliser directement les fonctionnalités.
 
-Elle vont nous permettre de nous s'inscires à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
+Elles vont nous permettre de nous inscrire à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
 
 \subsection{Langage server}
 La seconde solution est de fournir nous-mêmes ces méthodes en respectant \href{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/}{la spécifiation LSP} au travers d'un langage serveur.
@@ -220,7 +220,7 @@ que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage
 
 Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n'est pas un choix primordial.
 
-Pour être utiliser sur VSCode, un langage server à 2 partis :
+Pour être utilisé sur VSCode, un langage server à 2 partis :
 \begin{itemize}
     \item \textbf{Un client} : C'est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode
     \item \textbf{Langage server} : Un outil d'analyse linguistique fonctionnant dans un processus séparé lancé
@@ -229,13 +229,13 @@ Pour être utiliser sur VSCode, un langage server à 2 partis :
 Le client et le serveur communiquent à l'aide du protocole LSP (pour "language server") dès que des informations riches devraient être fournies à l'éditeur.
 Le langage server devrait donc ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C'est-à-dire être capable d'analyser un AST et de fournir une réponse adéquate.
 L'implémentation d'un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "Vscode-languageserver-node" implémenté en Typescript qui n'est pas exclusivement réservé à VsCode comme son nom pourrait l'indiquer.
-On remarque donc avec cette approche que 2 composantes existent (Le client et le serveur)
+On remarque donc avec cette approche que 2 composantes existent (le client et le serveur).
 Un langage server peut être utilisé sur d'autre éditeur compatible. Mais le client devra être implémenté de nouveau.
 
 \subsection{API vs LSP}\label{api vs lsp}
 
 Ce schéma ci-dessus montre la correspondance des méthodes entre la première et seconde approche.
-Cette liste est non exhaustive mais permet de montrer que les 2 approches sont relativement bien supporté.
+Cette liste est non exhaustive, mais permet de montrer que les 2 approches sont relativement bien supporté.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -245,13 +245,13 @@ Cette liste est non exhaustive mais permet de montrer que les 2 approches sont r
 \end{figure}
 
 \subsection{Parser}
-Pour fournir des fonctionnalités de langue, une approche souvent pratiqué et l'utilisation d'un parser.
-Car les fonctionnalité se baseront sur L'AST qu'il générera.
+Pour fournir des fonctionnalités de langue, une approche souvent mentionnée et l'utilisation d'un parser.
+Car les fonctionnalités se baseront sur L'AST qu'il générera.
 
-Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générér un AST (abstract syntax tree) qui à du sens depuis du code incomplet.
+Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générer un AST (abstract syntax tree) qui à du sens depuis du code incomplet.
 
 Il ne devrait pas s'arrêter dès la première erreur. Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect.
-Et les développeurs s'attendent tout de même à ce que la complétion automatique et et d'autres fonctions de langue fonctionnent.
+Et les développeurs s'attendent tout de même à ce que la complétion automatique et d'autres fonctions de langue fonctionnent.
 
 \subsection{Grammaire}
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
@@ -259,7 +259,7 @@ Pour faciliter l'étape de l'analyse syntaxique ("Parsing"), cette grammaire pou
 Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
 
 \section{Choix technologiques}
-Nous allons mentionner les technologies et approches choisis et expliquer la raison.
+Nous allons mentionner les technologies et approches choisies et expliquer la raison.
 
 \subsection{Direct implementation}
 L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi.
@@ -268,15 +268,15 @@ Si le temps le permet, toute la logique du code concernant les fonctionnalités 
 Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
 
 \begin{itemize}
-    \item \textbf{registerCompletionItemProvider} :  Pour afficher des suggestions de complétions
-    \item \textbf{registerHoverProvider} : Pour gérer le hover
-    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View
+    \item \textbf{registerCompletionItemProvider} : pour afficher des suggestions de complétions
+    \item \textbf{registerHoverProvider} : pour gérer le hover
+    \item \textbf{registerDocumentSymbolProvider} : pour afficher les éléments dans la Outline View
 \end{itemize}
 
 \subsection{ANTLR}
 \subsubsection{Parser}
 Étant donné que ce n'est pas le sujet de notre Travail de Bachelor, je vais m'aider d'outil existant pour extraire le plus possible de complexité concernant ce sujet.
-Plein d'outils permettant la génération existe à partir d'une grammaire. Mais allors choisir le générateur de parser d'ANTLR (ANother Tool for Language Recognition) car :
+Plein d'outils permettant la génération existent à partir d'une grammaire. J'ai opté pour le générateur de parser d'ANTLR (ANother Tool for Language Recognition), car :
 
 \begin{itemize}
     \item C'est un outil populaire est encore utilisé.
@@ -287,9 +287,9 @@ Plein d'outils permettant la génération existe à partir d'une grammaire. Mais
 \end{itemize}
 
 \textbf{Remarque} :
-Comme mentionner au point \hyperref[grammar scope]{Scope de la grammaire}. Mon précesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
-L'implémentation de son parser n'a pas été prévilégié car il aurait été nécessaire de créer l'infrastructure permettant d'utiliser son parser.
-Et Antlr semble être un choix plus naturelle dans notre environnement vscode.
+comme mentionner au point \hyperref[grammar scope]{Scope de la grammaire}. Mon prédécesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
+L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant d'utiliser son parser.
+Et Antlr semble être un choix plus naturel dans notre environnement vscode.
 
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML.
