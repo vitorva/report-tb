@@ -296,39 +296,65 @@ L'implémentation de son parser n'a pas été prévilégié car il aurait été 
 Et Antlr semble être un choix plus naturelle dans notre environnement vscode.
 
 \section{UON}
-UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML. Il fournit des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs.
+UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML.
+Il cherche à regrouper les meilleures caractéristiques de ces formats de sérialisation en un seul format.
+Il fournit également des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs, valider les données ainsi que pour diminuer le payload.
+
+Nous allons voir ci-dessous un apercu général de ce langage.
 
 \subsection{Pourquoi ?}
 Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l'IoT (Internet of Things).
-Beaucoup d'informations circulent entre ces composants et leurs ressources sont limitées.
-C'est ici que ce langage est intéressant. Car il a pour objectif d'encapsuler et représenter l'information avec le plus petit payload possible.
-Pour cela UON permet :
+Ces communications nécessitent souvent de communiquer entre de petits appareils dont la puissance de calcul est très limitée.
+La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adapté aux échanges à faible puissance est un très apréciable.
+
+\subsection{Communication}
+Lorsque deux appareils veulent échanger des informations, ils disposent de deux canaux de communication :
 \begin{itemize}
-    \item De représenter les données sous forme humaine et binaire.
-    \item Décrire le payload à travers d'un schéma de validation.
+    \item un canal de communication en ligne utilisé pour la transmission des données de contenu (payload). Les données peuvent être représenté sous forme humaine et binaire.
+    \item un canal de communication contractuel utilisé pour l'accord sur la description des données (schema).
 \end{itemize}
-Son rôle est donc de représenter des données sous forme la plus minimale pour permettre l'interopérabilité entre machines.
+
+Dans l'image suivante, on a à gauche deux dispositifs : un capteur de température à faible consommation
+et une puissante passerelle domotique. Pour réduire la taille du payload, les deux dispositifs peuvent convenir d'un schéma qui décrit le format des données.
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/data-exchange.png}
+    \end{center}
+    \caption[UON data exchange]{\label{data-exchange}UON data exchange}
+\end{figure}
+
+À droite on affine le schéma. Pour réduire d'avantange les données transmis.
+Par exemple en disant que la temperature exprimé avec un nombre et maintenant une valeur non signée de huit bits exprimée en degrés Celsius.
 
 \subsection{Design}
 UON est complètement conforme avec JSON et partiellement avec YAML.
+
+UOn peut être classé au travers de 4 niveaux de compléxités :
+\begin{itemize}
+    \item \textbf{UON:0} est entièrement compatible avec JSON en ce qui concerne le RFC8259
+    \item \textbf{UON:1} est partiellement conforme à YAML.
+    \item \textbf{UON:2} fournit des propriétés de type, la coercition et les chaînes de caractères multilignes.
+    \item \textbf{UON:3} offre des types et des références riches
+\end{itemize}
 
 \subsection{Types}
 Chaque élément est composé d'un type. Et chacun de ces types peut avoir des propriétés.
 3 types de propriétés existent :
 \begin{itemize}
-    \item Presenentation properties.
-    \item Validation propeties
-    \item Application properties
+    \item \textbf{Presenentation properties} : Elles influencent la présentation d'une valeur.
+    \item \textbf{Validation propeties} : Elles sont utilisés pour valider, contraindre et décrire un fichier UON.
+    \item \textbf{Application properties} : Elles ne peuvent être lues que depuis UON en utilisant le type !prop. Elles sont accessibles depuis l'application (Python, JavaScript, ...). Elles sont utilisées pour générer un fichier sérialisé (binaire, ou UON), mais elles ne sont jamais explicitement transmises.
 \end{itemize}
 
-\subsection{Schéma de Validation}
+\subsection{Validation}
+Dans de telles communications, la validation des données transmises entre des machines dont la puissance de calcul est très limitée est un atout majeur.
 Une des propriétés uniques de UON est l'usage de schéma directement intégré dans le langage.
 Le rôle de ce schéma et que les machines se mettent d'accord entre elles sur le format des données à respecter, diminuant ainsi le payload total et s'assurant de la validité des données.
 
 \subsection{Liens}
-La spécification comète du projet se trouve ici : \href{https://github.com/uon-language/specification/}{https://github.com/uon-language/specification/}
-Et le dépôt du projet : \href{https://github.com/uon-language/specification}{https://github.com/uon-language/specification}
-
+Si vous souhaitez-vous rensigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
+Et le dépôt du projet se trouve \href{https://github.com/uon-language/specification}{ici}.
 
 \chapter{Scope de la grammaire}\label{grammar scope}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera. Il est donc important préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
