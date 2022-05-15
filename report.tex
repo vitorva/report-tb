@@ -152,18 +152,14 @@ En général, l'extension est une combinaison de plusieurs Conntribution Point e
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 La structure d'une extension est la suivante :
-\begin{lstlisting}
-    .
-    ├── .vscode
-    │   ├── launch.json     // Config for launching and debugging the extension
-    │   └── tasks.json      // Config for build task that compiles TypeScript
-    ├── .gitignore          // Ignore build output and node_modules
-    ├── README.md           // Readable description of your extension's functionality
-    ├── src
-    │   └── extension.ts    // Extension source code
-    ├── package.json        // Extension manifest
-    ├── tsconfig.json       // TypeScript configuration
-\end{lstlisting}
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=10cm]{assets/figures/extension-anatomy.PNG}}
+    \end{center}
+    \caption[Extension Anatomy]{\label{extension-anatomy} Extension Anatomy}
+\end{figure}
+
 
 \textbf{Extension Manifest} :
 Chaque extension doit contenir un fichier "package.json". En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à Vscode.
@@ -235,11 +231,11 @@ Un langage server peut être utilisé sur d'autre éditeur compatible. Mais le c
 \subsection{API vs LSP}\label{api vs lsp}
 
 Ce schéma ci-dessus montre la correspondance des méthodes entre la première et seconde approche.
-Cette liste est non exhaustive, mais permet de montrer que les 2 approches sont relativement bien supporté.
+Cette liste est non exhaustive, mais permet de montrer l'équivalence des 2 méthodes.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/api-vscode.png}
+        \frame{\includegraphics[width=8cm]{assets/figures/api-vscode.png}}
     \end{center}
     \caption[API vs LSP]{\label{api vs lsp} VS Code API vs LSP method}
 \end{figure}
@@ -268,9 +264,9 @@ Si le temps le permet, toute la logique du code concernant les fonctionnalités 
 Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
 
 \begin{itemize}
-    \item \textbf{registerCompletionItemProvider} : pour afficher des suggestions de complétions
-    \item \textbf{registerHoverProvider} : pour gérer le hover
-    \item \textbf{registerDocumentSymbolProvider} : pour afficher les éléments dans la Outline View
+    \item \textbf{registerCompletionItemProvider} : Pour afficher des suggestions de complétions
+    \item \textbf{registerHoverProvider} : Pour gérer le hover
+    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View
 \end{itemize}
 
 \subsection{ANTLR}
@@ -287,7 +283,7 @@ Plein d'outils permettant la génération existent à partir d'une grammaire. J'
 \end{itemize}
 
 \textbf{Remarque} :
-comme mentionner au point \hyperref[grammar scope]{Scope de la grammaire}. Mon prédécesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
+Comme mentionner au point \hyperref[grammar scope]{Scope de la grammaire}. Mon prédécesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
 L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant d'utiliser son parser.
 Et Antlr semble être un choix plus naturel dans notre environnement vscode.
 
@@ -296,37 +292,37 @@ UON est essentiellement un langage de sérialisation qui est un superset de JSON
 Il cherche à regrouper les meilleures caractéristiques de ces formats de sérialisation en un seul format.
 Il fournit également des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs, valider les données ainsi que pour diminuer le payload.
 
-Nous allons voir ci-dessous un apercu général de ce langage.
+Nous allons voir ci-dessous un aperçu général de ce langage.
 
 \subsection{Pourquoi ?}
 Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l'IoT (Internet of Things).
 Ces communications nécessitent souvent de communiquer entre de petits appareils dont la puissance de calcul est très limitée.
-La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adapté aux échanges à faible puissance est un très apréciable.
+La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adapté aux échanges à faible puissance est un très appréciable.
 
 \subsection{Communication}
 Lorsque deux appareils veulent échanger des informations, ils disposent de deux canaux de communication :
 \begin{itemize}
-    \item un canal de communication en ligne utilisé pour la transmission des données de contenu (payload). Les données peuvent être représenté sous forme humaine et binaire.
-    \item un canal de communication contractuel utilisé pour l'accord sur la description des données (schema).
+    \item Un canal de communication en ligne utilisé pour la transmission des données de contenu (payload). Les données peuvent être représentées sous forme humaine et binaire.
+    \item Un canal de communication contractuel utilisé pour l'accord sur la description des données (schema).
 \end{itemize}
 
 Dans l'image suivante, on a à gauche deux dispositifs : un capteur de température à faible consommation
 et une puissante passerelle domotique. Pour réduire la taille du payload, les deux dispositifs peuvent convenir d'un schéma qui décrit le format des données.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/data-exchange.png}
+        \frame{\includegraphics[width=15cm]{assets/figures/data-exchange.png}}
     \end{center}
     \caption[UON data exchange]{\label{data-exchange}UON data exchange}
 \end{figure}
 
-À droite on affine le schéma. Pour réduire d'avantange les données transmis.
-Par exemple en disant que la temperature exprimé avec un nombre et maintenant une valeur non signée de huit bits exprimée en degrés Celsius.
+À droite on affine le schéma. Pour réduire d'avantages les données transmises.
+Par exemple en disant que la température exprimée avec un nombre et maintenant une valeur non signée de huit bits exprimée en degrés Celsius.
 
 \subsection{Design}
 UON est complètement conforme avec JSON et partiellement avec YAML.
 
-UOn peut être classé au travers de 4 niveaux de compléxités :
+Il peut être décomposé au travers de 4 niveaux de complexités :
 \begin{itemize}
     \item \textbf{UON:0} est entièrement compatible avec JSON en ce qui concerne le RFC8259
     \item \textbf{UON:1} est partiellement conforme à YAML.
@@ -338,7 +334,7 @@ UOn peut être classé au travers de 4 niveaux de compléxités :
 Chaque élément est composé d'un type. Et chacun de ces types peut avoir des propriétés.
 3 types de propriétés existent :
 \begin{itemize}
-    \item \textbf{Presenentation properties} : Elles influencent la présentation d'une valeur.
+    \item \textbf{Presentation properties} : Elles influencent la présentation d'une valeur.
     \item \textbf{Validation propeties} : Elles sont utilisés pour valider, contraindre et décrire un fichier UON.
     \item \textbf{Application properties} : Elles ne peuvent être lues que depuis UON en utilisant le type !prop. Elles sont accessibles depuis l'application (Python, JavaScript, ...). Elles sont utilisées pour générer un fichier sérialisé (binaire, ou UON), mais elles ne sont jamais explicitement transmises.
 \end{itemize}
@@ -349,7 +345,7 @@ Une des propriétés uniques de UON est l'usage de schéma directement intégré
 Le rôle de ce schéma et que les machines se mettent d'accord entre elles sur le format des données à respecter, diminuant ainsi le payload total et s'assurant de la validité des données.
 
 \subsection{Liens}
-Si vous souhaitez-vous rensigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
+Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
 Et le dépôt du projet se trouve \href{https://github.com/uon-language/specification}{ici}.
 
 \chapter{Scope de la grammaire}\label{grammar scope}
@@ -360,11 +356,11 @@ Cette grammaire se trouve dans le fichier UON.g4.
 Elle est une adaptation de la grammaire écrite en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON". Son travail se trouve sur :
 \href{https://github.com/uon-language/uon-parser}{https://github.com/uon-language/uon-parser}
 
-Elle sera complétée et améliorée après la mise en place des fonctionnalités attendus et si le temps le permet.
+Elle sera complétée et améliorée après la mise en place des fonctionnalités attendues, si le temps le permet.
 
 Les fonctionnalités implémentées s'appuieront sur cette grammaire. Ceci dans le but de rester cohérents entre eux.
 
-\textbf{Rappel}
+\textbf{Rappel} :
 La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
 
 \section{Modification}
@@ -386,70 +382,73 @@ Nous allons voir maintenant, la procédure pour créer et publier son extension.
 \subsection{Génération de l'extension}
 VsCode permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
 
-\begin{lstlisting}[caption={generator-code},label={generator-code}]
+\begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
 npm install -g yo generator-code
 \end{lstlisting}
 
 Puis il suffit de saisir la commande :
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=single]
 yo code
 \end{lstlisting}
 
 et de compléter ce qui est attendu dans le terminal.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=5cm]{assets/figures/yo-code.png}
+        \includegraphics[width=8cm]{assets/figures/yo-code.png}
     \end{center}
     \caption[Yo Code generator]{\label{yo-code}Yo Code generator}
 \end{figure}
 
-Cela nous créera l'arborescence mentionné précédement au point \hyperref[Extension File Structure]{Extension File Structure}.
+Cela nous créera l'arborescence mentionnée précédemment au point \hyperref[Extension File Structure]{Extension File Structure}.
 
 \subsection{Lancement de l'extension en debug}
 On peut lancer une nouvelle fenêtre (f5) qui va contenir notre extension.
 
-Par défaut, l'application généré vient avec du code permettant d'afficher le message suivant : "Hello World from [nom de l'extension]" en bas de l'écran. On l'affiche au travers du command pannel (CTRL + SHIFT + P). On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
-On constate donc que l'on peut lancer notre application au travers d'une commande, mais pour notre cas il sera plus intéressant que vscode nous propose les fonctionnalités à l'ouverture d'un fichier. uon.
-Pour cela, il faut donc remplacer le code dans le fichier package.json :
+Par défaut, l'application générée vient avec du code permettant d'afficher un message de bienvenu. On l'affiche au travers du command pannel (CTRL + SHIFT + P). On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
+On constate donc que l'on peut lancer notre application au travers d'une commande, mais pour notre cas il sera plus intéressant que vscode nous propose les fonctionnalités à l'ouverture d'un fichier uon.
+Pour cela, il faut modifier l'activation events dans le fichier package.json par :
+\begin{lstlisting}[frame=single]
+    "activateEvents" : [
+	"onLanguage:uon"
+    ]
+\end{lstlisting}
 
 \subsection{Déploiement sur le Marketplace}
 
 \textbf{Prérequis} : Posséder un compte Azure.
 Il faut récupérer un Personal Access Token , pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
 Puis, créer un access token avec ces paramètres :
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=5cm]{assets/figures/access-token.png}
+        \frame{\includegraphics[width=8cm]{assets/figures/access-token.png}}
     \end{center}
     \caption[Access Token]{\label{access-token}Access Token}
 \end{figure}
 
-Créer un publisher avec le même compte qui a créé l'organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}
+Ce token va nous permettre publier notre extension sur un Publisher. Celui-ci nous permettra de gérer notre extension en ligne.
 
-Ajouter la propriété "publisher" et saisir l'id de celui-ci dans le package.json :
+Pour créer un publisher, il faut se connecter avec le même compte qui a créé l'organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}
+Il faut ensuite ajouter la propriété "publisher" et saisir l'id de celui-ci dans le package.json.
 
-\begin{figure}[!ht]
-    \begin{center}
-        \includegraphics[width=5cm]{assets/figures/json-publisher.png}
-    \end{center}
-    \caption[Ajout du publisher dans le fichier package.json]{\label{json-publisher} Ajout du publisher dans le fichier package.json}
-\end{figure}
-
-Puis saisir dans le terminal : "vsce login [le nom du publisher]"
-Puis "Vsce publish" et "accept"
+Pour finalement il suffit dans un terminal les commandes suivantes :
+\begin{lstlisting}[frame=single]
+    vsce login [le nom du publisher]
+    Vsce publish
+\end{lstlisting}
 
 \textbf{Remarque} : Attention au terminal utilisé. Le terminal de node (git.bash) ne propose pas toujours les options de sélections à l'utilisateur. Dans mon cas il était impossible de saisir le PAT et donc une erreur est affichée.
-Il est facile en suite de manager l'extension au travers de la page web :
-L'extension apparaitra automatiquement dans le marketplace si elle est publié.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/manage-publisher.png}
+        \frame{\includegraphics[width=10cm]{assets/figures/manage-publisher.png}}
     \end{center}
     \caption[Interface web pour manager l'extension]{\label{manage-publisher} Interface web pour manager l'extension}
 \end{figure}
+
+Il est ensuite facile en suite de manager l'extension au travers de la page web.
+L'extension apparaitra automatiquement dans le marketplace si elle est publiée.
 
 
 \section{Génération du Parser ANTLR}
@@ -460,7 +459,7 @@ Le fichier de grammaire doit respecter les points suivants : \textbf{[TODO]}
 
 Quand le fichier de grammaire est écrit, il suffit de lancer le code suivant :
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=single]
     antlr4ts UON.g4 -no-listener -no-visitor -o generated -Xexact-output-dir
 \end{lstlisting}
 
@@ -480,9 +479,9 @@ Il contient tous les noeuds de la grammaires. Certains sont superflu pour en tir
 
 Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre plus simple.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=2cm]{assets/figures/tree.png}
+        \frame{\includegraphics[width=3cm]{assets/figures/tree.png}}
     \end{center}
     \caption[UON CST]{\label{uon-tree} UON CST}
 \end{figure}
@@ -497,7 +496,7 @@ Il y a 2 composantes principales.
     \item La thémisation (Theming) qui permet d'attribuer à un token une couleur et un style.
 \end{itemize}
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/basic-uon.png}
     \end{center}
@@ -519,7 +518,7 @@ TextMate fourni une liste de scope communs que de nombreux thèmes ciblent déj�
 Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
 Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/scope-inspector.png}
     \end{center}
@@ -537,7 +536,7 @@ Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/bl
 Mais peut être également généré depuis le contrôle panel.
 
 \subsection{Forcer le choix des couleurs}
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/manual-settings-color.png}
     \end{center}
@@ -552,7 +551,7 @@ Il est également possible de créer directement un fichier de thème.
 \textbf{Exemple simple}
 
 Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le mécanisme général utilisé dans notre fichier uontmLanguage.json :
-\begin{lstlisting}
+\begin{lstlisting}[frame=single]
  1  {  scopeName = 'source.untitled';
  2     patterns = (
  3        {  name = 'keyword.control.untitled';
@@ -589,18 +588,18 @@ Il s'agit donc d'obtenir des informations contextualisé afin fournir une colora
 
 Par exemple avec du code Typescript :
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/semantic-coloration-with.png}
-    \end{center}
-    \caption[Avec coloration sémantique ]{\label{semantic-coloration-with} Avec coloration sémantique }
-\end{figure}
-
-\begin{figure}[!ht]
-    \begin{center}
-        \includegraphics[width=10cm]{assets/figures/semantic-coloration-without.png}
+        \includegraphics[width=15cm]{assets/figures/semantic-coloration-without.png}
     \end{center}
     \caption[Sans coloration sémantique]{\label{semantic-coloration-without} Sans coloration sémantique}
+\end{figure}
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=15cm]{assets/figures/semantic-coloration-with.png}
+    \end{center}
+    \caption[Sans coloration sémantique ]{\label{semantic-coloration-with} Avec coloration sémantique }
 \end{figure}
 
 On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d'une fonction.
@@ -631,9 +630,9 @@ Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est s
 
 Ci-dessous Un ATN d'une séquence :
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/seq_ATN.png}
+        \includegraphics[width=12cm]{assets/figures/seq_ATN.png}
     \end{center}
     \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
 \end{figure}
@@ -643,7 +642,7 @@ Ainsi, nous pouvons revenir n'importe où dans le code, car la partie se trouvan
 De plus, actuellement, nous n'avons pas de suggestions qui dépendrais de ce qui se trouve après le curseur.
 Car par exemple dans l'exemple suivant pour du code SQL :
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=single]
 SELECT | FROM USER // ("|" étant le curseur)
 \end{lstlisting}
 
@@ -681,7 +680,7 @@ Il est possible d'ajouter des snippets sous Vscode. C'est-à-dire des templates 
 C'est utile si à un moment donné on a le choix entre plusieurs suggestions et que l'on veut tous les avoir d'un coup.
 Par exemple, on peut en UON, ajouter des attributs à un schéma :
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/snippet-suggestion.png}
     \end{center}
@@ -706,9 +705,9 @@ Grâce à la taille du tableau et en se basant sur les erreurs qui ont été gé
 \subsubsection{Index du candidat}
 L'indexation est gérée de 2 manières différentes. En fonction de la prise en compte de l'espace ou non.
 
-\begin{figure}[!ht]
+\begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/candidat-index.png}
+        \frame{\includegraphics[width=14cm]{assets/figures/candidat-index.png}}
     \end{center}
     \caption[Indexation des candidats]{\label{candidat-index} Indexation des candidats}
 \end{figure}
@@ -724,8 +723,8 @@ Les dévelopeurs de c3 recommandent de pas ignorer les espaces. Car cela permet 
 
 \section{Fonctionnalités triviales}
 Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
-
 Les suivantes ont été implémentées :
+
 \textbf{Comment}
 \begin{itemize}
     \item Il est possible de commenter du code sous forme de ligne.
@@ -742,6 +741,8 @@ Les suivantes ont été implémentées :
 \begin{itemize}
     \item Cacher un bloc de code sur une ligne en fonction de son niveau d'indentation.
 \end{itemize}
+
+\vspace{\parskip}
 
 Pour pouvoir les implémenter, il suffit d'éditer un fichier de configuration json (language-configuration.json) puis  éditer le fichier package.json afin qu'il référence ce fichier sous le point "contribution".
 
