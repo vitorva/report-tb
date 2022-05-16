@@ -13,6 +13,7 @@
 \usepackage{hyperref}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
+\usepackage{pdfpages}
 
 %\signature{mbernasconi.svg} TODO
 
@@ -131,7 +132,7 @@ Nous avons donc séléctionné les fonctionnalités attendues en choisissant cel
 
 \section{VScode}
 Visual Studio Code (ou VScode) est un éditeur de code qui est pensé pour être extensible (de L'UI à l'expérience utilisateur).
-Presque tout peut être customisé et amélioré à travers de \href{https://code.visualstudio.com/api/extension-capabilities/overview}{L'Extension API}.
+Presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
 
 L'Extension API nous permet donc de gérér un certain nombre de choses.
 On se focalisera sur le theming , les fonctionnalités de langages, la publication de l'extension et les tests.
@@ -143,9 +144,9 @@ Il s'agit donc évidemment de la source principale des explications données dan
 Il y a 3 concepts cruciaux à comprendre pour réaliser une extension.
 
 \begin{itemize}
-    \item \textbf{\href{https://code.visualstudio.com/api/references/activation-events}{Activation Events}}: Des événements à partir desquels l'extension devient active.
-    \item \textbf{\href{https://code.visualstudio.com/api/references/contribution-points}{Contribution Points}}: Des déclarations statiques qui sont faites dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes".
-    \item \textbf{\href{https://code.visualstudio.com/api/references/vscode-api}{VS Code API}}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code.
+    \item \textbf{Activation Events}: Des événements à partir desquels l'extension devient active \cite{activation-events}.
+    \item \textbf{Contribution Points}: Des déclarations statiques qui sont faites dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes" \cite{contribution-points}.
+    \item \textbf{VS Code API}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code \cite{vs-code-api}.
 \end{itemize}
 
 En général, l'extension est une combinaison de plusieurs Conntribution Point et de VS code API pour étendre les fonctionnalités de VSCode.
@@ -204,13 +205,13 @@ Il s'agit de fonctionnalité plus riche donc plus complexe à mettre en place (p
 Il y a 2 approches pour les implémenter que nous allons voir ci-dessous.
 
 \subsection{VsCode API (Direct implementation)}
-La première solution est d'utiliser l'api \href{https://code.visualstudio.com/api/references/vscode-api#languages}{vscode.languages.*} qui expose des interfaces
+La première solution est d'utiliser l'api vscode.languages.* \cite{vscode-api-languages} qui expose des interfaces
 permettant de réaliser directement les fonctionnalités.
 
 Elles vont nous permettre de nous inscrire à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
 
 \subsection{Langage server}
-La seconde solution est de fournir nous-mêmes ces méthodes en respectant \href{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/}{la spécifiation LSP} au travers d'un langage serveur.
+La seconde solution est de fournir nous-mêmes ces méthodes en respectant la spécifiation LSP \cite{lsp-specification} au travers d'un langage serveur.
 Les avantages souvent mentionnés ce cette approche et que le langage server peut être écrit avec le langage que l'on souhaite et
 que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ses fonctionnalités sans devoir les implémenter de nouveau.
 
@@ -276,8 +277,8 @@ Plein d'outils permettant la génération existent à partir d'une grammaire. J'
 
 \begin{itemize}
     \item C'est un outil populaire est encore utilisé.
-    \item Il est disponible directement en Typescript (\href{https://github.com/tunnelvisionlabs/antlr4ts}{antlr4ts}).
-    \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l'auto-complétion (\href{https://github.com/mike-lischke/antlr4-c3}{antlr4-c3})
+    \item Il est disponible directement en Typescript \cite{antlr4ts}.
+    \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l'auto-complétion \cite{antlr4-c3}.
     \item Quelques exemples existent d'implémentation.
     \item La génération est simple. Pour générer un parser (et d'autres fichiers utiles), il suffit d'écrire un fichier contenant une grammaire valide.
 \end{itemize}
@@ -365,7 +366,6 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 
 \section{Modification}
 \textbf{[TODO]}
-\cite{test}
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
@@ -504,7 +504,7 @@ Il y a 2 composantes principales.
 \end{figure}
 
 
-VS code utilise \href{https://macromates.com/manual/en/language_grammars}{Textmate grammars} comme le moteur de tokénisation de la syntaxe.
+VS code utilise Textmate grammars \cite{textmate-grammars} comme le moteur de tokénisation de la syntaxe.
 Cette grammaire a été inventé par l'éditeur TextMate est a été adopté par de nombreux éditeur et IDE.
 Elle contient une liste structurée d'expressions régulière qui permet d'associer un scope à un token.
 Nous définissons notre grammaire TextMate dans le fichier "uon.tmLanguage.json" qui  se trouve dans le dossier "syntax" à la racine du projet.
@@ -607,7 +607,7 @@ Cela est donc intéressant pour des langages plus complexes dans leur nature qu'
 Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
 
 \section{Auto-completion}
-Cette fonctionnalité fait parti de ce qu'on appelle plus communément \href{https://code.visualstudio.com/docs/editor/intellisense}{"IntelliSense"} qui un terme général désignant diverses fonctions d'édition de code.
+Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser directement un parser du langage.
 
@@ -749,19 +749,23 @@ Pour pouvoir les implémenter, il suffit d'éditer un fichier de configuration j
 \chapter{Intégration continue}
 
 \section{Autocomplétion}
-Applique la même méthodologie de antlr4-ts : \href{https://github.com/mike-lischke/antlr4-c3/tree/master/test}{https://github.com/mike-lischke/antlr4-c3/tree/master/test}
 \textbf{[TODO]}
 
 \section{Syntax highlight}
 \textbf{[TODO]}
 
 \section{Outline view}
-Teste que l'arbre syntaxique reçu est celui attendu pour un code.
 \textbf{[TODO]}
 
 \section{Information Hover}
-Tester que l'élément on Hover soit celui attendu
 \textbf{[TODO]}
+
+\chapter{Planning}
+\subsection{Diagramme de gantt}
+Voici le diagramme de Gantt pour ce projet.
+Ce diagramme sera pontentiellement mis à jour durant ce semestre du fait que certaines tâches ne sont pas connu à l'avance et pour réorganiser des taches si besoin.
+
+\includepdf[page=1]{assets/planning/gantt.pdf}
 
 \chapter{Conclusion}
 \textbf{[TODO]}
