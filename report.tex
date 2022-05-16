@@ -137,7 +137,7 @@ Presque tout peut être customisé et amélioré à travers de L'Extension API \
 L'Extension API nous permet donc de gérér un certain nombre de choses.
 On se focalisera sur le theming , les fonctionnalités de langages, la publication de l'extension et les tests.
 
-VScode fournit plein de documentations détaillées sur plein de sujets, guides, ainsi que des exemples de codes.
+VScode fournit des documentations détaillées sur plein de sujets, des guides, ainsi que des exemples de codes.
 Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cette éditeur.
 
 \subsection{Extension Anatomy}
@@ -167,15 +167,15 @@ Chaque extension doit contenir un fichier "package.json". En plus des champs pro
 \textbf{Extension Entry File} :
 Il s'agit du fichier prinicipal de l'extension (Extension.js).
 De base il contient 2 fonctions : "activate" et "deactivate".
-La fonction activate est executée à l'activation de notre extension par un Activation Event. On définira ici le code à exécuter.
+La fonction activate est executée à l'activation de notre extension par un Activation Event. On initialisera ici notre extension.
 La fonction deactivate est exécutée lorsque l'application devient inactive et sert principalement à nettoyer le code avant la désactivation de l'extension
 
-\textbf{Remarque} : Le niveau de customisation est assez élevé. La seule limitation souvent indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
+\textbf{Remarque} : Le niveau de customisation est assez élevé. La seule limitation indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
 
-Nous avons donc vu les briques de bases pour la conception d'une extension. Cette base est suffisante pour nous dans un premier temps.
-Comme ce rapport n'a pas pour vocation d'expliquer tout ce qu'il est possible de faire dans une extension. Si vous souhaitez vous renseigner d'avantages sur ce sujet, vous pouvez le faire \href{https://code.visualstudio.com/api}{ici}.
+Nous avons donc vu les briques de bases pour la conception d'une extension. Mais cette base est suffisante pour commencer à travailler.
 
-La même remarque concerne aussi les fonctionnalités générales de l'éditeur VScode. Pour plus de détail, consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
+Si vous souhaitez vous renseigner d'avantages sur l'élaboration d'une extension vous pouvez consulter la page \href{https://code.visualstudio.com/api}{suivante}.
+Concernant les fonctionnalitls générales de l'éditeur VScode vous pouvez consulter consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \subsection{Support de langage}
 VsCode fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
@@ -200,7 +200,7 @@ Il s'agit de fonctionnalités implémentées à l'aide de fichier de configurati
 Puis, elles doivent être enregistrées comme Contribute Point.
 
 \section{Programmatic language features}
-Il s'agit de fonctionnalité plus riche donc plus complexe à mettre en place (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
+Il s'agit de fonctionnalité plus riche et plus complexe à mettre en place (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
 Il y a 2 approches pour les implémenter que nous allons voir ci-dessous.
 
 \subsection{VsCode API (Direct implementation)}
@@ -218,12 +218,14 @@ Mais comme points négatifs cette approche est plus complexe à implémenter et 
 
 Pour être utilisé sur VSCode, un langage server à 2 partis :
 \begin{itemize}
-    \item \textbf{Un client} : C'est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode
-    \item \textbf{Langage server} : Un outil d'analyse linguistique fonctionnant dans un processus séparé lancé
+    \item \textbf{Un client} : C'est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode.
+    \item \textbf{Langage server} : Un outil d'analyse linguistique fonctionnant dans un processus séparé.
 \end{itemize}
 
+\vspace{\parskip}
+
 Le client et le serveur communiquent à l'aide du protocole LSP (pour "language server") dès que des informations riches devraient être fournies à l'éditeur.
-Le langage server devrait donc ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C'est-à-dire être capable d'analyser un AST et de fournir une réponse adéquate.
+Le langage server devrait ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C'est-à-dire être capable d'analyser un AST et de fournir une réponse adéquate.
 L'implémentation d'un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "Vscode-languageserver-node" implémenté en Typescript qui n'est pas exclusivement réservé à VsCode comme son nom pourrait l'indiquer.
 On remarque donc avec cette approche que 2 composantes existent (le client et le serveur).
 Un langage server peut être utilisé sur d'autre éditeur compatible. Mais le client devra être implémenté de nouveau.
@@ -244,7 +246,7 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des 2 mét
 Pour fournir des fonctionnalités de langue, une approche souvent mentionnée et l'utilisation d'un parser.
 Car les fonctionnalités se baseront sur L'AST qu'il générera.
 
-Cependant dans le cadre de son utilisation dans un éditeur/IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générer un AST (abstract syntax tree) qui à du sens depuis du code incomplet.
+Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générer un AST (abstract syntax tree) qui à du sens depuis du code incomplet.
 
 Il ne devrait pas s'arrêter dès la première erreur. Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect.
 Et les développeurs s'attendent tout de même à ce que la complétion automatique et d'autres fonctions de langue fonctionnent.
@@ -264,26 +266,26 @@ Si le temps le permet, toute la logique du code concernant les fonctionnalités 
 Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
 
 \begin{itemize}
-    \item \textbf{registerCompletionItemProvider} : Pour afficher des suggestions de complétions
-    \item \textbf{registerHoverProvider} : Pour gérer le hover
-    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View
+    \item \textbf{registerCompletionItemProvider} : Pour afficher des suggestions de complétions.
+    \item \textbf{registerHoverProvider} : Pour gérer le hover.
+    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View.
 \end{itemize}
 
 \subsection{ANTLR}
 \subsubsection{Parser}
 Étant donné que ce n'est pas le sujet de notre Travail de Bachelor, je vais m'aider d'outil existant pour extraire le plus possible de complexité concernant ce sujet.
-Plein d'outils permettant la génération existent à partir d'une grammaire. J'ai opté pour le générateur de parser d'ANTLR (ANother Tool for Language Recognition), car :
+Des outils permettant la génération d'un parser existent à partir d'une grammaire. J'ai opté pour le générateur d'ANTLR (ANother Tool for Language Recognition), car :
 
 \begin{itemize}
     \item C'est un outil populaire est encore utilisé.
     \item Il est disponible directement en Typescript \cite{antlr4ts}.
     \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l'auto-complétion \cite{antlr4-c3}.
     \item Quelques exemples existent d'implémentation.
-    \item La génération est simple. Pour générer un parser (et d'autres fichiers utiles), il suffit d'écrire un fichier contenant une grammaire valide.
+    \item La génération est simple.
 \end{itemize}
 
 \textbf{Remarque} :
-Comme mentionner au point \hyperref[grammar scope]{Scope de la grammaire}. Mon prédécesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
+Comme mentionner au plus loin au point \hyperref[grammar scope]{Scope de la grammaire}. Mon prédécesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
 L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant d'utiliser son parser.
 Et Antlr semble être un choix plus naturel dans notre environnement vscode.
 
@@ -297,7 +299,7 @@ Nous allons voir ci-dessous un aperçu général de ce langage.
 \subsection{Pourquoi ?}
 Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l'IoT (Internet of Things).
 Ces communications nécessitent souvent de communiquer entre de petits appareils dont la puissance de calcul est très limitée.
-La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adapté aux échanges à faible puissance est un très appréciable.
+La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adapté aux échanges à faible puissance est très appréciable.
 
 \subsection{Communication}
 Lorsque deux appareils veulent échanger des informations, ils disposent de deux canaux de communication :
@@ -305,6 +307,8 @@ Lorsque deux appareils veulent échanger des informations, ils disposent de deux
     \item Un canal de communication en ligne utilisé pour la transmission des données de contenu (payload). Les données peuvent être représentées sous forme humaine et binaire.
     \item Un canal de communication contractuel utilisé pour l'accord sur la description des données (schema).
 \end{itemize}
+
+\vspace{\parskip}
 
 Dans l'image suivante, on a à gauche deux dispositifs : un capteur de température à faible consommation
 et une puissante passerelle domotique. Pour réduire la taille du payload, les deux dispositifs peuvent convenir d'un schéma qui décrit le format des données.
@@ -324,10 +328,10 @@ UON est complètement conforme avec JSON et partiellement avec YAML.
 
 Il peut être décomposé au travers de 4 niveaux de complexités :
 \begin{itemize}
-    \item \textbf{UON:0} est entièrement compatible avec JSON en ce qui concerne le RFC8259
+    \item \textbf{UON:0} est entièrement compatible avec JSON en ce qui concerne le RFC8259.
     \item \textbf{UON:1} est partiellement conforme à YAML.
     \item \textbf{UON:2} fournit des propriétés de type, la coercition et les chaînes de caractères multilignes.
-    \item \textbf{UON:3} offre des types et des références riches
+    \item \textbf{UON:3} offre des types et des références riches.
 \end{itemize}
 
 \subsection{Types}
@@ -342,7 +346,6 @@ Chaque élément est composé d'un type. Et chacun de ces types peut avoir des p
 \subsection{Validation}
 Dans de telles communications, la validation des données transmises entre des machines dont la puissance de calcul est très limitée est un atout majeur.
 Une des propriétés uniques de UON est l'usage de schéma directement intégré dans le langage.
-Le rôle de ce schéma et que les machines se mettent d'accord entre elles sur le format des données à respecter, diminuant ainsi le payload total et s'assurant de la validité des données.
 
 \subsection{Liens}
 Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
@@ -417,7 +420,8 @@ Pour cela, il faut modifier l'activation events dans le fichier package.json par
 \subsection{Déploiement sur le Marketplace}
 
 \textbf{Prérequis} : Posséder un compte Azure.
-Il faut récupérer un Personal Access Token , pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
+
+Il faut d'abord récupérer un Personal Access Token. Pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
 Puis, créer un access token avec ces paramètres :
 \begin{figure}[!h]
     \begin{center}
@@ -428,16 +432,17 @@ Puis, créer un access token avec ces paramètres :
 
 Ce token va nous permettre publier notre extension sur un Publisher. Celui-ci nous permettra de gérer notre extension en ligne.
 
-Pour créer un publisher, il faut se connecter avec le même compte qui a créé l'organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}
-Il faut ensuite ajouter la propriété "publisher" et saisir l'id de celui-ci dans le package.json.
+Pour créer un publisher, il faut se connecter avec le même compte qui a créé l'organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}.
 
-Pour finalement il suffit dans un terminal les commandes suivantes :
+Quand cela est fait, il faut ensuite ajouter la propriété "publisher" et saisir l'id de celui-ci dans le package.json de notre extension.
+
+Puis finalement, il suffit dans un terminal les commandes suivantes :
 \begin{lstlisting}[frame=single]
     vsce login [le nom du publisher]
     Vsce publish
 \end{lstlisting}
 
-\textbf{Remarque} : Attention au terminal utilisé. Le terminal de node (git.bash) ne propose pas toujours les options de sélections à l'utilisateur. Dans mon cas il était impossible de saisir le PAT et donc une erreur est affichée.
+\textbf{Remarque} : Attention au terminal utilisé. Le terminal de node (git.bash) ne propose pas toujours les options de sélections à l'utilisateur. Dans mon cas il était impossible de saisir le PAT et donc une erreur était affichée.
 
 \begin{figure}[!h]
     \begin{center}
@@ -446,7 +451,7 @@ Pour finalement il suffit dans un terminal les commandes suivantes :
     \caption[Interface web pour manager l'extension]{\label{manage-publisher} Interface web pour manager l'extension}
 \end{figure}
 
-Il est ensuite facile en suite de manager l'extension au travers de la page web.
+Il est ensuite facile de manager l'extension au travers de la page web.
 L'extension apparaitra automatiquement dans le marketplace si elle est publiée.
 
 
@@ -462,7 +467,7 @@ Quand le fichier de grammaire est écrit, il suffit de lancer le code suivant :
     antlr4ts UON.g4 -no-listener -no-visitor -o generated -Xexact-output-dir
 \end{lstlisting}
 
-Il nous génère les fichiers suivants :
+Il nous génère ces fichiers :
 \begin{itemize}
     \item UON.interp
     \item UON.tokens
@@ -473,7 +478,7 @@ Il nous génère les fichiers suivants :
 \end{itemize}
 
 \subsection{Arbre (CST)}
-Antlr va générer un arbre parsé. Plus précisément un CST (concrete syntax tree)
+Antlr va générer un arbre parsé. Plus précisément un CST (concrete syntax tree).
 Il contient tous les noeuds de la grammaire. Certains sont superflus pour en tirer un sens.
 
 Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre plus simple.
@@ -513,7 +518,7 @@ Le but de ce fichier en plus de permettre la coloration syntaxique, et qu'il per
 
 \subsection{Scope}
 Un scope défini le contexte du token et peut-être considéré comme son type.
-TextMate fournit une liste de scope commun que de nombreux thèmes ciblent déjà et recommande de les utiliser. Ceci dans le but de permettre à notre langage d'être supporté le plus possible partout.
+TextMate fournit une liste de scope commun que de nombreux thèmes ciblent déjà et recommande de les utiliser. Ceci dans le but de permettre à notre langage d'être supporté le plus possible.
 Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
 Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
 
@@ -525,7 +530,8 @@ Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visual
 \end{figure}
 
 La section "textmate scopes" montre la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
-Cette fonctionnalité n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par un langage serveur ou depuis l'api de Vscode. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
+
+La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par la spécification LSP et donc l'api de Vscode non plus. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
 
 \subsection{Stratégie concernant les noms}
 Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut). Et de réutiliser les scopes.
@@ -542,13 +548,13 @@ Mais peut être également généré depuis le contrôle panel.
 \end{figure}
 
 On peut manuellement définir une couleur à un scope dans le fichier package.json.
-Cela peut -être intéressant si aucun thème n'est associé de base à un scope.
+Cela peut-être intéressant si aucun thème n'est associé de base à un scope.
 Il est également possible de créer directement un fichier de thème.
 
 \subsection{Fonctionnement}
 \textbf{Exemple simple}
 
-Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le mécanisme général utilisé dans notre fichier uontmLanguage.json :
+Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le mécanisme général utilisé dans notre fichier "uon.tmLanguage.json" :
 \begin{lstlisting}[frame=single, caption={Textmate grammar},label={Textmate grammar}]
  1  {  scopeName = 'source.untitled';
  2     patterns = (
@@ -567,11 +573,13 @@ Voici ci-dessous un exemple relativement simple, mais permettant de comprendre l
 14     );
 15  }
 \end{lstlisting}
-
 \textbf{"scopeName"} (ligne 1) : Identifiant unique
+
 \textbf{"patterns"} (ligne 2) : C'est un tableau contenant les règles actuelles utilisé pour parser le document. Elles sont appliquées dans l'ordre.
 Ces règles peuvent être directement écrites à cet emplacement, mais il est aussi possible de les définir dans le "repository". Puis de les inclure.
+
 \textbf{"repository"} : Un dictionnaire (clé-valeur) de règles.
+
 \textbf{"name"} : Nom du scope.
 
 Contrairement à la première règle qui ne faisait qu'un match, la deuxième définit un début et une fin sur laquelle seront appliquées les règles se trouvant dans le "patterns" suivant (à la ligne 12) . On voit qu'il est donc possible d'imbriquer les règles.
@@ -644,8 +652,9 @@ Car par exemple dans l'exemple suivant pour du code SQL :
 SELECT | FROM USER // ("|" étant le curseur)
 \end{lstlisting}
 
-Dans ce scénario des suggestions liées à la table USER devrait être proposé et donc un traitement particulier devrait être fait.
-La seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
+Dans ce scénario des suggestions liées à la table USER devrait être proposé et nécessiterait un traitement particulier.
+
+Pour nous, la seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
 
 \subsection{Tolérance}
 Il semble normal que la complétion n'ait pas lieu si le code saisie est gravement erroné.
@@ -662,15 +671,15 @@ Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On pe
 
 \subsection{Mécanisme automatique}
 VsCode va automatiquement filtrer les suggestions pendant la saisie.
-Par défaut il propose également des symboles déjà existants dans le code dans ses suggestions.
+Par défaut il propose également des symboles déjà existants dans le code.
 
 \subsection{Gestion des erreurs}\label{error handle}
 On peut ajouter au parser un "ErrorListener".
 Par défaut c'est la stratégie de la classe se trouvant dans le fichier \href{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}{suivant} qui est appliquée.
 
 Mais on peut l'étendre pour redéfinir les fonctions.
-Car normalement en cas d'erreur, le parser va essayé de continuer le parsing jusqu'à trouver un token valide.
-Cependant comme il se peut qu'il n'y ait rien après. C'est presque tout le temps le cas lorsqu'on est en train d'écrire.
+Car normalement en cas d'erreur, le parser va essayé de continuer l'analyse syntaxique jusqu'à trouver un token valide.
+Cependant il se peut qu'il n'y ait rien après. C'est presque tout le temps le cas lorsqu'on est en train d'écrire.
 On va donc juste s'arrêter.
 
 \subsection{Snippets}
@@ -689,7 +698,7 @@ Cependant toute la difficulté et de proposer ces suggestions au bon moment, car
 
 \subsection{Triggers}
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space".
-On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s'agit seulement d'une appréciation personnelle.
+On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s'agit que d'une appréciation personnelle.
 
 \subsection{Candidats}\label{candidates}
 
@@ -739,10 +748,6 @@ Les suivantes ont été implémentées :
 \begin{itemize}
     \item Cacher un bloc de code sur une ligne en fonction de son niveau d'indentation.
 \end{itemize}
-
-\vspace{\parskip}
-
-Pour pouvoir les implémenter, il suffit d'éditer un fichier de configuration json (language-configuration.json) puis  éditer le fichier package.json afin qu'il référence ce fichier sous le point "contribution".
 
 \chapter{Intégration continue}
 
