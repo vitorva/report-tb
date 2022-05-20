@@ -368,6 +368,8 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 
 \section{Modification}
 \textbf{[TODO]}
+J'ai repris la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple
+
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
@@ -584,6 +586,16 @@ Ces règles peuvent être directement écrites à cet emplacement, mais il est a
 
 Contrairement à la première règle qui ne faisait qu'un match, la deuxième définit un début et une fin sur laquelle seront appliquées les règles se trouvant dans le "patterns" suivant (à la ligne 12) . On voit qu'il est donc possible d'imbriquer les règles.
 
+Capture : \textbf{TODO} : expliquer fonctionnement capture -> exemple "float 12 C"
+
+Expliquer que c'est bien quand limitation clair genre {} (format json)
+
+mais format yaml + compliqué car sur plusieurs ligne / espaces (donc juste "une ligne")
++ avoir les scalaires à la racines
+
+arbitraire, essayer de reste cohérenet + concis
+Stratégie nom... à améliorer
+
 \subsection{Semantic Highlight}
 
 Un point important et qu'il ne faut pas confondre la coloration syntaxique avec ce que l'on nomme la coloration sémantique. Car il s'agit d'une couche que l'éditeur rajoute sur la précédente pour l'améliorer si nécessaire.
@@ -636,7 +648,7 @@ Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est s
 
 Ci-dessous Un ATN d'une séquence :
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
     \begin{center}
         \includegraphics[width=12cm]{assets/figures/seq_ATN.png}
     \end{center}
@@ -697,8 +709,13 @@ Par exemple, on peut en UON, ajouter des attributs à un schéma :
 Cependant toute la difficulté et de proposer ces suggestions au bon moment, car ne faisant pas partie du moteur de complétions d'antlr. Une idée et de se baser sur le dernier token reconnu. On pourrait ici savoir qu'il est le moment d'ajouter ce snippet, si le dernier token est de type "!schema".
 
 \subsection{Triggers}
-L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space".
+L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space" (par défaut).
 On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s'agit que d'une appréciation personnelle.
+
+\textbf{TODO} : 
+quand un espace précède un nouveau mot alors c'est simple pour le placer
+quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car vscode peut trigger l'autocomplete n'importe quand et du coup
+avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
 
 \subsection{Candidats}\label{candidates}
 
