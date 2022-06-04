@@ -136,10 +136,12 @@ Nous avons donc séléctionné les fonctionnalités attendues en choisissant cel
 \chapter{Pré-étude}
 
 \textbf{[TODO]}
-
 pourquoi VS Code est pas un autre éditeur ??
-Présenter les éditeur de code
-c'est quoi un éditeur de code / rapport avec un Ide...?
+Présenter les autres éditeur de code (atom...)
+C'était l'éditeur proposé mais pas que...
+Popularité, usage personnelle...
+c'est quoi un éditeur de code / rapport avec un Ide / Les difflérences que l'on pourrait avoir
+Que propose les concurents ?
 
 \section{VS Code}
 \textbf{[TODO]}
@@ -751,10 +753,13 @@ Cependant toute la difficulté et de proposer ces suggestions au bon moment, car
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space" (par défaut).
 On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s'agit que d'une appréciation personnelle.
 
-\textbf{TODO} : 
+\textbf{TODO} :
+No suggestion :
 quand un espace précède un nouveau mot alors c'est simple pour le placer
 quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car VS Code peut trigger l'autocomplete n'importe quand et du coup
 avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
+
+
 
 \subsection{Candidats}\label{candidates}
 
@@ -780,9 +785,40 @@ Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela per
 
 \section{Document outlining}
 \textbf{[TODO]}
+Parler des 2 patterns listener et visitor
+pourquoi avoir choisi le pattern visiteurs.
+
+Expliquer qu'on gènère finalement pas un AST mais qu'on créer la arbe de symbole de manière récusrive lors du parcours
+Pas de AST car antlr génère un parsed tree qui est un arbre qui contient tout.
+
+Figure
+
+Expliquer la stratégie pour récupérer la position d'un terminal
+
+Mentionner qu'on peut avoir 5 structures (json map, json seq, yaml map, yaml seq et schema)
+
+Quels sont les difficulté :
+- recursion
+- bien construire un noeud (gérer tous les cas particulier)
+- visiteur de type any -> expliquer pourquoi j'ai fait ça : pour traiter les terminaux + les strucures...
+
+
+parler de ce qu'attend le provider (hierchical ou non, voir lsp spec)
+
 
 \section{Info on Hover}
 \textbf{[TODO]}
+Fichier json clé-valeur....
+Intégration d'un module avec require
+utilité du dossier out
+
+\section{Lint}
+
+Proposition de correction à l'aide de antlr qui nous fourni la position dans le document
+Regarder pourquoi ici on la ligne + colonne et pourquoi on pouvait pas l'avoir dans la outline view
+
+On utilise également une fonction et non pas un provider pour afficher les erreurs
+
 
 \section{Fonctionnalités triviales}
 Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
@@ -805,6 +841,10 @@ Les suivantes ont été implémentées :
     \item Cacher un bloc de code sur une ligne en fonction de son niveau d'indentation.
 \end{itemize}
 
+\chapter{Couplage de fonctionnalité - logique}
+Info on hover - autocompletion
+lint - code outline
+
 \chapter{Intégration continue}
 
 https://code.visualstudio.com/api/working-with-extensions/testing-extension
@@ -819,17 +859,46 @@ Runs the Mocha tests specified by the extension test runner script.
 use mocha api...
 https://mochajs.org/api/
 
+
+Expliquer les différents types de tests automatisés (unitaire, intégrations, de bout en bout)
+
+focalisation sur les tests unitaires ?
+
+Ce qu'on veut tester et pourquoi...
+
+Penser au futur...extensibilité
+
+Est-ce que tout est testable ?
+
+
 \section{Autocomplétion}
 \textbf{[TODO]}
+example c3, on peut tester qu'un token attendu soit le bon à un emplacement
+Revoir c3 pour autres types de test
 
 \section{Syntax highlight}
 \textbf{[TODO]}
+Est-il possible de faire appel au scope inspector dans visual studio ? pourquoi faire (je crois pas) ? -> tester qu'un token soit bien dans son scope
+Regarder ça : https://github.com/PanAeon/vscode-tmgrammar-test
+tester les expressions régulières ?
+
 
 \section{Outline view}
 \textbf{[TODO]}
+Comment tester la outline view ? car le code final est fortement couplé avec la logique ?
+Comment savoir que le code outline est le bon....
+Tester les tailles selon différent scénario
+tester le noeud parent etc...
+
 
 \section{Information Hover}
 \textbf{[TODO]}
+Trivial ?
+
+\section{Lint}
+\textbf{[TODO]}
+Compter le nombre d'erreur et localiser leur emplacement
+
 
 \chapter{Planning}
 
@@ -843,6 +912,8 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 
 \chapter{Conclusion}
 \textbf{[TODO]}
+
+
 
 %% \vfil
 %% \hspace{8cm}\makeatletter\@author\makeatother\par
