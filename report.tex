@@ -15,7 +15,8 @@
 \usepackage{lastpage}
 \usepackage{pdfpages}
 
-%\signature{mbernasconi.svg} TODO
+%\signature{mbernasconi.svg} TODO : Gérer la taille
+\signature{va_signature.png}
 
 \makenomenclature
 \makenoidxglossaries
@@ -85,8 +86,12 @@
 %% Contenu
 \mainmatter
 \chapter{Introduction}
-Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VsCode. Ce projet se veut expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisies sont libres tant qu'elles respectent le cahier des charges.
-Dans les chapitres suivants, nous allons voir ce qui est fourni par VsCode pour élaborer et déployer une extension.
+
+\textbf{[TODO]}
+\textbf{Il manque une partie "Contexte" qui explique comment s'insère ce travail de Bachelor. C'est quoi UON est-ce que quelqu'un a déjà travaillé dessus, ce qu'il a fait, ce qu'il reste à faire.}
+
+Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VS Code. Ce projet se veut expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisies sont libres tant qu'elles respectent le cahier des charges.
+Dans les chapitres suivants, nous allons voir ce qui est fourni par VS Code pour élaborer et déployer une extension.
 Les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
 Les aspects du langage UON à considérer dans le cadre de ce projet.
 Et présenterons en détail l'implémentation d'une extension ainsi que ses fonctionnalités. Puis détaillerons les tests effectués.
@@ -100,7 +105,7 @@ Voici ci-dessous un résumé du cahier des charges :
 \begin{itemize}
     \item Code source publié sur Github
     \item Fournir une intégration continue
-    \item Déployer l'extension sur le marketplace
+    \item Déployer l'extension sur \href{https://marketplace.visualstudio.com/}{le marketplace} de Visual Studio
 \end{itemize}
 
 \textbf{Fonctionnalités à implémenter}
@@ -120,25 +125,38 @@ Voici ci-dessous un résumé du cahier des charges :
 
 \vspace{\parskip}
 
-Ce projet se focalise uniquement sur l'éditeur de code VScode.
+Ce projet se focalise uniquement sur l'éditeur de code Visual Studio Code.
 
 Une extension peut être écrite en Typescript ou en Javascript.
-Nous choisirons le Typescript car Vscode recommande ce langage.
+Nous choisirons le Typescript car VS Code recommande ce langage.
 
 Concernant les fonctionnalités à implémenter. Il n'y avait pas de contraintes de choix.
 Nous avons donc séléctionné les fonctionnalités attendues en choisissant celles paraissant utiles à avoir dans un premier temps et en prenant en considération la contrainte de temps.
 
 \chapter{Pré-étude}
 
-\section{VScode}
-Visual Studio Code (ou VScode) est un éditeur de code qui est pensé pour être extensible (de L'UI à l'expérience utilisateur).
+\textbf{[TODO]}
+
+pourquoi VS Code est pas un autre éditeur ??
+Présenter les éditeur de code
+c'est quoi un éditeur de code / rapport avec un Ide...?
+
+\section{VS Code}
+\textbf{[TODO]}
+\textbf{Peut être élaborer un peu plus : c'est quoi VS Code, pourquoi a-t-il été choisi ? Est-il populaire ? En quel langage a-t-il été écrit. Est-il entièrement open-source, est-ce qu'une extension peut être complètement indépendante de la base de code...
+    Pour le rapport final j'attends plus de détails}
+
+
+Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit qui est pensé pour être extensible (de L'UI à l'expérience utilisateur).
 Presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
 
 L'Extension API nous permet donc de gérér un certain nombre de choses.
-On se focalisera sur le theming , les fonctionnalités de langages, la publication de l'extension et les tests.
+On se focalisera sur le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
 
-VScode fournit des documentations détaillées sur plein de sujets, des guides, ainsi que des exemples de codes.
+VS Code fournit des documentations détaillées sur plein de sujets, des guides, ainsi que des exemples de codes.
 Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cette éditeur.
+
+//TODO : code sample https://github.com/microsoft/VS Code-extension-samples
 
 \subsection{Extension Anatomy}
 Il y a 3 concepts cruciaux à comprendre pour réaliser une extension.
@@ -149,9 +167,12 @@ Il y a 3 concepts cruciaux à comprendre pour réaliser une extension.
     \item \textbf{VS Code API}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code \cite{vs-code-api}.
 \end{itemize}
 
-En général, l'extension est une combinaison de plusieurs Conntribution Point et de VS code API pour étendre les fonctionnalités de VSCode.
+En général, l'extension est une combinaison de plusieurs Conntribution Point et de VS code API pour étendre les fonctionnalités de VS Code.
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
+
+\textbf{TODO : faire figurer un extrait de code / ou faire référence à la figure au lieu de "la suivante" }
+
 La structure d'une extension est la suivante :
 
 \begin{figure}[!h]
@@ -162,80 +183,81 @@ La structure d'une extension est la suivante :
 \end{figure}
 
 \textbf{Extension Manifest} :
-Chaque extension doit contenir un fichier "package.json". En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à Vscode.
+chaque extension doit contenir un fichier "package.json". En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à VS Code.
 
 \textbf{Extension Entry File} :
-Il s'agit du fichier prinicipal de l'extension (Extension.js).
-De base il contient 2 fonctions : "activate" et "deactivate".
+il s'agit du fichier prinicipal de l'extension (Extension.js).
+De base il contient 2 fonctions : \emph{activate} et \emph{deactivate}.
 La fonction activate est executée à l'activation de notre extension par un Activation Event. On initialisera ici notre extension.
-La fonction deactivate est exécutée lorsque l'application devient inactive et sert principalement à nettoyer le code avant la désactivation de l'extension
+La fonction \emph{deactivate} est exécutée lorsque l'application devient inactive et sert principalement à nettoyer le code avant la désactivation de l'extension
 
-\textbf{Remarque} : Le niveau de customisation est assez élevé. La seule limitation indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
+\textbf{Remarque} : le niveau de customisation est assez élevé. La seule limitation indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
 
 Nous avons donc vu les briques de bases pour la conception d'une extension. Mais cette base est suffisante pour commencer à travailler.
 
 Si vous souhaitez vous renseigner d'avantages sur l'élaboration d'une extension vous pouvez consulter la page \href{https://code.visualstudio.com/api}{suivante}.
-Concernant les fonctionnalitls générales de l'éditeur VScode vous pouvez consulter consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
+Concernant les fonctionnalitls générales de l'éditeur VS Code vous pouvez consulter consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \subsection{Support de langage}
-VsCode fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories :
+VS Code fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories détaillées
+dans dans les sections \hyperref[Declarative language features][Declarative language features] et \hyperref[Programmatic language features][Programmatic language features] ci-dessous.
 
-\section{Declarative language features}
+\section{Declarative language features}\label{Declarative language features}
 Elles ajoutent un support d'édition de texte de base pour un langage de programmation.
 Par exemple, les éléments suivants :
 
 \begin{itemize}
-    \item Syntax highlighting
-    \item Snippet completion
-    \item Bracket matching
-    \item Bracket autoclosing
-    \item Bracket autosurrounding
-    \item Comment toggling
-    \item Auto indentation
-    \item Folding (by markers)
+    \item syntax highlighting
+    \item snippet completion
+    \item bracket matching
+    \item bracket autoclosing
+    \item bracket autosurrounding
+    \item comment toggling
+    \item auto indentation
+    \item folding (by markers)
 \end{itemize}
 
 Il s'agit de fonctionnalités implémentées à l'aide de fichier de configuration.
 
-Puis, elles doivent être enregistrées comme Contribute Point.
+Puis, elles doivent être enregistrées comme \emph{Contribute Point}.
 
-\section{Programmatic language features}
+\section{Programmatic language features}\label{Programmatic language features}
 Il s'agit de fonctionnalité plus riche et plus complexe à mettre en place (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
 Il y a 2 approches pour les implémenter que nous allons voir ci-dessous.
 
-\subsection{VsCode API (Direct implementation)}
-La première solution est d'utiliser l'api vscode.languages.* \cite{vscode-api-languages} qui expose des interfaces
+\subsection{VS Code API (Direct implementation)}
+La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'api vscode.languages.*} qui expose des interfaces
 permettant de réaliser directement les fonctionnalités.
 
 Elles vont nous permettre de nous inscrire à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
 
 \subsection{Langage server}
 La seconde solution est de fournir nous-mêmes ces méthodes en respectant la spécifiation LSP \cite{lsp-specification} au travers d'un langage serveur.
-Les avantages souvent mentionnés ce cette approche et que le langage server peut être écrit avec le langage que l'on souhaite et
-que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ses fonctionnalités sans devoir les implémenter de nouveau.
+Les avantages souvent mentionnés ce cette approche sont que le langage server peut être écrit avec le langage que l'on souhaite et
+que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ces fonctionnalités sans devoir les implémenter de nouveau.
 
 Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n'est pas un choix primordial.
 
-Pour être utilisé sur VSCode, un langage server à 2 partis :
+Pour être utilisé sur VS Code, un langage server à 2 parties :
 \begin{itemize}
-    \item \textbf{Un client} : C'est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VScode.
-    \item \textbf{Langage server} : Un outil d'analyse linguistique fonctionnant dans un processus séparé.
+    \item \textbf{Un client} : c'est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VS Code.
+    \item \textbf{Langage server} : un outil d'analyse linguistique fonctionnant dans un processus séparé.
 \end{itemize}
 
 \vspace{\parskip}
 
 Le client et le serveur communiquent à l'aide du protocole LSP (pour "language server") dès que des informations riches devraient être fournies à l'éditeur.
 Le langage server devrait ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C'est-à-dire être capable d'analyser un AST et de fournir une réponse adéquate.
-L'implémentation d'un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "Vscode-languageserver-node" implémenté en Typescript qui n'est pas exclusivement réservé à VsCode comme son nom pourrait l'indiquer.
+L'implémentation d'un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "VS Code-languageserver-node" implémenté en Typescript qui n'est pas exclusivement réservé à VS Code comme son nom pourrait l'indiquer.
 On remarque donc avec cette approche que 2 composantes existent (le client et le serveur).
 Un langage server peut être utilisé sur d'autre éditeur compatible. Mais le client devra être implémenté de nouveau.
 
 \subsection{API vs LSP}\label{api vs lsp}
 
-Ce schéma ci-dessus montre la correspondance des méthodes entre la première et seconde approche.
+Le schéma suivant \ref{api vs lsp} montre la correspondance des méthodes entre la première et seconde approche.
 Cette liste est non exhaustive, mais permet de montrer l'équivalence des 2 méthodes.
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
     \begin{center}
         \frame{\includegraphics[width=8cm]{assets/figures/api-vscode.png}}
     \end{center}
@@ -243,13 +265,13 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des 2 mét
 \end{figure}
 
 \subsection{Parser}
-Pour fournir des fonctionnalités de langue, une approche souvent mentionnée et l'utilisation d'un parser.
-Car les fonctionnalités se baseront sur L'AST qu'il générera.
+Pour fournir des fonctionnalités de langue, une approche souvent mentionnée est l'utilisation d'un parser
+car les fonctionnalités se baseront sur l'AST qu'il générera.
 
-Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générer un AST (abstract syntax tree) qui à du sens depuis du code incomplet.
-
-Il ne devrait pas s'arrêter dès la première erreur. Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect.
-Et les développeurs s'attendent tout de même à ce que la complétion automatique et d'autres fonctions de langue fonctionnent.
+\textbf{TODO : être plus clair}
+Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générer un AST (abstract syntax tree) qui à du sens depuis du code incomplet
+car il ne devrait pas s'arrêter dès la première erreur.
+La plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect, et les développeurs s'attendent tout de même à ce que la complétion automatique et d'autres fonctions de langue fonctionnent.
 
 \subsection{Grammaire}
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
@@ -257,10 +279,10 @@ Pour faciliter l'étape de l'analyse syntaxique ("Parsing"), cette grammaire pou
 Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
 
 \section{Choix technologiques}
-Nous allons mentionner les technologies et approches choisies et expliquer la raison.
+Nous allons mentionner les technologies et approches choisies et expliquer les raisons.
 
 \subsection{Direct implementation}
-L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VsCode sera choisi.
+L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VS Code sera choisi.
 Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server.
 
 Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
@@ -272,9 +294,19 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 \end{itemize}
 
 \subsection{ANTLR}
+
+\textbf{[TODO] : Détailler en détail l'histoire d'antlr...etc...
+    A l'origine en java, une implémentation en typescript existent
+    Pourquoi prévilégier celui-ci et pas un autre
+    Liste des parseur de générateur existant
+}
+
+
 \subsubsection{Parser}
-Étant donné que ce n'est pas le sujet de notre Travail de Bachelor, je vais m'aider d'outil existant pour extraire le plus possible de complexité concernant ce sujet.
-Des outils permettant la génération d'un parser existent à partir d'une grammaire. J'ai opté pour le générateur d'ANTLR (ANother Tool for Language Recognition), car :
+Étant donné que ce n'est pas le sujet de ce Travail de Bachelor, il a été choisi d'utiliser un générateur de parser pour en extraire le plus possible de complexité sur son implémentation.
+
+Des outils permettant la génération d'un parser existent à partir d'une grammaire.
+J'ai opté pour le générateur d'ANTLR (ANother Tool for Language Recognition), car :
 
 \begin{itemize}
     \item C'est un outil populaire est encore utilisé.
@@ -285,9 +317,10 @@ Des outils permettant la génération d'un parser existent à partir d'une gramm
 \end{itemize}
 
 \textbf{Remarque} :
-Comme mentionner au plus loin au point \hyperref[grammar scope]{Scope de la grammaire}. Mon prédécesseur avait utilisé Lark pour écrire sa grammaire et générer son Parser pour son travail.
-L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant d'utiliser son parser.
-Et Antlr semble être un choix plus naturel dans notre environnement vscode.
+Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une spécifiation Lark.
+L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
+Et Antlr semble être un choix plus naturel dans notre environnement VS Code.
+\textbf{TODO : Founir une meilleur explication}
 
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML.
@@ -300,6 +333,7 @@ Nous allons voir ci-dessous un aperçu général de ce langage.
 Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l'IoT (Internet of Things).
 Ces communications nécessitent souvent de communiquer entre de petits appareils dont la puissance de calcul est très limitée.
 La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adapté aux échanges à faible puissance est très appréciable.
+Parce que \textbf{TODO....}
 
 \subsection{Communication}
 Lorsque deux appareils veulent échanger des informations, ils disposent de deux canaux de communication :
@@ -310,7 +344,7 @@ Lorsque deux appareils veulent échanger des informations, ils disposent de deux
 
 \vspace{\parskip}
 
-Dans l'image suivante, on a à gauche deux dispositifs : un capteur de température à faible consommation
+À la figure \ref*{data-exchange}, on a à gauche deux dispositifs : un capteur de température à faible consommation
 et une puissante passerelle domotique. Pour réduire la taille du payload, les deux dispositifs peuvent convenir d'un schéma qui décrit le format des données.
 
 \begin{figure}[!h]
@@ -320,8 +354,8 @@ et une puissante passerelle domotique. Pour réduire la taille du payload, les d
     \caption[UON data exchange]{\label{data-exchange}UON data exchange}
 \end{figure}
 
-À droite on affine le schéma. Pour réduire d'avantages les données transmises.
-Par exemple en disant que la température exprimée avec un nombre et maintenant une valeur non signée de huit bits exprimée en degrés Celsius.
+À droite on affine le schéma. Pour réduire davantage les données transmises.
+Par exemple, en disant que la température exprimée avec un nombre est maintenant une valeur non signée de huit bits exprimée en degrés Celsius.
 
 \subsection{Design}
 UON est complètement conforme avec JSON et partiellement avec YAML.
@@ -376,6 +410,7 @@ Dans ce chapitre, nous allons explorer les aspects techniques concernant l'impl�
 Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
 
 \section{Code}
+\textbf{TODO : Mettre à jour le readme}
 Le code de l'implémentation est disponible sur le dépôt public \href{https://github.com/vitorva/vscode-uon}{suivant}.
 
 \textbf{Remarque} : L'implémentation détaillée dans ce rapport pourrait ne plus représenter l'état du dépôt, car ce projet est sujet à évoluer.
@@ -384,7 +419,11 @@ Le code de l'implémentation est disponible sur le dépôt public \href{https://
 Nous allons voir maintenant, la procédure pour créer et publier son extension.
 
 \subsection{Génération de l'extension}
-VsCode permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
+\textbf{TODO : Expliquer qu'est-ce que Yeoman}
+
+VS Code permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
+
+\textbf{TODO :  Yeoman Generator to scaffold an extension}
 
 \begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
 npm install -g yo generator-code
@@ -411,7 +450,7 @@ Cela nous créera l'arborescence mentionnée précédemment au point \hyperref[E
 On peut lancer une nouvelle fenêtre (f5) qui va contenir notre extension.
 
 Par défaut, l'application générée vient avec du code permettant d'afficher un message de bienvenu. On l'affiche au travers du command pannel (CTRL + SHIFT + P). On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
-On constate donc que l'on peut lancer notre application au travers d'une commande, mais pour notre cas il sera plus intéressant que vscode nous propose les fonctionnalités à l'ouverture d'un fichier uon.
+On constate donc que l'on peut lancer notre application au travers d'une commande, mais pour notre cas il sera plus intéressant que VS Code nous propose les fonctionnalités à l'ouverture d'un fichier uon.
 Pour cela, il faut modifier l'activation events dans le fichier package.json par :
 \begin{lstlisting}[frame=single]
     "activateEvents" : [
@@ -533,7 +572,7 @@ Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visual
 
 La section "textmate scopes" montre la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
 
-La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par la spécification LSP et donc l'api de Vscode non plus. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
+La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par la spécification LSP et donc l'api de VS Code non plus. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
 
 \subsection{Stratégie concernant les noms}
 Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut). Et de réutiliser les scopes.
@@ -682,7 +721,7 @@ Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le proces
 Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On peut s'aider en parallèle de la coloration syntaxique.
 
 \subsection{Mécanisme automatique}
-VsCode va automatiquement filtrer les suggestions pendant la saisie.
+VS Code va automatiquement filtrer les suggestions pendant la saisie.
 Par défaut il propose également des symboles déjà existants dans le code.
 
 \subsection{Gestion des erreurs}\label{error handle}
@@ -695,7 +734,7 @@ Cependant il se peut qu'il n'y ait rien après. C'est presque tout le temps le c
 On va donc juste s'arrêter.
 
 \subsection{Snippets}
-Il est possible d'ajouter des snippets sous Vscode. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
+Il est possible d'ajouter des snippets sous VS Code. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
 C'est utile si à un moment donné on a le choix entre plusieurs suggestions et que l'on veut tous les avoir d'un coup.
 Par exemple, on peut en UON, ajouter des attributs à un schéma :
 
@@ -714,7 +753,7 @@ On peut aussi ajouter au provider des symboles qui vont trigger son activation. 
 
 \textbf{TODO} : 
 quand un espace précède un nouveau mot alors c'est simple pour le placer
-quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car vscode peut trigger l'autocomplete n'importe quand et du coup
+quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car VS Code peut trigger l'autocomplete n'importe quand et du coup
 avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
 
 \subsection{Candidats}\label{candidates}
@@ -768,6 +807,18 @@ Les suivantes ont été implémentées :
 
 \chapter{Intégration continue}
 
+https://code.visualstudio.com/api/working-with-extensions/testing-extension
+
+If you are using the Yeoman Generator to scaffold an extension, integration tests are already created for you....
+
+In the generated extension, you can use npm run test or yarn test to run the integration tests that:
+
+Downloads and unzips latest version of VS Code.
+Runs the Mocha tests specified by the extension test runner script.
+
+use mocha api...
+https://mochajs.org/api/
+
 \section{Autocomplétion}
 \textbf{[TODO]}
 
@@ -781,6 +832,9 @@ Les suivantes ont été implémentées :
 \textbf{[TODO]}
 
 \chapter{Planning}
+
+\textbf{Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ? }
+
 \subsection{Diagramme de gantt}
 Voici le diagramme de Gantt pour ce projet.
 Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que certaines tâches ne sont pas connues à l'avance et pour réorganiser des taches si besoin.
