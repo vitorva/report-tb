@@ -303,6 +303,10 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
     Liste des parseur de générateur existant
 }
 
+\textbf{TODO : Bien mentionner que l'on va utiliser antlrts et pas sa version en java}
+\textbf{TODO : Détailler antrlts ? (Les erreurs etc... dans auto-completion ?)}
+\textbf{TODO : Gérer les commentaires lors du parsing (analyse syntaxique)}
+
 
 \subsubsection{Parser}
 Étant donné que ce n'est pas le sujet de ce Travail de Bachelor, il a été choisi d'utiliser un générateur de parser pour en extraire le plus possible de complexité sur son implémentation.
@@ -401,10 +405,17 @@ Les fonctionnalités implémentées s'appuieront sur cette grammaire. Ceci dans 
 
 \textbf{Rappel} :
 La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
+\textbf{TODO : 3 embranchements différents -> Json(seq et map), Yaml(seq et map) et schema. Donc pas possible de combiner du yaml avec du json}
+
 
 \section{Modification}
-\textbf{[TODO]}
-J'ai repris la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple
+\textbf{TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple}
+\textbf{TODO : ajouter la gestion des indent }
+\textbf{TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...)}
+\textbf{TODO : gérer erreur grammaire -> caractère qui bloque le parsing, des erreurs devraient être générés à la place}
+\textbf{TODO : visualisation graphique de l'arbre (java ou extension intellij)}
+\textbf{TODO : utiliser les types correctes ou avoir 2 grammaires différentes}
+\textbf{TODO : autocomplétion dans les commentaires ?}
 
 
 \chapter{Implémentation}
@@ -412,7 +423,7 @@ Dans ce chapitre, nous allons explorer les aspects techniques concernant l'impl�
 Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
 
 \section{Code}
-\textbf{TODO : Mettre à jour le readme}
+\textbf{TODO : mettre à jour le readme}
 Le code de l'implémentation est disponible sur le dépôt public \href{https://github.com/vitorva/vscode-uon}{suivant}.
 
 \textbf{Remarque} : L'implémentation détaillée dans ce rapport pourrait ne plus représenter l'état du dépôt, car ce projet est sujet à évoluer.
@@ -421,7 +432,7 @@ Le code de l'implémentation est disponible sur le dépôt public \href{https://
 Nous allons voir maintenant, la procédure pour créer et publier son extension.
 
 \subsection{Génération de l'extension}
-\textbf{TODO : Expliquer qu'est-ce que Yeoman}
+\textbf{TODO : expliquer qu'est-ce que Yeoman}
 
 VS Code permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
 
@@ -536,6 +547,11 @@ Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) po
 \textbf{[TODO]}
 
 \section{Syntax highlighting}
+
+\textbf{TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema}
+\textbf{TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...}
+\textbf{TODO : Mentionner la découverte personnel dans le fichier tm : Captures + appliquer une règle à une capture spécifique}
+
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a 2 composantes principales.
 \begin{itemize}
@@ -666,6 +682,9 @@ Cela est donc intéressant pour des langages plus complexes dans leur nature qu'
 Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
 
 \section{Auto-completion}
+
+\textbf{TODO : Revoir c3, plus particulèrement rules et symbol tables}
+
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser directement un parser du langage.
@@ -758,6 +777,8 @@ No suggestion :
 quand un espace précède un nouveau mot alors c'est simple pour le placer
 quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car VS Code peut trigger l'autocomplete n'importe quand et du coup
 avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
+
+\textbf{TODO : quick-suggest-setting : https://github.com/microsoft/vscode/issues/101333}
 
 
 
