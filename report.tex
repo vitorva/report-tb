@@ -306,6 +306,7 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 \textbf{TODO : Bien mentionner que l'on va utiliser antlrts et pas sa version en java}
 \textbf{TODO : Détailler antrlts ? (Les erreurs etc... dans auto-completion ?)}
 \textbf{TODO : Gérer les commentaires lors du parsing (analyse syntaxique)}
+\textbf{TODO : Ajouter dans la Bibliographie https://www.regular-expressions.info/anchors.html}
 
 
 \subsubsection{Parser}
@@ -411,7 +412,7 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 \section{Modification}
 \textbf{TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple}
 \textbf{TODO : ajouter la gestion des indent }
-\textbf{TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...)}
+\textbf{TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...) + faire attention aux erreurs de saisies}
 \textbf{TODO : gérer erreur grammaire -> caractère qui bloque le parsing, des erreurs devraient être générés à la place}
 \textbf{TODO : visualisation graphique de l'arbre (java ou extension intellij)}
 \textbf{TODO : utiliser les types correctes ou avoir 2 grammaires différentes}
@@ -683,7 +684,8 @@ Car se baser sur la structure du document nous donne déjà toutes les informati
 
 \section{Auto-completion}
 
-\textbf{TODO : Revoir c3, plus particulèrement rules et symbol tables}
+\textbf{TODO : revoir c3, plus particulèrement rules et symbol tables}
+\textbf{TOOO : faire attention de gérer les erreurs dès que la complétions est appelé par un trigger -> ErrorListener}
 
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
@@ -781,7 +783,6 @@ avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre 
 \textbf{TODO : quick-suggest-setting : https://github.com/microsoft/vscode/issues/101333}
 
 
-
 \subsection{Candidats}\label{candidates}
 
 Actuellement pour connaitre l'indice du ou des prochains candidats, on récupère le flux des tokens (tokenStream) trouvé lors du parsing.
@@ -804,27 +805,35 @@ L'indexation est gérée de 2 manières différentes. En fonction de la prise en
 Cela va dépendre si on décide d'ignorer ou non les espaces dans la grammaire g4.
 Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela permet de gérer plus de cas particuliers.
 
+\textbf{TODO : remplacer par Outline view ?}
 \section{Document outlining}
-\textbf{[TODO]}
-Parler des 2 patterns listener et visitor
-pourquoi avoir choisi le pattern visiteurs.
 
-Expliquer qu'on gènère finalement pas un AST mais qu'on créer la arbe de symbole de manière récusrive lors du parcours
-Pas de AST car antlr génère un parsed tree qui est un arbre qui contient tout.
+\textbf{TODO : parler des 2 patterns listener et visitor
+    pourquoi avoir choisi le pattern visiteurs ? }
 
-Figure
+visiteur explications : https://www.youtube.com/watch?v=BD-I3f0aTbs
 
-Expliquer la stratégie pour récupérer la position d'un terminal
-
-Mentionner qu'on peut avoir 5 structures (json map, json seq, yaml map, yaml seq et schema)
-
-Quels sont les difficulté :
-- recursion
-- bien construire un noeud (gérer tous les cas particulier)
-- visiteur de type any -> expliquer pourquoi j'ai fait ça : pour traiter les terminaux + les strucures...
+\textbf{TODO : expliquer qu'on gènère finalement pas un AST mais qu'on créer la arbe de symbole de manière récusrive lors du parcours
+    Pas de AST car antlr génère un parsed tree qui est un arbre qui contient tout.}
 
 
-parler de ce qu'attend le provider (hierchical ou non, voir lsp spec)
+\textbf{TODO : ajouterigure (cst vs ast) }
+
+\textbf{TODO : expliquer la stratégie pour récupérer la position d'un terminal}
+
+\textbf{TODO : mentionner qu'on peut avoir 5 structures (json map, json seq, yaml map, yaml seq et schema) }
+
+\textbf{
+    TODO :
+    Quels sont les difficulté :
+    - recursion
+    - bien construire un noeud (gérer tous les cas particulier)
+    - visiteur de type any -> expliquer pourquoi j'ai fait ça : pour traiter les terminaux + les strucures...
+}
+
+\textbf{TODO : parler de ce qu'attend le provider (hierchical ou non, voir lsp spec)}
+
+\textbf{TODO : expliquer quelle commande lancer et pourquoi (génération des TOUS les fichiers)}
 
 
 \section{Info on Hover}
