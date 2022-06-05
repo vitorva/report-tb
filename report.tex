@@ -306,7 +306,10 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 \textbf{TODO : Bien mentionner que l'on va utiliser antlrts et pas sa version en java}
 \textbf{TODO : Détailler antrlts ? (Les erreurs etc... dans auto-completion ?)}
 \textbf{TODO : Gérer les commentaires lors du parsing (analyse syntaxique)}
-\textbf{TODO : Ajouter dans la Bibliographie https://www.regular-expressions.info/anchors.html}
+\textbf{TODO : gérer correctement les erreurs. On devrait pourvoir continuer le plus possible, actuellement ça bloque la suite ?
+    expliquer les fonctions / ErrorListener
+    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
+}
 
 
 \subsubsection{Parser}
@@ -408,20 +411,22 @@ Les fonctionnalités implémentées s'appuieront sur cette grammaire. Ceci dans 
 La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
 \textbf{TODO : 3 embranchements différents -> Json(seq et map), Yaml(seq et map) et schema. Donc pas possible de combiner du yaml avec du json}
 
-
 \section{Modification}
 \textbf{TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple}
-\textbf{TODO : ajouter la gestion des indent }
+\textbf{TODO : ajouter la gestion des indent pour les sequences en version yaml }
 \textbf{TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...) + faire attention aux erreurs de saisies}
 \textbf{TODO : gérer erreur grammaire -> caractère qui bloque le parsing, des erreurs devraient être générés à la place , erreur avec "name", "parameters"}
 \textbf{TODO : visualisation graphique de l'arbre (java ou extension intellij)}
-\textbf{TODO : utiliser les types correctes ou avoir 2 grammaires différentes}
+\textbf{TODO : utiliser les types correctes ou avoir 2 grammaires différentes et donc 2 parsers en paralleles ?}
 \textbf{TODO : autocomplétion dans les commentaires ?}
+\textbf{TODO : expliquer les règles : https://github.com/antlr/antlr4/blob/master/doc/grammars.md}
 
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
 Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
+
+\textbf{TODO : Taux "d'erreur" acceptable pour le rendu final ?}
 
 \section{Code}
 \textbf{TODO : mettre à jour le readme}
@@ -432,12 +437,14 @@ Le code de l'implémentation est disponible sur le dépôt public \href{https://
 \section{Extension}
 Nous allons voir maintenant, la procédure pour créer et publier son extension.
 
+\textbf{TODO : Expliquer que c'est une procédure minimaliste, les explications détaillés sur la documentation vs code}
+
 \subsection{Génération de l'extension}
 \textbf{TODO : expliquer qu'est-ce que Yeoman}
 
 VS Code permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
 
-\textbf{TODO :  Yeoman Generator to scaffold an extension}
+\textbf{TODO : yeoman Generator to scaffold an extension...}
 
 \begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
 npm install -g yo generator-code
@@ -549,9 +556,12 @@ Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) po
 
 \section{Syntax highlighting}
 
-\textbf{TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema}
-\textbf{TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...}
-\textbf{TODO : Mentionner la découverte personnel dans le fichier tm : Captures + appliquer une règle à une capture spécifique}
+\textbf{TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema, Il faudrait une explication sur les "composition"  }
+\textbf{TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...
+    Vérifier ça ! -> par ex. "key(description) : faux... en json et yaml"}
+\textbf{TODO : key avec et sans guillemet ? Quelles règles pour une clé ? (voir grammaire originel)}
+\textbf{TODO : Approfondir explication des règles + regex (montrer des exemples ?) + Mentionner la découverte personnel dans le fichier tm : Captures + appliquer une règle à une capture spécifique}
+\textbf{TODO : difficulté regex ne fonctionne pas...}
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a 2 composantes principales.
@@ -684,8 +694,12 @@ Car se baser sur la structure du document nous donne déjà toutes les informati
 
 \section{Auto-completion}
 
-\textbf{TODO : revoir c3, plus particulèrement rules et symbol tables}
-\textbf{TOOO : faire attention de gérer les erreurs dès que la complétions est appelé par un trigger -> ErrorListener}
+\textbf{TODO : revoir c3, plus particulèrement rules et symbol tables
+    Snippet ou possible d'avoir des bloc de complétion ?}
+
+\textbf{TOOO : faire attention de bien gérer les erreurs dès que la complétions est appelé par un trigger sinon comportement aléatoire
+    ex. trigger élément qui lançait la complétion et erreur car le text parsé était faux !
+}
 
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
@@ -780,7 +794,7 @@ quand un espace précède un nouveau mot alors c'est simple pour le placer
 quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car VS Code peut trigger l'autocomplete n'importe quand et du coup
 avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
 
-\textbf{TODO : quick-suggest-setting : https://github.com/microsoft/vscode/issues/101333}
+\textbf{TODO : quick-suggest-setting (par défaut ?) : https://github.com/microsoft/vscode/issues/101333}
 
 
 \subsection{Candidats}\label{candidates}
@@ -809,15 +823,17 @@ Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela per
 \section{Document outlining}
 
 \textbf{TODO : parler des 2 patterns listener et visitor
-    pourquoi avoir choisi le pattern visiteurs ? }
+    pourquoi avoir choisi le pattern visiteurs ? https://stackoverflow.com/questions/20714492/antlr4-listeners-and-visitors-which-to-implement
+    Mentionner la provenance de la base du code (github antlr4ts) + les fichiers utilsés par le module antlrts (TreeVisitor etc...)
+}
 
 visiteur explications : https://www.youtube.com/watch?v=BD-I3f0aTbs
 
-\textbf{TODO : expliquer qu'on gènère finalement pas un AST mais qu'on créer la arbe de symbole de manière récusrive lors du parcours
+\textbf{TODO : expliquer qu'on gènère finalement pas un AST pour l'utiliser mais qu'on crée l'arbe de symbole de manière récusrive lors du parcours (sorte d'ast directement utilisable)
     Pas de AST car antlr génère un parsed tree qui est un arbre qui contient tout.}
 
 
-\textbf{TODO : ajouterigure (cst vs ast) }
+\textbf{TODO : ajouter figure (cst vs ast) -> Du coup quoi garder et pourquoi }
 
 \textbf{TODO : expliquer la stratégie pour récupérer la position d'un terminal}
 
@@ -833,7 +849,11 @@ visiteur explications : https://www.youtube.com/watch?v=BD-I3f0aTbs
 
 \textbf{TODO : parler de ce qu'attend le provider (hierchical ou non, voir lsp spec)}
 
-\textbf{TODO : expliquer quelle commande lancer et pourquoi (génération des TOUS les fichiers)}
+\textbf{TODO : expliquer quelle commande lancer et pourquoi (génération des TOUS les fichiers :
+"scripts": {
+// ...
+"antlr4ts": "antlr4ts -visitor path/to/MyGrammar.g4"
+}) sinon listener et visitor ne fonctionne pas (revoir la commande fausse précédement utilisé....)}
 
 
 \section{Info on Hover}
@@ -906,7 +926,7 @@ Est-ce que tout est testable ?
 
 \section{Autocomplétion}
 \textbf{Todo : expliquer les tests}
-example c3, on peut tester qu'un token attendu soit le bon à un emplacement
+example c3, on peut tester qu'un token attendu soit le bon à un emplacemente de la
 Revoir c3 pour autres types de test
 
 \section{Syntax highlight}
@@ -932,10 +952,23 @@ Trivial ?
 \textbf{[TODO]}
 Compter le nombre d'erreur et localiser leur emplacement
 
+\section{Regex ?}
+\textbf{TODO : regex utilisé dans la grammaire g4 + tm à vérifier ?
+    utilisation d'outils en ligne : ex : https://regex101.com/
+    référence officielle : https://www.regular-expressions.info/
+}
+
 
 \chapter{Planning}
 
-\textbf{Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ? }
+\textbf{TODO : Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ? }
+\textbf{TODO : Des implémentations pas compliqué mais peu de documentation sur antlrts dans le cadre d'une extension + faut trouver comment faire en testant parfois}
+\textbf{TODO :
+    Difficulté :
+    Regrouper toutes les sources.
+    Grand projet personnel....
+    Analyse des resultat
+}
 
 \subsection{Diagramme de gantt}
 Voici le diagramme de Gantt pour ce projet.
@@ -963,6 +996,7 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 
 %% \label{glossaire}
 %% \printnoidxglossary
+\textbf{TODO : Ajouter dans la Bibliographie https://www.regular-expressions.info/anchors.html}
 \printbibliography
 \addcontentsline{toc}{chapter}{Bibliographie}
 %% \label{index}
