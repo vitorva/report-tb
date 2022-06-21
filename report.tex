@@ -14,7 +14,7 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{pdfpages}
-
+%https://www.overleaf.com/project/62b06d8b8257fff1974999df
 %\signature{mbernasconi.svg} TODO : Gérer la taille
 \signature{va_signature.png}
 
@@ -87,14 +87,34 @@
 \mainmatter
 \chapter{Introduction}
 
-\textbf{[TODO]}
+\textbf{[DONE]}
 \textbf{Il manque une partie "Contexte" qui explique comment s'insère ce travail de Bachelor. C'est quoi UON est-ce que quelqu'un a déjà travaillé dessus, ce qu'il a fait, ce qu'il reste à faire.}
 
-Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VS Code. Ce projet se veut expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisies sont libres tant qu'elles respectent le cahier des charges.
+Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VS Code.
+UON (abréviation de Unified Object Notation) est un format de sérialisation qui vise à rassembler les meilleures caractéristiques de tous les formats de sérialisation disponibles sur le marché, pour créer celui qui les unifie tous.
+
+Son intérêt principale est de \textbf{TODO} pour permettre de résoudre
+
+Ce projet consiste donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON
+dans l'éditeur VS Code.
+
+C'est un nouveau langage complexe et une spécification détaillé existe. Il reste maintenant à construire les éléments permettant son utilisation.
+
+Un parser en Python à déja été implémenté par Stéphane Selim. Cepedendant ce travail de bachelor n'en est pas la suite directe.
+Il consite à founir une autre composante qui est de permettre l'utilisation du langage UON dans un éditeur pour qu'il soit utilisé par un plus grand nombre.
+Et cela sera possible quand sa syntaxe sera entièrement prise en charge par tous les principaux éditeurs de texte.
+Nous nous focaliserons uniquement sur VS code dans un premier temps et expliquerons pourquoi plus tard.
+
+Ce projet consite à étudier les différentes approches et les mettre en oeuvre. Nous spécifierons également les alternatives et améliorations possible quand cela est pertinent.
+
+Il se veut aussi être expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisies sont libres tant qu'elles respectent le cahier des charges.
 Dans les chapitres suivants, nous allons voir ce qui est fourni par VS Code pour élaborer et déployer une extension.
 Les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
 Les aspects du langage UON à considérer dans le cadre de ce projet.
 Et présenterons en détail l'implémentation d'une extension ainsi que ses fonctionnalités. Puis détaillerons les tests effectués.
+
+\textbf{TODO : Changer de place}
+Ce travail de bachelor consite à étudier les différentes approches et les mettre en oeuvre. Nous spécifierons les alternatives et améliorations possible.
 
 \let\cleardoublepage\clearpage
 
@@ -127,9 +147,6 @@ Voici ci-dessous un résumé du cahier des charges :
 
 Ce projet se focalise uniquement sur l'éditeur de code Visual Studio Code.
 
-Une extension peut être écrite en Typescript ou en Javascript.
-Nous choisirons le Typescript car VS Code recommande ce langage.
-
 Concernant les fonctionnalités à implémenter. Il n'y avait pas de contraintes de choix.
 Nous avons donc séléctionné les fonctionnalités attendues en choisissant celles paraissant utiles à avoir dans un premier temps et en prenant en considération la contrainte de temps.
 
@@ -148,9 +165,39 @@ Que propose les concurents ?
 \textbf{Peut être élaborer un peu plus : c'est quoi VS Code, pourquoi a-t-il été choisi ? Est-il populaire ? En quel langage a-t-il été écrit. Est-il entièrement open-source, est-ce qu'une extension peut être complètement indépendante de la base de code...
     Pour le rapport final j'attends plus de détails}
 
+D'autres alternatives existes comme VIM et Atom pour ne citer qu'eux.
+
+Il a été choisi car il fait parti des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déja familier de son environement.
+
+
+Comme il est pensé pour être étendu, il fourni et détaille très clairement les étapes pour la création d'une extension ainsi que le support de langage en lui-même.
+La communauté est très active.
+De nombreux exemples officieles et d'utilisateurs existents.
+
+Le code source de vscode de Microsoft estopen source (sous licence MIT) mais...
+
+Une extension peut être écrite en Typescript ou en Javascript.
+Nous choisirons le Typescript car VS Code recommande ce langage.
+
+Mais certaines composantes externes (langage server) peuvent être écrit dans n'importe quel langage. Tant qu'elle fournisse l'API adéquat pour communiquer.
+
+
+
 
 Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit qui est pensé pour être extensible (de L'UI à l'expérience utilisateur).
 Presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
+
+
+
+Un éditeur de code est décris selon wikipédia comme un logiciel destiné à la création et l'édition de fichiers textes.
+Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debuggage de programme plus complexe.
+
+Nous manipulerons des fichiers statiques par la nature même de UON qui est un langage de sérialisation.
+
+
+
+
+Il a été écrit en Typscript et Javascript.
 
 L'Extension API nous permet donc de gérér un certain nombre de choses.
 On se focalisera sur le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
@@ -232,6 +279,8 @@ La première solution est d'utiliser \href{https://code.visualstudio.com/api/ref
 permettant de réaliser directement les fonctionnalités.
 
 Elles vont nous permettre de nous inscrire à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
+
+\textbf{TODO : Pas forcément uniquement des providers (ex suggestions)}
 
 \subsection{Langage server}
 La seconde solution est de fournir nous-mêmes ces méthodes en respectant la spécifiation LSP \cite{lsp-specification} au travers d'un langage serveur.
@@ -415,11 +464,13 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 \textbf{TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple}
 \textbf{TODO : ajouter la gestion des indent pour les sequences en version yaml }
 \textbf{TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...) + faire attention aux erreurs de saisies}
+\textbf{TODO : Gestion des INDENT ET DEDENT (Modification de la grammaire ?), + explication (parti avec grammaire sans la gestion des espaces....)}
 \textbf{TODO : gérer erreur grammaire -> caractère qui bloque le parsing, des erreurs devraient être générés à la place , erreur avec "name", "parameters"}
 \textbf{TODO : visualisation graphique de l'arbre (java ou extension intellij)}
 \textbf{TODO : utiliser les types correctes ou avoir 2 grammaires différentes et donc 2 parsers en paralleles ?}
 \textbf{TODO : autocomplétion dans les commentaires ?}
 \textbf{TODO : expliquer les règles : https://github.com/antlr/antlr4/blob/master/doc/grammars.md}
+\textbf{TODO : règle Clé}
 
 
 \chapter{Implémentation}
