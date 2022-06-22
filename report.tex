@@ -87,13 +87,13 @@
 \mainmatter
 \chapter{Introduction}
 
-\textbf{[DONE]}
-\textbf{Il manque une partie "Contexte" qui explique comment s'insère ce travail de Bachelor. C'est quoi UON est-ce que quelqu'un a déjà travaillé dessus, ce qu'il a fait, ce qu'il reste à faire.}
+% DONE
+% Il manque une partie "Contexte" qui explique comment s'insère ce travail de Bachelor. C'est quoi UON est-ce que quelqu'un a déjà travaillé dessus, ce qu'il a fait, ce qu'il reste à faire.
 
 Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VS Code.
 UON (abréviation de Unified Object Notation) est un format de sérialisation qui vise à rassembler les meilleures caractéristiques de tous les formats de sérialisation disponibles sur le marché, pour créer celui qui les unifie tous.
 
-Son intérêt principale est de \textbf{TODO} pour permettre de résoudre  \textbf{TODO}
+Son intérêt principale est de \textbf{TODO} pour permettre de résoudre \textbf{TODO}
 
 Ce projet consiste donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON
 dans l'éditeur VS Code.
@@ -116,9 +116,7 @@ Dans les chapitres suivants, nous allons voir ce qui est fourni par VS Code pour
 Les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
 Les aspects du langage UON à considérer dans le cadre de ce projet.
 Et présenterons en détail l'implémentation d'une extension ainsi que ses fonctionnalités. Puis détaillerons les tests effectués.
-
-\textbf{TODO : Changer de place}
-Ce travail de bachelor consite à étudier les différentes approches et les mettre en oeuvre. Nous spécifierons les alternatives et améliorations possible.
+Nous spécifierons également les alternatives et améliorations possible.
 
 \let\cleardoublepage\clearpage
 
@@ -153,16 +151,10 @@ Concernant les fonctionnalités à implémenter. Il n'y avait pas de contraintes
 Les fonctionnalités choisis ont donc été ceux paraissant être les plus utiles à avoir dans un premier temps, en prenant en considération la contrainte de temps.
 
 Cependant il ne s'agit que d'une infime partie de ce qui peut être réalisable.
-Il existe une multitude d'ajouts, d'améliorations possible et cela pour chaque langage.
+Il existe. pour chaque langage, une multitude d'ajouts, d'améliorations possible.
 
+% TODO
 On pourrait par exemple mentionner la validation par un schéma...
-
-Étant relativement libre sur la direction du travail de bachelor. J'ai 
-
-Selon moi, l'éditeur doit permettre la création d'un document UON. Le code d'un langage de sérialisation dans l'éditeur est "statique".
-Pas de notion de traitement dans un éditeur de code. On ne va appliquer les mêmes traitements quand il s'agit uniquement de UON par rapport à quand il est utilisé avec un langage haut niveau.
-On pourrait créer une extension supplémentaire pour linker le fichier UON au parseur de selim, features + avancé ???
-
 
 \chapter{Pré-étude}
 
@@ -190,11 +182,16 @@ C'est cette strucutre final qui sera intérpté ou compilé.
 
 \chapter{Generator de parsing}
 
+% TODO
 Pour nous simplifier la vie...
 
-
-\textbf{TODO : pertinence ? à déplacer dans UON}
+% TODO
+%  pertinence ? à déplacer dans UON
 \chapter{Format de sérialisation}
+
+Le code d'un langage de sérialisation dans l'éditeur est "statique".
+Pas de notion de traitement dans un éditeur de code. On ne va appliquer les mêmes traitements quand il s'agit uniquement de UON par rapport à quand il est utilisé avec un langage haut niveau.
+On pourrait créer une extension supplémentaire pour linker le fichier UON au parseur de selim, features + avancé ???
 
 Lorsqu'on sérialise des données, elles se retouvent soit sous forme binaire ou textuelle.
 
@@ -204,10 +201,7 @@ Le rôle d'un format de sérialsiation et de pouvoir représenté des données s
 
 Dans un éditeur de texte c'est statique.
 
-Expliquer le mécanimse . ou c'est utilisé et pourquoi ?
-
-schéma\dots
-
+Expliquer le mécanimse. ou c'est utilisé et pourquoi ?
 
 \section{JSON}
 clé-valeur
@@ -225,9 +219,9 @@ c'est quoi un éditeur de code / rapport avec un Ide / Les difflérences que l'o
 Que propose les concurents ?
 
 \section{VS Code}
-\textbf{[TODO]}
-\textbf{Peut être élaborer un peu plus : c'est quoi VS Code, pourquoi a-t-il été choisi ? Est-il populaire ? En quel langage a-t-il été écrit. Est-il entièrement open-source, est-ce qu'une extension peut être complètement indépendante de la base de code...
-    Pour le rapport final j'attends plus de détails}
+% TODO :
+% Peut être élaborer un peu plus : c'est quoi VS Code, pourquoi a-t-il été choisi ? Est-il populaire ? En quel langage a-t-il été écrit. Est-il entièrement open-source, est-ce qu'une extension peut être complètement indépendante de la base de code...
+% Pour le rapport final j'attends plus de détails
 
 Il a été choisi car il fait parti des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déja familier de son environement.
 D'autres alternatives existes comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fourni également de quoi implémenter une extension.
@@ -260,7 +254,6 @@ Contrairement à un IDE (Environnement de développement) qui permet en plus la 
 
 Nous manipulerons des fichiers statiques par la nature même de UON qui est un langage de sérialisation.
 
-
 Il a été écrit en Typscript et Javascript.
 
 L'Extension API nous permet donc de gérér un certain nombre de choses.
@@ -284,7 +277,7 @@ En général, l'extension est une combinaison de plusieurs Conntribution Point e
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 
-\textbf{TODO : faire figurer un extrait de code / ou faire référence à la figure au lieu de "la suivante" }
+%TODO : faire figurer un extrait de code / ou faire référence à la figure au lieu de "la suivante"
 
 La structure d'une extension est la suivante :
 
@@ -344,7 +337,7 @@ permettant de réaliser directement les fonctionnalités.
 
 Elles vont nous permettre de nous inscrire à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
 
-\textbf{TODO : Pas forcément uniquement des providers (ex suggestions)}
+%TODO : Pas forcément uniquement des providers (ex suggestions)}
 
 \subsection{Langage server}
 La seconde solution est de fournir nous-mêmes ces méthodes en respectant la spécifiation LSP \cite{lsp-specification} au travers d'un langage serveur.
@@ -383,7 +376,7 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des 2 mét
 Pour fournir des fonctionnalités de langue, une approche souvent mentionnée est l'utilisation d'un parser
 car les fonctionnalités se baseront sur l'AST qu'il générera.
 
-\textbf{TODO : être plus clair}
+%TODO : être plus clair
 Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générer un AST (abstract syntax tree) qui à du sens depuis du code incomplet
 car il ne devrait pas s'arrêter dès la première erreur.
 La plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect, et les développeurs s'attendent tout de même à ce que la complétion automatique et d'autres fonctions de langue fonctionnent.
@@ -410,19 +403,18 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 
 \subsection{ANTLR}
 
-\textbf{[TODO] : Détailler en détail l'histoire d'antlr...etc...
-    A l'origine en java, une implémentation en typescript existent
-    Pourquoi prévilégier celui-ci et pas un autre
-    Liste des parseur de générateur existant
-}
+%TODO : Détailler en détail l'histoire d'antlr...etc...
+%    A l'origine en java, une implémentation en typescript existent
+%    Pourquoi prévilégier celui-ci et pas un autre
+%    Liste des parseur de générateur existant
 
-\textbf{TODO : Bien mentionner que l'on va utiliser antlrts et pas sa version en java}
-\textbf{TODO : Détailler antrlts ? (Les erreurs etc... dans auto-completion ?)}
-\textbf{TODO : Gérer les commentaires lors du parsing (analyse syntaxique)}
-\textbf{TODO : gérer correctement les erreurs. On devrait pourvoir continuer le plus possible, actuellement ça bloque la suite ?
-    expliquer les fonctions / ErrorListener
-    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
-}
+
+%TODO : Bien mentionner que l'on va utiliser antlrts et pas sa version en java}
+%TODO : Détailler antrlts ? (Les erreurs etc... dans auto-completion ?)}
+%TODO : Gérer les commentaires lors du parsing (analyse syntaxique)}
+%TODO : gérer correctement les erreurs. On devrait pourvoir continuer le plus possible, actuellement ça bloque la suite ?
+%    expliquer les fonctions / ErrorListener
+%    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
 
 
 \subsubsection{Parser}
@@ -443,7 +435,7 @@ J'ai opté pour le générateur d'ANTLR (ANother Tool for Language Recognition),
 Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une spécifiation Lark.
 L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
 Et Antlr semble être un choix plus naturel dans notre environnement VS Code.
-\textbf{TODO : Founir une meilleur explication}
+%TODO : Founir une meilleur explication
 
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML.
@@ -520,8 +512,6 @@ D'autres sont relativement approprié
 Tout est une valeur avec un type et des propriétés associés. Ces propriétés sont parfois unique.
 
 
-
-
 \chapter{Scope de la grammaire}\label{grammar scope}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera. Il est donc important préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
 Nous allons donc partir d'une grammaire la plus minimale possible tout en faisant attention à son extensibilité par la suite.
@@ -536,29 +526,71 @@ Les fonctionnalités implémentées s'appuieront sur cette grammaire. Ceci dans 
 
 \textbf{Rappel} :
 La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
-\textbf{TODO : 3 embranchements différents -> Json(seq et map), Yaml(seq et map) et schema. Donc pas possible de combiner du yaml avec du json}
+% TODO : 3 embranchements différents -> Json(seq et map), Yaml(seq et map) et schema. Donc pas possible de combiner du yaml avec du json
 
 \section{Modification}
-\textbf{TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple}
-\textbf{TODO : ajouter la gestion des indent pour les sequences en version yaml }
-\textbf{TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...) + faire attention aux erreurs de saisies}
-\textbf{TODO : Gestion des INDENT ET DEDENT (Modification de la grammaire ?), + explication (parti avec grammaire sans la gestion des espaces....)}
-\textbf{TODO : gérer erreur grammaire -> caractère qui bloque le parsing, des erreurs devraient être générés à la place , erreur avec "name", "parameters"}
-\textbf{TODO : visualisation graphique de l'arbre (java ou extension intellij)}
-\textbf{TODO : utiliser les types correctes ou avoir 2 grammaires différentes et donc 2 parsers en paralleles ?}
-\textbf{TODO : autocomplétion dans les commentaires ?}
-\textbf{TODO : expliquer les règles : https://github.com/antlr/antlr4/blob/master/doc/grammars.md}
-\textbf{TODO : règle Clé}
+% TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple
+% TODO : ajouter la gestion des indent pour les sequences en version yaml
+% TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...) + faire attention aux erreurs de saisies
+% DONE : Gestion des INDENT ET DEDENT (Modification de la grammaire ?), + explication (parti avec grammaire sans la gestion des espaces....)
+% TODO : gérer erreur grammaire -> caractère qui bloque le parsing, des erreurs devraient être générés à la place , erreur avec "name", "parameters"
+% TODO : visualisation graphique de l'arbre (java ou extension intellij)
+% TODO : utiliser les types correctes ou avoir 2 grammaires différentes et donc 2 parsers en paralleles ?
+% TODO : autocomplétion dans les commentaires ?
+% TODO : expliquer les règles : https://github.com/antlr/antlr4/blob/master/doc/grammars.md
+% TODO : règle Clé
 
+\subsection{L'indentation}
+
+Contrairement au parser lark, la gestion des indentations n'est pas géré automatiquement à l'aide d'une librairie externe.
+Ce mécanimse doit être traité par nos soins.
+
+La grande modularité d'ANTLR est un avantage mais peu se revéler très contraignant pour ce genres de tâches.
+
+Mais le plus gros problème à traiter et que notre grammaire n'est pas uniforme concernant la gestion des retours à la ligne.
+
+En effet, UON peut-être écrit sous une forme proche de JSON ou de YAML. Le premier ne tiens pas compte des indentations contrairement à la seconde.
+
+Et la gestion des indentations nécessite de prendre en compte les retour à la ligne.
+
+Il y a donc trois solutions qui ont été envisagées.
+
+La première est de rajouter des token de retour à la ligne partout ou il serait possible d'en avoir. Mais ce n'est pas très propre et on risque d'en placer énormément.
+Le problème et que dans le cas du format proche de JSON, il faudrait traiter énormément de cas pour rester cohérent.
+
+Le deuxième serait d'ignorer tout simplement les erreurs. C'est à dire que si on à un token de retour à la ligne qui ne devrait pas être là, alors l'ignorer tout simplement.
+On pourrait penser ce mécanisme simple se révelerait efficace. Cependant je n'ai malheurseuement pas réussi à faire que le moteur de complétion c3 \textbf{TODO : ICI}
+puisse ignorer ces erreurs.
+
+La troisième solution trouvée et celle actuellement utilisée. Elle consite à prendre en compte uniquement les retours à la ligne si le lexer à détecter les tokens initiaux
+nous permettant de savoir si oui ou non les retours à la ligne doivent être pris en compte.
+
+Par exemple : % TODO
+
+\textbf{Remarque : } Mais cette solution n'est pas optimale car si on modifie la grammaire il faudra probabement modifier ce code.
+
+%Il faut prendre en compte les retours à la ligne.
+\subsection{Token DEDENT et INDENT}
+Ces deux tokens sont ajoutés depuis le lexer. Cela nécessite d'y rajouter le code pour le faire.
+
+% TODO
+On peut le faire depuis la grammaire. Il suffit d'écrire le code permettant de le faire à l'intérieur de @lexer:members{}.
+Lors de la génération, ce code sera déplacé dans le lexer.
+Mais j'ai constaté quelques bugs, probablement du au faites que cette implémentation en typescript et récente et que tout n'a pas été pris en compte.
+Par exemple il est nécessaire après coup de corriger ce fichier en y rajoutant les imports manquants.
+
+% TODO
+\subsection{Règles ?}
+Une règle doit suivre le pattern suvant : NEWLINE DEDENT [RULE] INDENT
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
 Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
 
-\textbf{TODO : Taux "d'erreur" acceptable pour le rendu final ?}
+% TODO : Taux "d'erreur" acceptable pour le rendu final ?
 
 \section{Code}
-\textbf{TODO : mettre à jour le readme}
+% TODO : mettre à jour le readme
 Le code de l'implémentation est disponible sur le dépôt public \href{https://github.com/vitorva/vscode-uon}{suivant}.
 
 \textbf{Remarque} : L'implémentation détaillée dans ce rapport pourrait ne plus représenter l'état du dépôt, car ce projet est sujet à évoluer.
@@ -566,14 +598,14 @@ Le code de l'implémentation est disponible sur le dépôt public \href{https://
 \section{Extension}
 Nous allons voir maintenant, la procédure pour créer et publier son extension.
 
-\textbf{TODO : Expliquer que c'est une procédure minimaliste, les explications détaillés sur la documentation vs code}
+% TODO : Expliquer que c'est une procédure minimaliste, les explications détaillés sur la documentation vs code
 
 \subsection{Génération de l'extension}
-\textbf{TODO : expliquer qu'est-ce que Yeoman}
+% TODO : expliquer qu'est-ce que Yeoman
 
 VS Code permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
 
-\textbf{TODO : yeoman Generator to scaffold an extension...}
+% TODO : yeoman Generator to scaffold an extension...
 
 \begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
 npm install -g yo generator-code
@@ -681,18 +713,17 @@ Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) po
     \caption[UON CST]{\label{uon-tree} UON CST}
 \end{figure}
 
-\textbf{[TODO]}
 
 \section{Syntax highlighting}
 
-\textbf{TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema, Il faudrait une explication sur les "composition"  }
-\textbf{TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...
-    Vérifier ça ! -> par ex. "key(description) : faux... en json et yaml"}
-\textbf{TODO : key avec et sans guillemet ? Quelles règles pour une clé ? (voir grammaire originel)}
-\textbf{TODO : Approfondir explication des règles + regex (montrer des exemples ?) + Mentionner la découverte personnel dans le fichier tm : Captures + appliquer une règle à une capture spécifique}
-\textbf{TODO : difficulté regex ne fonctionne pas...}
+%TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema, Il faudrait une explication sur les "composition"  }
+%TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...
+%Vérifier ça ! -> par ex. "key(description) : faux... en json et yaml"}
+%TODO : key avec et sans guillemet ? Quelles règles pour une clé ? (voir grammaire originel)}
+%TODO :: Approfondir explication des règles + regex (montrer des exemples ?) + Mentionner la découverte personnel dans le fichier tm : Captures + appliquer une règle à une capture spécifique}
+%TODO : difficulté regex ne fonctionne pas...}
 
-\textbf{TODO : Reserved Symbols}
+%TODO : Reserved Symbols}
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a 2 composantes principales.
@@ -864,13 +895,13 @@ Tout est une valeur avec un type et des propriétés associés.
 
 Les suggestions de baseront donc sur les types et leur propriétés.
 
-\textbf{TODO : revoir c3, plus particulèrement rules et symbol tables
-    Snippet ou possible d'avoir des bloc de complétion ?}
+%TODO : revoir c3, plus particulèrement rules et symbol tables
+%    Snippet ou possible d'avoir des bloc de complétion ?}
 
-\textbf{TOOO : faire attention de bien gérer les erreurs dès que la complétions est appelé par un trigger sinon comportement aléatoire
-    ex. trigger élément qui lançait la complétion et erreur car le text parsé était faux !
-}
-\textbf{TODO : texte collé}
+%TODO : faire attention de bien gérer les erreurs dès que la complétions est appelé par un trigger sinon comportement aléatoire
+%    ex. trigger élément qui lançait la complétion et erreur car le text parsé était faux !
+
+%TODO : texte collé}
 
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
@@ -959,14 +990,13 @@ Cependant toute la difficulté et de proposer ces suggestions au bon moment, car
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space" (par défaut).
 On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace et de retour à la ligne ont été défini comme triggers, car cela semble assez naturel dans ce langage. Cependant il ne s'agit que d'une appréciation personnelle.
 
-\textbf{TODO} :
+%TODO :
 No suggestion :
 quand un espace précède un nouveau mot alors c'est simple pour le placer
 quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car VS Code peut trigger l'autocomplete n'importe quand et du coup
 avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
 
-\textbf{TODO : quick-suggest-setting (par défaut ?) : https://github.com/microsoft/vscode/issues/101333}
-
+%TODO : quick-suggest-setting (par défaut ?) : https://github.com/microsoft/vscode/issues/101333}
 
 \subsection{Candidats}\label{candidates}
 
@@ -990,7 +1020,7 @@ L'indexation est gérée de 2 manières différentes. En fonction de la prise en
 Cela va dépendre si on décide d'ignorer ou non les espaces dans la grammaire g4.
 Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela permet de gérer plus de cas particuliers.
 
-\textbf{TODO : remplacer par Outline view ?}
+%TODO : remplacer par Outline view ?}
 \section{Document outlining}
 
 La outline view est une représentation du fichier actuellement ouvert par l'éditeur.
@@ -999,7 +1029,6 @@ Les éléments peuvent être représenté de manière hiérarchique ou seulement
 Un élément de l'outline (noeud) représente un élément unique du texte ou une structure.
 Généralement un noeud nous permet de nous rediréger sur l'élément du fichier lorsqu'on le séléctionne.
 Il faut donc pouvoir être capable de récupérer la position d'un élément du fichier.
-
 
 Il est possible obtenir la structure d'un fichier en analysant manuellement le texte (par exemple ligne par ligne). Mais cette approche n'est pas optimale et il serait diffile de représenter la strucutre hiérarchique du document.
 
@@ -1024,7 +1053,7 @@ Un AST est une représentation abstraite de notre input. Il ne contient généra
     \caption[UON AST]{\label{ast} UON AST}
 \end{figure}
 
-\textbf{TODO : Images non contractuelles}
+%TODO : Images non contractuelles
 
 Donc pour le générer on va vouloir récupérer uniquement les informations que l'on juge pertinentes pendant le parcours.
 
@@ -1044,7 +1073,7 @@ Puis il faut ajouter le code suivant au paser \dots \textbf{TODO}
 Le type de classe est générique. Et ce qui nous permet de manipuler un objet VS code \textbf{TODO : le nom} en la surchagant.
 La classe surchargée est de type "any" car pendant le parcours un élément peu être de 2 natures différentes (Une valeur/terminal ou une strucutre Vscode)
 
-\textbf{TODO : expliquer en détail}
+%TODO : expliquer en détail
 
 \subsection{La position}
 
@@ -1053,58 +1082,56 @@ On va donc manipuler l'input pour obtenir le numéro de ligne en se basant sur l
 Seul la ligne nous intéresse. VS code ne nous redirigant que sur celle-ci.
 
 
-\textbf{TODO : parler des 2 patterns listener et visitor
-    pourquoi avoir choisi le pattern visiteurs ? https://stackoverflow.com/questions/20714492/antlr4-listeners-and-visitors-which-to-implement
-    Mentionner la provenance de la base du code (github antlr4ts) + les fichiers utilsés par le module antlrts (TreeVisitor etc...)
-}
-
-visiteur explications : https://www.youtube.com/watch?v=BD-I3f0aTbs
-
-\textbf{TODO : expliquer qu'on gènère finalement pas un AST pour l'utiliser mais qu'on crée l'arbe de symbole de manière récusrive lors du parcours (sorte d'ast directement utilisable)
-    Pas de AST car antlr génère un parsed tree qui est un arbre qui contient tout.}
+%TODO :TODO : parler des 2 patterns listener et visitor
+%    pourquoi avoir choisi le pattern visiteurs ? https://stackoverflow.com/questions/20714492/antlr4-listeners-and-visitors-which-to-implement
+%    Mentionner la provenance de la base du code (github antlr4ts) + les fichiers utilsés par le module antlrts (TreeVisitor etc...)
 
 
-\textbf{TODO : ajouter figure (cst vs ast) -> Du coup quoi garder et pourquoi }
+% visiteur explications : https://www.youtube.com/watch?v=BD-I3f0aTbs
 
-\textbf{TODO : expliquer la stratégie pour récupérer la position d'un terminal}
+%TODO : expliquer qu'on gènère finalement pas un AST pour l'utiliser mais qu'on crée l'arbe de symbole de manière récusrive lors du parcours (sorte d'ast directement utilisable)
+%    Pas de AST car antlr génère un parsed tree qui est un arbre qui contient tout.
 
-\textbf{TODO : mentionner qu'on peut avoir 5 structures (json map, json seq, yaml map, yaml seq et schema) }
 
-\textbf{
-    TODO :
-    Quels sont les difficulté :
-    - recursion
-    - bien construire un noeud (gérer tous les cas particulier)
-    - visiteur de type any -> expliquer pourquoi j'ai fait ça : pour traiter les terminaux + les strucures...
-}
+%TODO : ajouter figure (cst vs ast) -> Du coup quoi garder et pourquoi
 
-\textbf{TODO : parler de ce qu'attend le provider (hierchical ou non, voir lsp spec)}
+%TODO : expliquer la stratégie pour récupérer la position d'un terminal
 
-\textbf{TODO : expliquer quelle commande lancer et pourquoi (génération des TOUS les fichiers :
-"scripts": {
-// ...
-"antlr4ts": "antlr4ts -visitor path/to/MyGrammar.g4"
-}) sinon listener et visitor ne fonctionne pas (revoir la commande fausse précédement utilisé....)}
+%TODO :TODO : mentionner qu'on peut avoir 5 structures (json map, json seq, yaml map, yaml seq et schema)
+
+%TODO :
+%    Quels sont les difficulté :
+%    - recursion
+%    - bien construire un noeud (gérer tous les cas particulier)
+%    - visiteur de type any -> expliquer pourquoi j'ai fait ça : pour traiter les terminaux + les strucures...
+
+
+%TODO : parler de ce qu'attend le provider (hierchical ou non, voir lsp spec)
+
+%TODO : expliquer quelle commande lancer et pourquoi (génération des TOUS les fichiers :
+%"scripts": {
+%// ...
+%"antlr4ts": "antlr4ts -visitor path/to/MyGrammar.g4"
+%}) sinon listener et visitor ne fonctionne pas (revoir la commande fausse précédement utilisé....)
 
 
 \section{Info on Hover}
-\textbf{Todo : expliquer pourquoi on voulait que ça soit une feature de base / au début je pensais que ça allait être dans la grammaire ?}
+% DONE : expliquer pourquoi on voulait que ça soit une feature de base / au début je pensais que ça allait être dans la grammaire ?
 
 C'est une fonctionnalité assez triviale qui consite à afficher une explication lorsque l'on passe le curseur sur un élément.
 
 Il s'agit donc d'une dictionnaire clé-valeur.
 
-Cependant, même si son implémentation est relativement simple, il n'en reste pas moins un élément très appréciable et pouvant être beaucoup plus étendu.
+Cependant, même si son implémentation est relativement simple, il n'en reste pas moins un élément fortement utile et pouvant être étendu par la suite.
 On pourrait le réutiliser dans la complétion pour pouvoir fournir une description d'un token dans la liste des suggestions.
 Cela n'a pas été fait à cause d'une question de temps.
 
-\textbf{TODO}
-Fichier json clé-valeur....
-Intégration d'un module avec require
-utilité du dossier out
+% TODO
+%Fichier json clé-valeur....
+%Intégration d'un module avec require
+%utilité du dossier out
 
 \section{Lint}
-
 Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et les problèmes de syntaxe.
 
 Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
@@ -1112,17 +1139,23 @@ Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
 % https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorStrategy.html
 Antlr définit une interace pour définir une startégie concernant les erreurs recontrés durant une analyse syntaxique nommé "ANTLRErrorStrategy".
 On peut distinguer trois types d'erreurs :
-The parser could not figure out which path to take in the ATN (none of the available alternatives could possibly match)
-The current input does not match what we were looking for
-A predicate evaluated to false
+\begin{itemize}
+    \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans le ATN (aucune des alternatives disponibles ne pouvait correspondre).
+    \item L'input actuel ne correspond pas ce que nous attendons.
+    \item Un prédicat évalué comme faux
+\end{itemize}
 
-\textbf{TODO : expliquer la classe qui nous permet de recevoir des informations en cas d'erreur}
+% TODO
+Nous utiliserons le "DefaultErrorStrategy". Il a la particularité d'ignorer un token invalide pour passer au suivant.
+
+% TODO : expliquer la classe qui nous permet de recevoir des informations en cas d'erreur
 Puis on peut être notifié de ces erreurs en liant notre parser à un listener "notifyErrorListener".
 
-Proposition de correction à l'aide de antlr qui nous fourni la position dans le document
-Regarder pourquoi ici on la ligne + colonne et pourquoi on pouvait pas l'avoir dans la outline view
 
-On utilise également une fonction et non pas un provider pour afficher les erreurs
+% TODO
+%Proposition de correction à l'aide de antlr qui nous fourni la position dans le document
+%Regarder pourquoi ici on la ligne + colonne et pourquoi on pouvait pas l'avoir dans la outline view
+%On utilise également une fonction et non pas un provider pour afficher les erreurs
 
 
 \subsection{Suggestion}
@@ -1131,8 +1164,7 @@ Une idée serait donc de pouvoir remplacer ce token erronées par ceux suggéré
 Le problème et que cette information ne se trouve sous forme textuelle.
 Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifiers pour en récuper la liste des tokens....
 
-\textbf{TODO surcharger des méthodes pour pouvoir être notifié des tokens manquant}
-
+% TODO surcharger des méthodes pour pouvoir être notifié des tokens manquant
 \section{Fonctionnalités triviales}
 Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
 Les suivantes ont été implémentées :
@@ -1154,13 +1186,14 @@ Les suivantes ont été implémentées :
     \item Cacher un bloc de code sur une ligne en fonction de son niveau d'indentation.
 \end{itemize}
 
-\chapter{Couplage de fonctionnalité - logique}
-Info on hover - autocompletion
-lint - code outline
+% TODO
+% Couplage de fonctionnalité - logique
+% Info on hover - autocompletion
+% lint - code outline
 
 \chapter{Intégration continue}
 
-\textbf{Todo : expliquer l'architecture des fichiers test}
+% TODO : expliquer l'architecture des fichiers test
 
 https://code.visualstudio.com/api/working-with-extensions/testing-extension
 
@@ -1187,19 +1220,19 @@ Est-ce que tout est testable ?
 
 
 \section{Autocomplétion}
-\textbf{Todo : expliquer les tests}
+% Todo : expliquer les tests
 example c3, on peut tester qu'un token attendu soit le bon à un emplacemente de la
 Revoir c3 pour autres types de test
 
 \section{Syntax highlight}
-\textbf{[TODO]}
+% TODO
 Est-il possible de faire appel au scope inspector dans visual studio ? pourquoi faire (je crois pas) ? -> tester qu'un token soit bien dans son scope
 Regarder ça : https://github.com/PanAeon/vscode-tmgrammar-test
 tester les expressions régulières ?
 
 
 \section{Outline view}
-\textbf{[TODO]}
+% TODO
 Comment tester la outline view ? car le code final est fortement couplé avec la logique ?
 Comment savoir que le code outline est le bon....
 Tester les tailles selon différent scénario
@@ -1207,34 +1240,33 @@ tester le noeud parent etc...
 
 
 \section{Information Hover}
-\textbf{[TODO]}
+% TODO
 Trivial ?
 
 \section{Lint}
-\textbf{[TODO]}
+% TODO
 Compter le nombre d'erreur et localiser leur emplacement
 
 \section{Regex ?}
-\textbf{TODO : regex utilisé dans la grammaire g4 + tm à vérifier ?
-    utilisation d'outils en ligne : ex : https://regex101.com/
-    référence officielle : https://www.regular-expressions.info/
-}
+% TODO
+% regex utilisé dans la grammaire g4 + tm à vérifier ?
+% utilisation d'outils en ligne : ex : https://regex101.com/
+% référence officielle : https://www.regular-expressions.info/
+
 
 \chapter{Publication (CD ???) et maintenance}
-\textbf{TODO}
+% TODO
 Les explications permettant de  reprendre le projet se trouve sur le Readme à la racine du repository...
-
 
 \chapter{Planning}
 
-\textbf{TODO : Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ? }
-\textbf{TODO : Des implémentations pas compliqué mais peu de documentation sur antlrts dans le cadre d'une extension + faut trouver comment faire en testant parfois}
-\textbf{TODO :
-    Difficulté :
-    Regrouper toutes les sources.
-    Grand projet personnel....
-    Analyse des resultat
-}
+% TODO : Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ?
+% TODO : Des implémentations pas compliqué mais peu de documentation sur antlrts dans le cadre d'une extension + faut trouver comment faire en testant parfois
+% TODO :
+%    Difficulté :
+%    Regrouper toutes les sources.
+%    Grand projet personnel....
+%    Analyse des resultat
 
 \subsection{Diagramme de gantt}
 Voici le diagramme de Gantt pour ce projet.
@@ -1243,12 +1275,10 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 \includepdf[page=1]{assets/planning/gantt.pdf}
 
 \chapter{Conclusion}
-\textbf{[TODO]}
+% TODO
 
-\chapter(Lexique)
-\textbf{[TODO]}
-
-
+\chapter{Lexique}
+% TODO
 
 
 %% \vfil
