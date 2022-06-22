@@ -870,6 +870,7 @@ Les suggestions de baseront donc sur les types et leur propriétés.
 \textbf{TOOO : faire attention de bien gérer les erreurs dès que la complétions est appelé par un trigger sinon comportement aléatoire
     ex. trigger élément qui lançait la complétion et erreur car le text parsé était faux !
 }
+\textbf{TODO : texte collé}
 
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
@@ -991,6 +992,35 @@ Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela per
 
 \textbf{TODO : remplacer par Outline view ?}
 \section{Document outlining}
+
+La outline view est une représentation notre fichier, elle peut-être hiérarchique.
+
+Un élément de l'outline représente un élément unique du texte ou une strucure.
+
+Il est possible de l'obtenir en analysant manuellement le fichier texte (par exemple ligne par ligne). Mais cet approche n'est pas optimale er il serait diffile de représenter la strucutre hiérarchique du document.
+
+Nous allons donc utiliser notre parser.
+Le résulat du parsing est un "parse tree" qui contient beaucoup trop d'information supérflues.
+C'est pourquoi il faut pouvoir le parcourir pour en tirer un AST. On va vouloir récupérer uniquement les informations que l'on juge pertinent pendant le parcours
+L'outline view sera une représentation de notre AST.
+
+Cependant on ne va pas créer d'abord un AST puis construire la outline view à l'aide de celui-ci.
+
+Nous allors directement construire l'outline view à la volé pendant le parcours du parse tree.
+
+
+C'est finalement le parcours
+
+Le parcours == AST
+
+
+Pour parcourir un arbre, deux approches sont possibles : Le pattern Listener ou Visitor.
+
+La première consiste à écouter \dots
+
+La deuxième est l'apporche choisi. 
+
+
 
 \textbf{TODO : parler des 2 patterns listener et visitor
     pourquoi avoir choisi le pattern visiteurs ? https://stackoverflow.com/questions/20714492/antlr4-listeners-and-visitors-which-to-implement
