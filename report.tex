@@ -182,6 +182,13 @@ Mais il est important de rappeler des concepts
 \section{Final stages of parsing}
 \chapter{Generator de parsing}
 
+\textbf{TODO}
+\chapter{Format de sérialisation}
+Rôle d'un format de sérialsation....
+\section{JSON}
+\section{YAML}
+\section{Protobuf}
+
 
 \textbf{[TODO]}
 pourquoi VS Code est pas un autre éditeur ??
@@ -657,6 +664,8 @@ Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) po
 \textbf{TODO : Approfondir explication des règles + regex (montrer des exemples ?) + Mentionner la découverte personnel dans le fichier tm : Captures + appliquer une règle à une capture spécifique}
 \textbf{TODO : difficulté regex ne fonctionne pas...}
 
+\textbf{TODO : Reserved Symbols}
+
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a 2 composantes principales.
 \begin{itemize}
@@ -788,6 +797,45 @@ Car se baser sur la structure du document nous donne déjà toutes les informati
 
 \section{Auto-completion}
 
+Le terme "auto-complétion" existe également sous d'autres appélations (ex : autocomplétion, complétion automatique, complétion, etc.).
+L'intérêt est de proposer des suggestions de saisie au fur est à mesure que l'on écrit.
+
+\textbf{TODO : Citation}
+Selon wikipédia, il s'agit d'une fonctionnalité informatique permettant à l'utilisateur de limiter la quantité d'informations qu'il saisit avec son clavier
+en se voyant proposer un complément qui pourrait convenir à la chaîne de caractères qu'il a commencé à taper.
+
+Le terme suggestions étant relativement vague. C'est ici ou réside la subtilité.
+
+Il est donc nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
+
+Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment du à leur nature même de ces langages de sérialisation.
+Contrairement à des langages de pogrammation. Il n'y a pas de mots clés, on ne peut pas définir de nom de fonction, ni de classe. On ne peut également pas définir de variables.
+
+On a donc rien de base à proposer. À la limite, seul les clé ou valeur précédement saisie peuvent éventuellement être reproposé mais cela est fait automatiquemnt sous VS Code
+avec le type de complétion nommé \textbf{TODO}.
+
+Ce comportement peut-être amélioré en utilisant par exemple "JSON-schéma" qui nous permet de définir des mots clés existants et préciser aussi leur emplacement possible.
+Typiquement on peut étendre du yaml en lui spécifiant un schéma Docker est ainsi rajouter une source d'information externe.
+
+
+Donc pour commencer, lorsqu'on implémente une telle fonctionnalité, il faut pouvoir répondre à une série de question :
+Quelles sont les suggestions pertinentes à proposer, pourquoi et quand le faire ?
+
+La syntaxe UON peut être exprimée par l'image suivante :
+
+\begin{figure}[!ht]
+    \begin{center}
+        \frame{\includegraphics[width=8cm]{assets/figures/syntax.png}}
+    \end{center}
+    \caption[syntax]{\label{syntax} UON syntax}
+\end{figure}
+
+On n'y remarque un point extrement intéressant.
+
+Tout est une valeur avec un type et des propriétés associés.
+
+Les suggestions de baseront donc sur les types et leur propriétés.
+
 \textbf{TODO : revoir c3, plus particulèrement rules et symbol tables
     Snippet ou possible d'avoir des bloc de complétion ?}
 
@@ -803,7 +851,7 @@ Mais en complément nous allons utiliser en plus "Antlr4-c3" (Code Completion Co
 
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
 
-Avant il n'y a avait que des solutions customs. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
+Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
 
 Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
 un mécanisme de machine à état ATN (Augmented Transition Network). C'est ce méchanisme qui est en coeur du fonctionnement du moteur.
