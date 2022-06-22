@@ -93,7 +93,7 @@
 Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VS Code.
 UON (abréviation de Unified Object Notation) est un format de sérialisation qui vise à rassembler les meilleures caractéristiques de tous les formats de sérialisation disponibles sur le marché, pour créer celui qui les unifie tous.
 
-Son intérêt principale est de \textbf{TODO} pour permettre de résoudre
+Son intérêt principale est de \textbf{TODO} pour permettre de résoudre  \textbf{TODO}
 
 Ce projet consiste donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON
 dans l'éditeur VS Code.
@@ -105,7 +105,7 @@ Il consite à founir une autre composante qui est de permettre l'utilisation du 
 Et cela sera possible quand sa syntaxe sera entièrement prise en charge par tous les principaux éditeurs de texte.
 
 Le travail précédent c'était concentrer sur 3 aspects : La sérialisation/deserialisation binaire et textuelle d'objet en python, la cohércient et la validation.
-Parmis ces trois, la validation pourrait être pertinente mais ne fait pas parti du CDC même si possible.
+Parmis ces trois, la validation pourrait être pertinente mais ne fait pas parti du CDC même si possible \textbf{TODO}
 
 Nous nous focaliserons uniquement sur VS code dans un premier temps et expliquerons pourquoi plus tard.
 
@@ -152,18 +152,12 @@ Voici ci-dessous un résumé du cahier des charges :
 Concernant les fonctionnalités à implémenter. Il n'y avait pas de contraintes de choix.
 Les fonctionnalités choisis ont donc été ceux paraissant être les plus utiles à avoir dans un premier temps, en prenant en considération la contrainte de temps.
 
-Cependant il ne s'agit que d'une infime parti de ce qui peut être réalisable.
+Cependant il ne s'agit que d'une infime partie de ce qui peut être réalisable.
+Il existe une multitude d'ajouts, d'améliorations possible et cela pour chaque langage.
 
-On pourrait aussi mentionner la validation par un schéma, la prise en compte des commentaires...??
+On pourrait par exemple mentionner la validation par un schéma...
 
-Nous pouvons catégoriser les fonctionnalités de la manière suivante :
-
-Aide à la saisie
-Informations visuelles
-Validation
-Formattage
-Convertion
-
+Étant relativement libre sur la direction du travail de bachelor. J'ai 
 
 Selon moi, l'éditeur doit permettre la création d'un document UON. Le code d'un langage de sérialisation dans l'éditeur est "statique".
 Pas de notion de traitement dans un éditeur de code. On ne va appliquer les mêmes traitements quand il s'agit uniquement de UON par rapport à quand il est utilisé avec un langage haut niveau.
@@ -173,20 +167,52 @@ On pourrait créer une extension supplémentaire pour linker le fichier UON au p
 \chapter{Pré-étude}
 
 \chapter{Parsing}
-Le travail ne porte pas sur cette élément en particulier.
-Mais il est important de rappeler des concepts
+Le travail ne portant pas sur cette élément en particulier. Nous n'allons pas rentrer en détail dans ce sujet.
+Mais il est important de rappeler les concepts prinicipaux car ces éléments nous sont très utile et il est important de bien en comprendre son fonctionnement.
 
-\textbf{TODO}
-\section{Lexical analysis}
-\section{Sytactic analysis}
-\section{Final stages of parsing}
+Afin de pouvoir intérpréter du code, on passe par plusieurs étapes.
+
+La première consite à une analyse lexical à l'aide d'un Lexer. On va décomposer un input (notre code ou texte) en une liste de token.
+Ces tokens seront ensuite utiliser lors de l'analyse syntaxique. L'analyse syntaxique consite à regarder quelles sont les règles qui sont applicables pour une suite de tokens défini dans une grammaire.
+
+Le résultat de cette analyse est un "Parse Tree" qui représente toutes les dérivations de notre input en fonction de la grammaire.
+Elle est représenté sous forme hiérarchique.
+
+C'est cette strucutre final qui sera intérpté ou compilé.
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=12cm]{assets/figures/interpreter-flow.PNG}}
+    \end{center}
+    \caption[interpreter-flow Anatomy]{\label{interpreter-flow} interpreter flow}
+\end{figure}
+
+
 \chapter{Generator de parsing}
 
-\textbf{TODO}
+Pour nous simplifier la vie...
+
+
+\textbf{TODO : pertinence ? à déplacer dans UON}
 \chapter{Format de sérialisation}
-Rôle d'un format de sérialsation....
+
+Lorsqu'on sérialise des données, elles se retouvent soit sous forme binaire ou textuelle.
+
+Ce projet se focalisera naturellement uniquement sur le format textuelle car c'est le format que l'on manipulera dans un éditeur.
+
+Le rôle d'un format de sérialsiation et de pouvoir représenté des données sous une autre forme et comprise et intérprétable...
+
+Dans un éditeur de texte c'est statique.
+
+Expliquer le mécanimse . ou c'est utilisé et pourquoi ?
+
+schéma\dots
+
+
 \section{JSON}
+clé-valeur
 \section{YAML}
+indentation
 \section{Protobuf}
 
 
@@ -481,6 +507,8 @@ Une des propriétés uniques de UON est l'usage de schéma directement intégré
 \subsection{Liens}
 Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
 Et le dépôt du projet se trouve \href{https://github.com/uon-language/specification}{ici}.
+
+\textbf{TODO : Datatypes ?}
 
 \subsection{Quoi traiter ?}
 Il est important d'avoir une bonne compréhension de ce que le langage propose afin de fournir un support pertinent.
@@ -999,19 +1027,50 @@ visiteur explications : https://www.youtube.com/watch?v=BD-I3f0aTbs
 
 
 \section{Info on Hover}
-\textbf{[TODO]}
 \textbf{Todo : expliquer pourquoi on voulait que ça soit une feature de base / au début je pensais que ça allait être dans la grammaire ?}
+
+C'est une fonctionnalité assez triviale qui consite à afficher une explication lorsque l'on passe le curseur sur un élément.
+
+Il s'agit donc d'une dictionnaire clé-valeur.
+
+Cependant, même si son implémentation est relativement simple, il n'en reste pas moins un élément très appréciable et pouvant être beaucoup plus étendu.
+On pourrait le réutiliser dans la complétion pour pouvoir fournir une description d'un token dans la liste des suggestions.
+Cela n'a pas été fait à cause d'une question de temps.
+
+\textbf{TODO}
 Fichier json clé-valeur....
 Intégration d'un module avec require
 utilité du dossier out
 
 \section{Lint}
 
+Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et les problèmes de syntaxe.
+
+Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
+
+% https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorStrategy.html
+Antlr définit une interace pour définir une startégie concernant les erreurs recontrés durant une analyse syntaxique nommé "ANTLRErrorStrategy".
+On peut distinguer trois types d'erreurs :
+The parser could not figure out which path to take in the ATN (none of the available alternatives could possibly match)
+The current input does not match what we were looking for
+A predicate evaluated to false
+
+\textbf{TODO : expliquer la classe qui nous permet de recevoir des informations en cas d'erreur}
+Puis on peut être notifié de ces erreurs en liant notre parser à un listener "notifyErrorListener".
+
 Proposition de correction à l'aide de antlr qui nous fourni la position dans le document
 Regarder pourquoi ici on la ligne + colonne et pourquoi on pouvait pas l'avoir dans la outline view
 
 On utilise également une fonction et non pas un provider pour afficher les erreurs
 
+
+\subsection{Suggestion}
+Certains messages d'erreurs nous informes parfois des tokens qui devrait se situer à la place de celui qui a causl l'erreur.
+Une idée serait donc de pouvoir remplacer ce token erronées par ceux suggérés.
+Le problème et que cette information ne se trouve sous forme textuelle.
+Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifiers pour en récuper la liste des tokens....
+
+\textbf{TODO surcharger des méthodes pour pouvoir être notifié des tokens manquant}
 
 \section{Fonctionnalités triviales}
 Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
@@ -1124,6 +1183,10 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 
 \chapter{Conclusion}
 \textbf{[TODO]}
+
+\chapter(Lexique)
+\textbf{[TODO]}
+
 
 
 
