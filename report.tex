@@ -993,33 +993,64 @@ Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela per
 \textbf{TODO : remplacer par Outline view ?}
 \section{Document outlining}
 
-La outline view est une représentation notre fichier, elle peut-être hiérarchique.
+La outline view est une représentation du fichier actuellement ouvert par l'éditeur.
+Les éléments peuvent être représenté de manière hiérarchique ou seulement être listés.
 
-Un élément de l'outline représente un élément unique du texte ou une strucure.
+Un élément de l'outline (noeud) représente un élément unique du texte ou une structure.
+Généralement un noeud nous permet de nous rediréger sur l'élément du fichier lorsqu'on le séléctionne.
+Il faut donc pouvoir être capable de récupérer la position d'un élément du fichier.
 
-Il est possible de l'obtenir en analysant manuellement le fichier texte (par exemple ligne par ligne). Mais cet approche n'est pas optimale er il serait diffile de représenter la strucutre hiérarchique du document.
+
+Il est possible obtenir la structure d'un fichier en analysant manuellement le texte (par exemple ligne par ligne). Mais cette approche n'est pas optimale et il serait diffile de représenter la strucutre hiérarchique du document.
 
 Nous allons donc utiliser notre parser.
-Le résulat du parsing est un "parse tree" qui contient beaucoup trop d'information supérflues.
-C'est pourquoi il faut pouvoir le parcourir pour en tirer un AST. On va vouloir récupérer uniquement les informations que l'on juge pertinent pendant le parcours
-L'outline view sera une représentation de notre AST.
+Le résulat du parsing est un "parse tree" (aussi nommé CST) qui est une représentation concrète de notre input. Le parse tree contient toutes les infomrations et beaucoup d'entre elles ne nous intéressent pas.
+Typiquement les informations grammaticales et structurelles.
 
-Cependant on ne va pas créer d'abord un AST puis construire la outline view à l'aide de celui-ci.
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=10cm]{assets/figures/parse-tree.PNG}}
+    \end{center}
+    \caption[UON parse tree]{\label{parse-tree} UON parse tree}
+\end{figure}
 
-Nous allors directement construire l'outline view à la volé pendant le parcours du parse tree.
+C'est pourquoi il faut pouvoir le parcourir pour en extraire un AST.
+Un AST est une représentation abstraite de notre input. Il ne contient généralement que les informations les plus pertinents.
 
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=10cm]{assets/figures/ast.PNG}}
+    \end{center}
+    \caption[UON AST]{\label{ast} UON AST}
+\end{figure}
 
-C'est finalement le parcours
+\textbf{TODO : Images non contractuelles}
 
-Le parcours == AST
-
+Donc pour le générer on va vouloir récupérer uniquement les informations que l'on juge pertinentes pendant le parcours.
 
 Pour parcourir un arbre, deux approches sont possibles : Le pattern Listener ou Visitor.
+La première consiste à écouter les types de noeuds traversés qui nous intéressent. Le problème et que c'est approche ne nous permet pas de manipuler un objet en cours de route.
+Car il n'est pas possible de communiquer entre les noeuds. Cela peut être tout de même utile si l'on veut afficher la strucure de l'arbre dans une console.
 
-La première consiste à écouter \dots
+La deuxième est l'approche choisie.
+Cependant on ne va pas d'abord créer un AST puis construire la outline view à l'aide de celui-ci.
+Nous allors directement construire l'outline view à la volé, pendant le parcours du parse tree. L'outline view sera une représentation direct de notre AST.
 
-La deuxième est l'apporche choisi. 
 
+Lors de la génération du parser, une classe Visitor a été crée et son rôle est de pouvoir retourner un élément à chaque étape du parcours.
+
+Puis il faut ajouter le code suivant au paser \dots \textbf{TODO}
+
+Le type de classe est générique. Et ce qui nous permet de manipuler un objet VS code \textbf{TODO : le nom} en la surchagant.
+La classe surchargée est de type "any" car pendant le parcours un élément peu être de 2 natures différentes (Une valeur/terminal ou une strucutre Vscode)
+
+\textbf{TODO : expliquer en détail}
+
+\subsection{La position}
+
+Comme expliqué précédemment, il est nécessaire d'obtenir la position. Cependant nous ne possédons pas cette informations \textbf{TODO : à controler}
+On va donc manipuler l'input pour obtenir le numéro de ligne en se basant sur le nombre de retour à la ligne.
+Seul la ligne nous intéresse. VS code ne nous redirigant que sur celle-ci.
 
 
 \textbf{TODO : parler des 2 patterns listener et visitor
