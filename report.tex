@@ -357,8 +357,17 @@ Pour être utilisé sur VS Code, un langage server à 2 parties :
 Le client et le serveur communiquent à l'aide du protocole LSP (pour "language server") dès que des informations riches devraient être fournies à l'éditeur.
 Le langage server devrait ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C'est-à-dire être capable d'analyser un AST et de fournir une réponse adéquate.
 L'implémentation d'un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "VS Code-languageserver-node" implémenté en Typescript qui n'est pas exclusivement réservé à VS Code comme son nom pourrait l'indiquer.
-On remarque donc avec cette approche que 2 composantes existent (le client et le serveur).
+On remarque donc avec cette approche que deux composantes existent (le client et le serveur).
 Un langage server peut être utilisé sur d'autre éditeur compatible. Mais le client devra être implémenté de nouveau.
+
+% TODO
+On pourrait vite se réjouir est pensé que n'importe quelle éditeur ou IDE \dots
+
+"NOTE: The first time I read about LSP I thought (naively) that any editor or IDE with LSP support could simply connect to any LSP language server. 
+This is not the case: most non-trivial LSP servers require each editor to also have a language-specific (even if small) LSP client. 
+The main responsibility of each LSP client is to launch the server, and then pass on the connection information to the editor/IDE."
+
+
 
 \subsection{API vs LSP}\label{api vs lsp}
 
@@ -863,19 +872,18 @@ L'intérêt est de proposer des suggestions de saisie au fur est à mesure que l
 Selon wikipédia, il s'agit d'une fonctionnalité informatique permettant à l'utilisateur de limiter la quantité d'informations qu'il saisit avec son clavier
 en se voyant proposer un complément qui pourrait convenir à la chaîne de caractères qu'il a commencé à taper.
 
-Le terme suggestions étant relativement vague. C'est ici ou réside la subtilité.
+Le terme "suggestions" étant relativement vague. C'est ici ou réside la subtilité.
 
 Il est donc nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
 
 Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment du à leur nature même de ces langages de sérialisation.
-Contrairement à des langages de pogrammation. Il n'y a pas de mots clés, on ne peut pas définir de nom de fonction, ni de classe. On ne peut également pas définir de variables.
+Contrairement à des langages de programmation. Il n'y a pas de mots clés, on ne peut pas définir de nom de fonction, ni de classe. On ne peut également pas définir de variables.
 
 On a donc rien de base à proposer. À la limite, seul les clé ou valeur précédement saisie peuvent éventuellement être reproposé mais cela est fait automatiquemnt sous VS Code
 avec le type de complétion nommé \textbf{TODO}.
 
 Ce comportement peut-être amélioré en utilisant par exemple "JSON-schéma" qui nous permet de définir des mots clés existants et préciser aussi leur emplacement possible.
 Typiquement on peut étendre du yaml en lui spécifiant un schéma Docker est ainsi rajouter une source d'information externe.
-
 
 Donc pour commencer, lorsqu'on implémente une telle fonctionnalité, il faut pouvoir répondre à une série de question :
 Quelles sont les suggestions pertinentes à proposer, pourquoi et quand le faire ?
@@ -903,15 +911,41 @@ Les suggestions de baseront donc sur les types et leur propriétés.
 
 %TODO : texte collé}
 
+
+
+
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
-Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser directement un parser du langage.
+Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 
-Mais en complément nous allons utiliser en plus "Antlr4-c3" (Code Completion Core for Antlr4, aussi simplement nommé c3).
+Mais en complément nous allons aussi exploiter "Antlr4-c3" (Code Completion Core for Antlr4, aussi simplement nommé c3).
 
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
+Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
+Et cet outil apporte une solution pratique est élégante pour résoudre ce cas. %TODO source
 
 Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
+Elle a été conçu par Mike Lischke.
+
+%%% TODO Explication
+En ce qui concerne l'API de complétion de antlr-c3, cela ressemble un peu à ceci :
+
+%TODO pas contractuel
+\begin{lstlisting}[frame=single]
+class CompletionCandidates:
+    # a map of the next possible token to a list of tokens which immediately follow it, 
+    # if they exist (I haven't personally found any use for the following token list with my grammar)
+    tokens: Mapping[TokenId, List[TokenId]]
+    # a map of the current parser rule to the rule stack at that point
+    rules: Mapping[RuleId, List[RuleId]]
+
+def collect_candidates(
+    parse_tree,
+    ignored_tokens: List[TokenId],  # the token blacklist
+    preferred_rules: List[RuleId],   # the rule whitelist
+    caret_token_idx: int) -> CompletionCandidates: ...
+\end{lstlisting}
+
 
 Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
 un mécanisme de machine à état ATN (Augmented Transition Network). C'est ce méchanisme qui est en coeur du fonctionnement du moteur.
@@ -963,7 +997,15 @@ Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On pe
 VS Code va automatiquement filtrer les suggestions pendant la saisie.
 Par défaut il propose également des symboles déjà existants dans le code.
 
-\subsection{Gestion des erreurs}\label{error handle}
+\subsection{Gestion des erreurs }\label{error handle}
+
+ANTLR à un méchanisme avancé de récupération d'erreur (Parser Error Recovery Strategy).
+% TODO : centraliser les gestion d'erreur d'antlr avec celui dans le lint...
+% Source...
+L'idée gérnéral et d'insérer de faux token ou de supprimer les tokens non valides jusqu'à ce qu'il en trouve un qui corresponde à set de tokens connu.
+
+% TODO : Fonctionne réelement ou je dois changer l'index aussi
+
 On peut ajouter au parser un "ErrorListener".
 Par défaut c'est la stratégie de la classe se trouvant dans le fichier \href{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}{suivant} qui est appliquée.
 
@@ -999,6 +1041,19 @@ avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre 
 %TODO : quick-suggest-setting (par défaut ?) : https://github.com/microsoft/vscode/issues/101333}
 
 \subsection{Candidats}\label{candidates}
+
+Une des plus grandes diffucultés à résoudre, est d'implémenter une fonction pour convertir la positon actuelle du curseur en la position du prochain token attendu.
+Pour être transmis à la fonction "collectCandidates(tokenIndex)". %todo
+
+La documenation du projet indique bien que ce n'est pas un problème trivial à résoudre.
+Un point important est de savoir si l'on tient compte ou non des espaces vides dans la grammaire.
+
+Sans les espaces, il est difficle de gérer certains cas particuliers % TODO montrer des exemples
+
+% TODO controler si on doit modifier l'indice ou ignorer ces tokens dans le ignore...
+% TODO résoudre le cas lorsque nous rajoutons manuellement des tokens depuis le lexer
+% Plus tard, nous verrons qu'il est nécessaire d'ajouter des tokens manuellement pour gérer l'indendation\dots 
+
 
 Actuellement pour connaitre l'indice du ou des prochains candidats, on récupère le flux des tokens (tokenStream) trouvé lors du parsing.
 Puis, on récupère dans un tableau chaque token individuellement (y compris les espaces).
