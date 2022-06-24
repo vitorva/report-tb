@@ -180,7 +180,10 @@ C'est cette strucutre final qui sera intérpté ou compilé.
 \end{figure}
 
 
-\chapter{Generator de parsing}
+\chapter{Generator de parser}
+
+% https://en.wikipedia.org/wiki/Comparison_of_parser_generators
+
 
 % TODO
 Pour nous simplifier la vie...
@@ -189,9 +192,10 @@ Pour nous simplifier la vie...
 %  pertinence ? à déplacer dans UON
 \chapter{Format de sérialisation}
 
-Le code d'un langage de sérialisation dans l'éditeur est "statique".
-Pas de notion de traitement dans un éditeur de code. On ne va appliquer les mêmes traitements quand il s'agit uniquement de UON par rapport à quand il est utilisé avec un langage haut niveau.
-On pourrait créer une extension supplémentaire pour linker le fichier UON au parseur de selim, features + avancé ???
+% TODO
+%%Le code d'un langage de sérialisation dans l'éditeur est "statique".
+%Pas de notion de traitement dans un éditeur de code. On ne va appliquer les mêmes traitements quand il s'agit uniquement de UON par rapport à quand il est utilisé avec un langage haut niveau.
+%On pourrait créer une extension supplémentaire pour linker le fichier UON au parseur de selim, features + avancé ???
 
 Lorsqu'on sérialise des données, elles se retouvent soit sous forme binaire ou textuelle.
 
@@ -332,8 +336,8 @@ Il s'agit de fonctionnalité plus riche et plus complexe à mettre en place (p.e
 Il y a 2 approches pour les implémenter que nous allons voir ci-dessous.
 
 \subsection{VS Code API (Direct implementation)}
-La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'api vscode.languages.*} qui expose des interfaces
-permettant de réaliser directement les fonctionnalités.
+La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'api vscode.languages.*}
+VS Code fournit sa propre API pour implémenter directement les fonctionnalités du langage.
 
 Elles vont nous permettre de nous inscrire à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
 
@@ -425,6 +429,13 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 %    expliquer les fonctions / ErrorListener
 %    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
 
+% Debugging
+%JAVA
+%Affichage Vscode
+%Outil pour voir les ATN
+%Intelej plugin
+%fonction antl4-c3
+
 
 \subsubsection{Parser}
 Étant donné que ce n'est pas le sujet de ce Travail de Bachelor, il a été choisi d'utiliser un générateur de parser pour en extraire le plus possible de complexité sur son implémentation.
@@ -432,6 +443,8 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 Des outils permettant la génération d'un parser existent à partir d'une grammaire.
 J'ai opté pour le générateur d'ANTLR (ANother Tool for Language Recognition), car :
 
+% use ANTLR 4 for parsing tasks inside of a TypeScript application
+% tree-sitter ????
 \begin{itemize}
     \item C'est un outil populaire est encore utilisé.
     \item Il est disponible directement en Typescript \cite{antlr4ts}.
@@ -548,19 +561,20 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 % TODO : autocomplétion dans les commentaires ?
 % TODO : expliquer les règles : https://github.com/antlr/antlr4/blob/master/doc/grammars.md
 % TODO : règle Clé
+% @members -> injection code
 
 \subsection{L'indentation}
 
 Contrairement au parser lark, la gestion des indentations n'est pas géré automatiquement à l'aide d'une librairie externe.
-Ce mécanimse doit être traité par nos soins.
+Ce méchanisme doit malheurseuement être traité par nos soins.
 
 La grande modularité d'ANTLR est un avantage mais peu se revéler très contraignant pour ce genres de tâches.
 
-Mais le plus gros problème à traiter et que notre grammaire n'est pas uniforme concernant la gestion des retours à la ligne.
+Mais avant de résoudre ce problème, il est nécessaire de rappeler que notre grammaire n'est pas uniforme concernant la gestion des retours à la ligne.
 
-En effet, UON peut-être écrit sous une forme proche de JSON ou de YAML. Le premier ne tiens pas compte des indentations contrairement à la seconde.
+En effet, UON peut-être écrit sous une forme proche de JSON ou de YAML. Le premier ne tient pas compte des indentations contrairement à la seconde.
 
-Et la gestion des indentations nécessite de prendre en compte les retour à la ligne.
+Et la gestion des indentations nécessite de prendre en compte les retour à la ligne. % TODO newline regex
 
 Il y a donc trois solutions qui ont été envisagées.
 
@@ -574,7 +588,23 @@ puisse ignorer ces erreurs.
 La troisième solution trouvée et celle actuellement utilisée. Elle consite à prendre en compte uniquement les retours à la ligne si le lexer à détecter les tokens initiaux
 nous permettant de savoir si oui ou non les retours à la ligne doivent être pris en compte.
 
-Par exemple : % TODO
+Par exemple, tester que le premier token est un token de type MINUS ("-"). On peut déduire qu'il s'agira d'une séquence en format yaml. % TODO
+
+Dès lors que les retours à la ligne existe, nous pouvons maintenant placer les tokens INDENT et DEDENT nécessaire dans le lexer
+pour pouvoir gérer les imbrications correctement.
+
+Pour ce faire, à chaque fois qu'un espace qu'un retour à la ligne est detécté, nous prenons compte de la taille de l'espacemment qu'il contient ("\\r\\n    ")
+Cet espacement nous permettra de savoir si l'on doit rajouter des INDENT ou DEDENT.
+
+% À chaque fois que le lexer detecte un token on regarde le suivant. Si c'est un retour à la ligne on va appliquer un traitement spécifique
+% TODO : More explications -> nextToken , @members, fonction pour ajouter INDENT et DEDENT etc...
+
+\begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
+    yaml_seq : INDENT (SEQUENCE_TYPE)? seq_item+ DEDENT;
+\end{lstlisting}
+
+Pour créer les tokens INDENT et DEDENT
+
 
 \textbf{Remarque : } Mais cette solution n'est pas optimale car si on modifie la grammaire il faudra probabement modifier ce code.
 
@@ -912,8 +942,6 @@ Les suggestions de baseront donc sur les types et leur propriétés.
 %TODO : texte collé}
 
 
-
-
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
@@ -924,8 +952,37 @@ Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteu
 Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas. %TODO source
 
+% TODO
+% The ANTLR4 runtime even provides the LL1Analyzer class, which helps with retrieving follow sets for a given ATN state, but has a few shortcomings and is in general not easy to use.
+% With the Code Completion Core implementation things become a lot easier. In the simplest setup you only give it a parser instance and a caret position and it will return the candidates for it. Still, a full code completion implementation requires some support code that we need to discuss first before we can come to the actual usage of the c3 engine.
+
+% Symbol table ?
+
+% Preferred Rules ?
+
+% Debugging ?
+
+
+
 Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
 Elle a été conçu par Mike Lischke.
+
+% TODO
+Setup basique :
+
+\begin{lstlisting}[frame=single]
+    let inputStream = new ANTLRInputStream("var c = a + b()");
+    let lexer = new ExprLexer(inputStream);
+    let tokenStream = new CommonTokenStream(lexer);
+
+    let parser = new ExprParser(tokenStream);
+    let errorListener = new ErrorListener();
+    parser.addErrorListener(errorListener);
+    let tree = parser.expression();
+
+    let core = new c3.CodeCompletionCore(parser);
+    let candidates = core.collectCandidates(0);
+\end{lstlisting}
 
 %%% TODO Explication
 En ce qui concerne l'API de complétion de antlr-c3, cela ressemble un peu à ceci :
@@ -933,7 +990,7 @@ En ce qui concerne l'API de complétion de antlr-c3, cela ressemble un peu à ce
 %TODO pas contractuel
 \begin{lstlisting}[frame=single]
 class CompletionCandidates:
-    # a map of the next possible token to a list of tokens which immediately follow it, 
+    # a map of the next possible token to a list of tokens which immediately follow it,
     # if they exist (I haven't personally found any use for the following token list with my grammar)
     tokens: Mapping[TokenId, List[TokenId]]
     # a map of the current parser rule to the rule stack at that point
@@ -945,6 +1002,13 @@ def collect_candidates(
     preferred_rules: List[RuleId],   # the rule whitelist
     caret_token_idx: int) -> CompletionCandidates: ...
 \end{lstlisting}
+
+% TODO https://github.com/lark-parser/lark/issues/684
+
+% The tokens give you keyword completion and you use the rules + their contexts +
+% previous parse information to do more advanced autocompletion of identifer names etc.
+
+Of course you have to locate the caret token index yourself and you seem to end up which lots of parser rule name aliases in your grammar so they can be filtered out specifically during completion.
 
 
 Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
@@ -979,6 +1043,9 @@ SELECT | FROM USER // ("|" étant le curseur)
 Dans ce scénario des suggestions liées à la table USER devrait être proposé et nécessiterait un traitement particulier.
 
 Pour nous, la seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
+
+\subsection{Tokens ignorés}
+Nous pouvons indiquer au moteur les token qui ne nous intéressent pas, pour ne pas les récupérer dans la liste des candidats.
 
 \subsection{Tolérance}
 Il semble normal que la complétion n'ait pas lieu si le code saisie est gravement erroné.
