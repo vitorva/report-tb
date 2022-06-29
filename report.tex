@@ -448,6 +448,9 @@ Il est très utilisé, autant dans le monde académique que profesionnel.
 L'algorithme de parsing utilisé dans sa version la plus récente est le "Adaptive LL(*)" qui est décrit comme amélioration de l'algorithme
 "LL(*)" utilisé dans ssa version précédente.
 
+% https://en.wikipedia.org/wiki/LL_parser
+% https://www.antlr.org/papers/allstar-techreport.pdf
+
 Dans les grandes lignes  % TODO %
 
 Depuis une grammaire, qui est un fichier décrivant formellement le langage, ANTLR génère le code perméttant de reconnaitre ce langage.
@@ -458,6 +461,8 @@ La grammaire est décrite en utilisant la notation EBNF (Extended Backus–Naur 
 Le parser peut automatiquement créer un "parse tree" qui est une structure représentant comment la grammaire interpète un input.
 ANTLR peut génèrer également automatiquement un "tree walkers" qui nous permet de visiter chaque noeud de l'abre pour y exécuter des actions liés à notre application.
 %TODO : citer antlr.org et wikipedia ?
+% https://www.antlr.org/about.html
+% https://en.wikipedia.org/wiki/ANTLR
 
 Il n'y a seulement qu'un seul outil qui permet de générer le code des lexer et parsers pour tous les langages cibles, et il est écrit en Java.
 
@@ -471,6 +476,14 @@ Nous utiliserons antlr4ts, qui est un environement d'éxécution en typescript e
 
 Il a été conçu par l'organisation principalement par Sam Harwell indépendamment de l'organisation ANTLR.
 L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citation
+% https://github.com/antlr/antlr4/blob/master/doc/targets.md
+% https://github.com/tunnelvisionlabs/antlr4/blob/master/doc/targets.md
+
+% https://github.com/sharwell
+% https://github.com/tunnelvisionlabs
+
+% lecture
+%https://stackoverflow.com/questions/41427905/how-many-ways-are-there-to-build-a-parser
 
 Cette implémentation semble très apprécié et utilisé.
 
@@ -1008,13 +1021,25 @@ Les suggestions de baseront donc sur les types et leur propriétés.
 
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
+
+\subsection{antlr4-c3}
+
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 
-Mais en complément nous allons aussi exploiter "Antlr4-c3" (Code Completion Core for Antlr4, aussi simplement nommé c3).
+Mais en complément nous allons aussi exploiter "antlr4-c3" (Code Completion Core for ANTLR4, aussi simplement nommé c3).
 
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
 Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas. %TODO source
+
+Comment aurions nous du procéder sans un tel outil ?
+
+On devrait comprendre quel type de token pourrait pourrait suivre le "carret".
+
+Pour trouver ces tokens, on peut s'aider du lexer pour garder dans une liste dans les tokens trouvés dans un inputs.
+
+
+
 
 % TODO
 % The ANTLR4 runtime even provides the LL1Analyzer class, which helps with retrieving follow sets for a given ATN state, but has a few shortcomings and is in general not easy to use.
