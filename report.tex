@@ -104,7 +104,7 @@ Un parser en Python à déja été implémenté par Stéphane Selim. Cepedendant
 Il consite à founir une autre composante qui est de permettre l'utilisation du langage UON dans un éditeur pour qu'il soit utilisé par un plus grand nombre.
 Et cela sera possible quand sa syntaxe sera entièrement prise en charge par tous les principaux éditeurs de texte.
 
-Le travail précédent c'était concentrer sur 3 aspects : La sérialisation/deserialisation binaire et textuelle d'objet en python, la cohércient et la validation.
+Le travail précédent s'était concentrer sur 3 aspects : La sérialisation/deserialisation binaire et textuelle d'objet en python, la cohércient et la validation.
 Parmis ces trois, la validation pourrait être pertinente mais ne fait pas parti du CDC même si possible \textbf{TODO}
 
 Nous nous focaliserons uniquement sur VS code dans un premier temps et expliquerons pourquoi plus tard.
@@ -112,6 +112,8 @@ Nous nous focaliserons uniquement sur VS code dans un premier temps et expliquer
 Ce projet consite à étudier les différentes approches et les mettre en oeuvre. Nous spécifierons également les alternatives et améliorations possible quand cela est pertinent.
 
 Il se veut aussi être expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisies sont libres tant qu'elles respectent le cahier des charges.
+% TODO : aussi on se permet d'explorer des possibilités...
+
 Dans les chapitres suivants, nous allons voir ce qui est fourni par VS Code pour élaborer et déployer une extension.
 Les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
 Les aspects du langage UON à considérer dans le cadre de ce projet.
@@ -158,7 +160,7 @@ On pourrait par exemple mentionner la validation par un schéma...
 
 \chapter{Pré-étude}
 
-\chapter{Parsing}
+\section{Parsing}
 Le travail ne portant pas sur cette élément en particulier. Nous n'allons pas rentrer en détail dans ce sujet.
 Mais il est important de rappeler les concepts prinicipaux car ces éléments nous sont très utile et il est important de bien en comprendre son fonctionnement.
 
@@ -180,7 +182,7 @@ C'est cette strucutre final qui sera intérpté ou compilé.
 \end{figure}
 
 
-\chapter{Generator de parser}
+\section{Generator de parser}
 
 % https://en.wikipedia.org/wiki/Comparison_of_parser_generators
 
@@ -190,7 +192,7 @@ Pour nous simplifier la vie...
 
 % TODO
 %  pertinence ? à déplacer dans UON
-\chapter{Format de sérialisation}
+\section{Format de sérialisation}
 
 % TODO
 %%Le code d'un langage de sérialisation dans l'éditeur est "statique".
@@ -207,11 +209,11 @@ Dans un éditeur de texte c'est statique.
 
 Expliquer le mécanimse. ou c'est utilisé et pourquoi ?
 
-\section{JSON}
+\subsection{JSON}
 clé-valeur
-\section{YAML}
+\subsection{YAML}
 indentation
-\section{Protobuf}
+\subsection{Protobuf}
 
 
 \textbf{[TODO]}
@@ -232,7 +234,7 @@ D'autres alternatives existes comme VIM et Atom pour ne citer qu'eux. Et chacun 
 C'est donc un choix personnel. Mais les concepts entre éditeur semble relativement similaire.
 
 L'idéal serait de pouvoir créer un support pouvant être utilisé sur n'importe quels éditeurs. Mais cela n'est pas possible pour plusieurs raisons.
-Des fonctionnalités ne peuvent être implémenté que sur un éditeur spécifique. Par ex
+Des fonctionnalités ne peuvent être implémenté que sur un éditeur spécifique. Par ex % todo
 
 
 Comme il est pensé pour être étendu, il fourni et détaille très clairement les étapes pour la création d'une extension ainsi que le support de langage en lui-même.
@@ -437,6 +439,42 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 %fonction antl4-c3
 
 
+Il s'agit d'un générateur de parseur, il est actuellement dans sa quatrième version.
+
+Il a été créé par Terence Parr à l'Université de San Francisco.
+
+Il est très utilisé, autant dans le monde académique que profesionnel.
+
+L'algorithme de parsing utilisé dans sa version la plus récente est le "Adaptive LL(*)" qui est décrit comme amélioration de l'algorithme
+"LL(*)" utilisé dans ssa version précédente.
+
+Dans les grandes lignes  % TODO %
+
+Depuis une grammaire, qui est un fichier décrivant formellement le langage, ANTLR génère le code perméttant de reconnaitre ce langage.
+C'est à dire en pratique un lexer et un parser.
+
+La grammaire est décrite en utilisant la notation EBNF (Extended Backus–Naur Form).
+
+Le parser peut automatiquement créer un "parse tree" qui est une structure représentant comment la grammaire interpète un input.
+ANTLR peut génèrer également automatiquement un "tree walkers" qui nous permet de visiter chaque noeud de l'abre pour y exécuter des actions liés à notre application.
+%TODO : citer antlr.org et wikipedia ?
+
+Il n'y a seulement qu'un seul outil qui permet de générer le code des lexer et parsers pour tous les langages cibles, et il est écrit en Java.
+
+Pour pouvoir utiliser cet outil dans un environnement autre que java, il est nécessaire de l'utiliser dans un runtime (environnement d'éxécution) propre au langage shouhaité.
+%TODO : citer target.md de antlr et repo antlr4ts ?
+
+% TODO : liens + emph ?
+
+% fork du répo principal antl ?
+Nous utiliserons antlr4ts, qui est un environement d'éxécution en typescript et donc parfaitement adapté pour VS Code.
+
+Il a été conçu par l'organisation principalement par Sam Harwell indépendamment de l'organisation ANTLR.
+L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citation
+
+Cette implémentation semble très apprécié et utilisé.
+
+
 \subsubsection{Parser}
 Étant donné que ce n'est pas le sujet de ce Travail de Bachelor, il a été choisi d'utiliser un générateur de parser pour en extraire le plus possible de complexité sur son implémentation.
 
@@ -562,8 +600,24 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 % TODO : expliquer les règles : https://github.com/antlr/antlr4/blob/master/doc/grammars.md
 % TODO : règle Clé
 % @members -> injection code
+% regex pas possible genre ^ symbole ...
 
 \subsection{L'indentation}
+
+% TODO : Détailler en détail la réflexion ci-dessous
+Après refléxion, la gestion des indentations n'a pas été implémentée. Cependant, il est intéressant de détailler son implémentation dans un environnement ANTLR
+et plus particulièrement typescript.
+
+L'idée de gérer l'indentation venait du fait que le UON est décrit comme un set partielle de YAML\dots
+
+Pourquoi ? Yaml compliant... / être au plus proche de la specs
+Ne pas séparpillier...
+
+On veut éviter au maximum la confusion sur ce qui est possible de faire (ex yaml avec les sequence ? que le prof m'a montré)
+Les indentations complexifie énormément dans une contexte (JSON et schéma)
+Parler de l'envie exploratoire
+Grammaire reprise mais du coup sera réadapté
+%%%%%
 
 Contrairement au parser lark, la gestion des indentations n'est pas géré automatiquement à l'aide d'une librairie externe.
 Ce méchanisme doit malheurseuement être traité par nos soins.
@@ -612,7 +666,7 @@ Pour créer les tokens INDENT et DEDENT
 \subsection{Token DEDENT et INDENT}
 Ces deux tokens sont ajoutés depuis le lexer. Cela nécessite d'y rajouter le code pour le faire.
 
-% TODO
+% TODO mieux...
 On peut le faire depuis la grammaire. Il suffit d'écrire le code permettant de le faire à l'intérieur de @lexer:members{}.
 Lors de la génération, ce code sera déplacé dans le lexer.
 Mais j'ai constaté quelques bugs, probablement du au faites que cette implémentation en typescript et récente et que tout n'a pas été pris en compte.
@@ -627,6 +681,15 @@ Dans ce chapitre, nous allons explorer les aspects techniques concernant l'impl�
 Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
 
 % TODO : Taux "d'erreur" acceptable pour le rendu final ?
+\section{Tolérance}
+
+Le parseur doit pouvoir traiter un fichier correct
+Mais si trop correct il y a potentiellement + d'erreurs qui peuvents être detecté
+
+La gestion des erreurs se fait à l'aide des fichiers de stratégies.
+
+Mais on ne peut pas imaginer ignorer / modifier tout correctement\dots
+
 
 \section{Code}
 % TODO : mettre à jour le readme
@@ -763,6 +826,7 @@ Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) po
 %TODO : difficulté regex ne fonctionne pas...}
 
 %TODO : Reserved Symbols}
+% TODO : quelle couleur par défaut ?
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a 2 composantes principales.
@@ -1144,6 +1208,8 @@ Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela per
 
 %TODO : remplacer par Outline view ?}
 \section{Document outlining}
+
+%TODO : expliquer qu'on affiche pas les propriété ... pourquoi ?
 
 La outline view est une représentation du fichier actuellement ouvert par l'éditeur.
 Les éléments peuvent être représenté de manière hiérarchique ou seulement être listés.
