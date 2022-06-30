@@ -1026,19 +1026,90 @@ Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliS
 
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 
-Mais en complément nous allons aussi exploiter "antlr4-c3" (Code Completion Core for ANTLR4, aussi simplement nommé c3).
-
+% TODO : ERREUR avec le symbole #
+Mais en complément nous allons aussi exploiter \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
+Cet outil est écrit en Typescript mais existe aussi en version JAVA et C\#.
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
+
+% citation ?
+Le moteur ne va pas utiliser le résultat du parse tree pour la complétion. Mais l'exécution du parser est nécessaire pour remplir le token stream sur lequelle s'appuyera le moteur.
+
+% citation ?
+\textbf{Remarque} : Le résultat du parsing n'a pas besoin d'être correcte. Il est possible de travailler avec du code incomplet ou malformé, ce qui est relativement fréquent dans un éditeur.
+ANTLR4 est capable de se rétablir des erreurs et si nous utilisons le DefaultErrorStrategy nous obtiendrons un parse tree dans tous les cas.
+
+Pourquoi un telle moteur ?
+
 Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas. %TODO source
 
+%% todo : useless ?
+%%De plus nous ne voudrions pas proposer tout ce qui est possible
+
+Pour recevoir des candidats il suffit d'exécuter la commande suivantes.
+
+\begin{lstlisting}[frame=single]
+    let candidates = core.collectCandidates(index);
+\end{lstlisting}
+
+
+Nous expliquerons plus tard comment est calculé l'indice.
+
+Nous recevorns alors un objet CandidatesCollection.
+
+\begin{lstlisting}[frame=single]
+    class CandidatesCollection {
+        tokens: Map<number, TokenList>;
+        rules: Map<number, RuleList>;
+    }
+\end{lstlisting}
+
+
+On obeserve qu'en plus une liste des tokens en obtient également une liste de règles "rules".
+
+%Tell the engine in which parser rules you are particularly interested. It will then return those to you instead of the lexer tokens they are made of.
+
+On peut spécifier au moteur quelles règles de parseur nous intéresse. Cela nous retournera ? au lieu des tokens de lexers avec lesquels ils sont composé.
+
+Example :
+
+
 Comment aurions nous du procéder sans un tel outil ?
+Il évidemment possible de le faire sans ce moteur. Un excellent article mentionne une telle implémentation aussi avec ANTLR ici.
 
-On devrait comprendre quel type de token pourrait pourrait suivre le "carret".
+Cela rend bien entendu le travail plus conséquent.
 
-Pour trouver ces tokens, on peut s'aider du lexer pour garder dans une liste dans les tokens trouvés dans un inputs.
+% todo : useless ?
+%%On devrait comprendre quel type de token pourrait pourrait suivre le "caret".
+%%Pour trouver ces tokens, on peut s'aider du lexer pour garder dans une liste dans les tokens trouvés dans un inputs.
 
 
+\textbf{Symbol tables}
+
+C'est un méchanisme important de c3 mais que nous n'allons pas exploiter.
+
+Une table de symbole est une structure qui contient des informations sur des symboles, cela peut s'agir de noms, leur scopes et d'autre caractèrisiques.
+Cependant, un langage de sérialisation est relativement moins complexe à gérer qu'un langage de programmation.
+Nous n'avons par exemple pas à gérer des variables et leur visibilité au sein du code.
+
+De ce fait nous n'avons alors pas besoin d'une telle source d'information complémentaire.
+
+
+\textbf{Rule}
+
+%todo
+
+
+\textbf{Sorting}
+
+%  fuzzy search algorithms to match identifiers
+Pour rendre la recherche plus agréable on peut utiliser un algotihme de recheche aproximative (Fuzzy search).
+% TODO
+
+%Filtering
+%Partial Matches ???? -> pas compris pourquoi il y a ce traitement si particulier ???
+%Adding Heuristics
+%Improving Performance
 
 
 % TODO
