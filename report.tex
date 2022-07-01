@@ -431,12 +431,13 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 %    expliquer les fonctions / ErrorListener
 %    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
 
-% Debugging
-%JAVA
-%Affichage Vscode
-%Outil pour voir les ATN
-%Intelej plugin
-%fonction antl4-c3
+% TODO
+\textbf{Debugging}
+JAVA - vaut pas trop la peine de détailler
+Affichage Vscode (arbre mais sans strucutre)
+Outil pour voir les ATN (plugin vscode)
+Intelej plugin
+fonction antl4-c3
 
 
 Il s'agit d'un générateur de parseur, il est actuellement dans sa quatrième version.
@@ -486,6 +487,21 @@ L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citat
 %https://stackoverflow.com/questions/41427905/how-many-ways-are-there-to-build-a-parser
 
 Cette implémentation semble très apprécié et utilisé.
+
+La raison principal d'utiliser parseur est de pouvoir exploiter un arbre contenant la structure du document.
+On pourrait se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expression régulières.
+Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrèment difficle à traiter.
+
+"you cannot find a (regular) expression inside another one, unless you code it by hand for each level. Something that quickly became unmaintainable."
+
+Example : % TODO
+
+Lorsque que la grammaire a été défini, on peut demander à antlr de générer des parsers dans différents langages.
+
+ANTLR est composé de 2 parties principales : L'outil en java qui permet de générer le lexer et le parseur, aisni que l'environnement d'éxecution (runtime) qui permet leur exécution
+
+%The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
+%Typical Workflow
 
 
 \subsubsection{Parser}
@@ -614,6 +630,8 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 % TODO : règle Clé
 % @members -> injection code
 % regex pas possible genre ^ symbole ...
+% fragments: they are reusable building blocks for lexer rules.
+% Error tolerance: This can partly be resolved by making the grammar itself more error tolerant and solving those errors later. -> https://github.com/lark-parser/lark/issues/684 
 
 \subsection{L'indentation}
 
@@ -696,6 +714,11 @@ Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne d
 % TODO : Taux "d'erreur" acceptable pour le rendu final ?
 \section{Tolérance}
 
+"The parser should only check the syntax. So the rule of thumb is that when in doubt you 
+let the parser pass the content up to your program. Then, in your program, you check the semantics and make sure that the rule actually have a proper meaning."
+% Citation !!!
+
+
 Le parseur doit pouvoir traiter un fichier correct
 Mais si trop correct il y a potentiellement + d'erreurs qui peuvents être detecté
 
@@ -759,6 +782,8 @@ Pour cela, il faut modifier l'activation events dans le fichier package.json par
 
 \textbf{Prérequis} : Posséder un compte Azure.
 
+% En gros on va créer un acces TOKEN depuis notre compte qui nous permettre d'avoir les droits pour publier une extension
+
 Il faut d'abord récupérer un Personal Access Token. Pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
 Puis, créer un access token avec ces paramètres :
 \begin{figure}[!h]
@@ -816,7 +841,13 @@ Il nous génère ces fichiers :
 \end{itemize}
 
 \subsection{Arbre (CST)}
-Antlr va générer un arbre parsé. Plus précisément un CST (concrete syntax tree).
+
+%"Notice that technically what you get from ANTLR is a parse tree rather than an AST.
+% The difference is that a parse tree is exactly what comes out of the parser, while the AST is a more refined version
+%of the parse tree. You create the AST by manipulating the parse tree, in order to get something that is easier to use by subsequent parts of your program"
+% Citation ?
+
+ANTLR va générer un arbre parsé. Plus précisément un CST (concrete syntax tree).
 Il contient tous les noeuds de la grammaire. Certains sont superflus pour en tirer un sens.
 
 Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre plus simple.
@@ -1342,13 +1373,23 @@ Un AST est une représentation abstraite de notre input. Il ne contient généra
 Donc pour le générer on va vouloir récupérer uniquement les informations que l'on juge pertinentes pendant le parcours.
 
 Pour parcourir un arbre, deux approches sont possibles : Le pattern Listener ou Visitor.
-La première consiste à écouter les types de noeuds traversés qui nous intéressent. Le problème et que c'est approche ne nous permet pas de manipuler un objet en cours de route.
-Car il n'est pas possible de communiquer entre les noeuds. Cela peut être tout de même utile si l'on veut afficher la strucure de l'arbre dans une console.
+La première consiste à écouter les types de noeuds traversés qui nous intéressent. Le problème et que c'est approche ne nous permet pas de manipuler un objet en cours de route, ni gérer le flux d'exécution.
+Car il n'est pas possible de communiquer entre les noeuds. Cela peut être tout de même utile si l'on veut afficher la strucure de l'arbre dans un terminal par exemple.
 
-La deuxième est l'approche choisie.
+Contrairement à la seconde apporche, qui nous permet de gérer ces 2 cas. Et c'est donc tout naturellement que cette solution a été prévilégiée.
+
 Cependant on ne va pas d'abord créer un AST puis construire la outline view à l'aide de celui-ci.
 Nous allors directement construire l'outline view à la volé, pendant le parcours du parse tree. L'outline view sera une représentation direct de notre AST.
 
+
+"Both the listener and the visitor use depth-first search"
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=10cm]{assets/figures/DFS.PNG}}
+    \end{center}
+    \caption[Algorithme de parcours en profondeur (DFS)]{\label{ast} Algorithme de parcours en profondeur (DFS)}
+\end{figure}
 
 Lors de la génération du parser, une classe Visitor a été crée et son rôle est de pouvoir retourner un élément à chaque étape du parcours.
 
@@ -1358,6 +1399,8 @@ Le type de classe est générique. Et ce qui nous permet de manipuler un objet V
 La classe surchargée est de type "any" car pendant le parcours un élément peu être de 2 natures différentes (Une valeur/terminal ou une strucutre Vscode)
 
 %TODO : expliquer en détail
+
+On peut avoir pendant le parcours 2 structure différentes
 
 \subsection{La position}
 
@@ -1539,7 +1582,14 @@ Compter le nombre d'erreur et localiser leur emplacement
 
 
 \chapter{Publication (CD ???) et maintenance}
-% TODO
+
+% Parler du CD ? Ajouter notre access Token comme secret
+% Ajouter le script pour déployer dans le package.json
+% Installer vsce ? pourquoi ?
+% Il faut s'assurer de changer la version de l'extension dans le package.json
+% On ne peut pas mettre une version inférieur ou égale
+
+% TODO : maintenance
 Les explications permettant de  reprendre le projet se trouve sur le Readme à la racine du repository...
 
 \chapter{Planning}
