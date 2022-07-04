@@ -216,13 +216,13 @@ indentation
 \subsection{Protobuf}
 
 
-\textbf{[TODO]}
-pourquoi VS Code est pas un autre éditeur ??
-Présenter les autres éditeur de code (atom...)
-C'était l'éditeur proposé mais pas que...
-Popularité, usage personnelle...
-c'est quoi un éditeur de code / rapport avec un Ide / Les difflérences que l'on pourrait avoir
-Que propose les concurents ?
+% TODO
+% pourquoi VS Code est pas un autre éditeur ??
+% Présenter les autres éditeur de code (atom...)
+% C'était l'éditeur proposé mais pas que...
+% Popularité, usage personnelle...
+% c'est quoi un éditeur de code / rapport avec un Ide / Les difflérences que l'on pourrait avoir
+% Que propose les concurents ?
 
 \section{VS Code}
 % TODO :
@@ -400,6 +400,8 @@ La plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement inc
 Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
 Pour faciliter l'étape de l'analyse syntaxique ("Parsing"), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux).
 Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
+
+% Différente catégorie de grammaire (nous la 2 ?)
 
 \section{Choix technologiques}
 Nous allons mentionner les technologies et approches choisies et expliquer les raisons.
@@ -633,6 +635,18 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 % fragments: they are reusable building blocks for lexer rules.
 % Error tolerance: This can partly be resolved by making the grammar itself more error tolerant and solving those errors later. -> https://github.com/lark-parser/lark/issues/684 
 
+
+% Rajout d'unités
+% Rajout de propriétés au types (présentation) directement dans le payload
+% Rajout des validation propriétés dans un schéma
+% Remettre le yaml ??
+
+% Bug : Resolu en créant un lexer token pour les mots et l'utiliser dans le parser rule "string"
+% Le truc avec UON c'est qu'on a plein de mon clé. Mais on aussi envie de les utilisers parfois dans les clés
+% Si on crée un nouveau token (le fait automatiquemnt meme si on fait jusqze qu écrire du texte) alors il faudra le spécifier dans les clé sinon erreur !!!!
+
+
+
 \subsection{L'indentation}
 
 % TODO : Détailler en détail la réflexion ci-dessous
@@ -780,6 +794,11 @@ Pour cela, il faut modifier l'activation events dans le fichier package.json par
 
 \subsection{Déploiement sur le Marketplace}
 
+% https://code.visualstudio.com/api/working-with-extensions/publishing-extension
+% https://code.visualstudio.com/api/working-with-extensions/continuous-integration
+% https://marketplace.visualstudio.com/manage/publishers/test2publish?noPrompt=true
+% https://dev.azure.com/Stev03/_usersSettings/tokens
+
 \textbf{Prérequis} : Posséder un compte Azure.
 
 % En gros on va créer un acces TOKEN depuis notre compte qui nous permettre d'avoir les droits pour publier une extension
@@ -870,7 +889,8 @@ Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) po
 %TODO : difficulté regex ne fonctionne pas...}
 
 %TODO : Reserved Symbols}
-% TODO : quelle couleur par défaut ?
+% TODO : quelle couleur par défaut (gérer les entres deux) ?
+% quand afficher des erreurs
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a 2 composantes principales.
@@ -1047,7 +1067,20 @@ Les suggestions de baseront donc sur les types et leur propriétés.
 %TODO : faire attention de bien gérer les erreurs dès que la complétions est appelé par un trigger sinon comportement aléatoire
 %    ex. trigger élément qui lançait la complétion et erreur car le text parsé était faux !
 
-%TODO : texte collé}
+%TODO : texte collé -> genre {comment:
+
+% TODO : Se baser sur les erreurs pour essayer d'ignorer manuellement la partie avant
+
+% Ne devrait pas afficher des proposition dans les commentaires ?
+
+%Impossible d'avoir des suggestions si le texte est eronner : Impossible de savoir combien de token à skip + syncronisation
+%"ANTL4's error strategy is to try re-synching the ATN walk to the actual input. However, that goes only so far to
+%find either a single additional token or a single missing token. This won't help in this scenario,
+%which would require to (theoretically) skip an unknown number of tokens and resynch."
+
+%le moteur n'utilise pas vraiment le parser mais le toknenStream généré par le parseur.
+
+%https://github.com/mike-lischke/antlr4-c3/issues/29
 
 
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
@@ -1336,7 +1369,9 @@ Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela per
 %TODO : remplacer par Outline view ?}
 \section{Document outlining}
 
-%TODO : expliquer qu'on affiche pas les propriété ... pourquoi ?
+%TODO : expliquer qu'on affiche pas les propriété pour l'instant ou pour toujours ?
+% si pas le cas, changer strucutre pour mieux représenter les propriétés...
+% Rajouter yaml
 
 La outline view est une représentation du fichier actuellement ouvert par l'éditeur.
 Les éléments peuvent être représenté de manière hiérarchique ou seulement être listés.
@@ -1383,6 +1418,25 @@ Nous allors directement construire l'outline view à la volé, pendant le parcou
 
 
 "Both the listener and the visitor use depth-first search"
+
+Je me suis inspiré de l'outline json et yaml pour obtenir un résultat visuel similaire.
+
+Que devons nous visualiser dans l'outline ?
+
+DFS permet de garder l'odre donc manipulations facilités
+
+DocumentSymbol
+
+class DocumentSymbol
+Represents programming constructs like variables, classes, interfaces etc. that appear in a document. 
+Document symbols can be hierarchical and they have two ranges: one that encloses its definition and one
+that points to its most interesting range, e.g. the range of an identifier.
+
+
+Dans un premier temps ne tient pas compte des popriété
+rajouter ça....
+
+pierre angulaire
 
 \begin{figure}[!h]
     \begin{center}
@@ -1456,12 +1510,21 @@ Cela n'a pas été fait à cause d'une question de temps.
 % TODO
 %Fichier json clé-valeur....
 %Intégration d'un module avec require
-%utilité du dossier out
+%utilité du dossier out / corriger bug sinon par défaut dans out/
+
+% placement "des erreurs"
+% suggestion token si possible ou expliquer qu'il faudrait redéfinir des fichiers pour récupérer le tableau ayant servi à créer le message d'erreur reçu
+
 
 \section{Lint}
 Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et les problèmes de syntaxe.
 
 Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
+
+
+On affiche les erreurs trouvé avec antlr -> avantages positions
+Les erreurs sont liés au placement des tokens (manque un éléments du langages, mauvais token ou leur "ortographe").
+Message trop technique mais ok pour voir d'ou viens la faute.
 
 % https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorStrategy.html
 Antlr définit une interace pour définir une startégie concernant les erreurs recontrés durant une analyse syntaxique nommé "ANTLRErrorStrategy".
