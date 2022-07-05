@@ -1,6 +1,82 @@
 % Francais
-En 2018, Le Professeur Yves Chevallier a imaginé un nouveau format de sérialisation proche de YAML et JSON nommé UON.
-Pour être utilisable, ce format de sérialisation devrait disposer de son propre support de langage.
 
-\textbf{[TODO]}
-\textbf{À étoffer pour le rendu final, peut-être rajouter aussi un résumé en anglais}
+% • le contexte,
+En 2018, Le Professeur Yves Chevallier a imaginé un nouveau format de sérialisation proche de YAML et JSON nommé UON.
+
+UON vise à rassembler toutes les caractéristiques utlies de des formats de sérialisation les plus utilisés (XML, YAML et JSON) en un seul format qui les englobe et le rend adapté à la communication m2m, des dispositifs embarqués de faible puissance aux plateformes haut de gamme basées sur le cloud.
+
+Il offre des fonctionnalités supplémentaires utiles pour accroître l'interopérabilité entre différents types d'appareils. Ses principaux avantages par rapport à d'autres langages similaires sont les suivants :
+
+%Validation schema
+%Binary payload
+%Canonical form
+%Physical quantities and units
+%References
+%Standard API
+%Type properties
+%User types
+
+%Schéma de validation
+%Charge utile binaire
+%Forme canonique
+%Quantités et unités physiques
+%Références
+%API standard
+%Propriétés des types
+%Types d'utilisateurs
+
+\begin{itemize}
+    \item Typage fort
+    \item Schéma de validation
+    \item Forme canonique
+    \item Quantités et unités physiques
+    \item Références
+    \item API standard
+    \item Propriétés des types
+    \item Types d'utilisateurs
+\end{itemize}
+
+% • la problématique,
+Pour être utilisable, ce format de sérialisation devrait disposer de son propre support de langage afin qu'il soit utilisé par un plus grand nombre.
+
+% • les objectifs du travail,
+% editeur de texte ou de code ?
+Ce Travail de bachelor à l'objectif de répondre à ce besoin en permettant l'utilisation du langage UON dans un éditeur de code.
+Sa syntaxe devra être pris en charge à terme par les pincipaux éditeurs de code. Nous nous focaliserons ici, uniquement sur l'éditeur VS Code.
+Le support de langage consistera donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON.
+
+% • la méthodologie utilisée,
+La méthodologie utilisée tout le long de ce projet à étét la suivante :
+
+Se renseigner concernant ce qui est fourni par VS Code pour élaborer et déployer une extension.
+Se renseigner sur les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
+Chosiri les aspects du langage UON à traiter dans le cadre de ce projet.
+
+Documenter et réaliserl'implémentation d'une extension ainsi que ses fonctionnalités.
+Documenter et mettre en place les tests effectués pour les différents composants du projet.
+
+Documenter également des pistes de réflexions, les alternatives,et améliorations possible.
+
+% • les principaux résultats de la recherche ou, si confidentiel, au moins la nature
+%   des résultats,
+Au terme de ce projet, les points attendues du cahier des charges ont été effectué. Il s'agit de :
+\begin{itemize}
+    \item Définir une grammaire UON
+    \item Implémenter une intégration continue
+    \item Implémenter de l'autocomplétion : Les éléments proposé à l'utilisateur sont des mots-clés : (Le nom des structures, les types et leur propriétés associés).
+    \item Implémenter une outline view.
+    \item Implémenter la documentation on hover
+\end{itemize}
+
+% • perspectives et recommandations
+Les perspectives concernant ce sujet sont vastes, mais des améliorations possibles sont les suivants :
+\begin{itemize}
+    \item Implémenter les points du CDC dans la partie "si le temps le permet"
+    \item Créer un langage server et déplacer, adapter le code pour pouvoir l'utiliser.
+    \item Continuer à améliorer la grammaire et adapté les fonctionnalités en conséquence
+\end{itemize}
+
+Étant donné l'étendu d'un tel sujet, le travail s'est focalisé sur une infime partie de ce qui est possible de faire.
+Une extension pouvant être étendue à l'infini, chacun pourrait donc ajouter ce qu'il trouve pertinent.
+
+% TODO : English
