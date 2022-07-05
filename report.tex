@@ -177,14 +177,6 @@ Le flow d'exécution standard est représenté par la figure \ref{interpreter-fl
 \end{figure}
 
 
-% TODO
-% pourquoi VS Code est pas un autre éditeur ??
-% Présenter les autres éditeur de code (atom...)
-% C'était l'éditeur proposé mais pas que...
-% Popularité, usage personnelle...
-% c'est quoi un éditeur de code / rapport avec un Ide / Les difflérences que l'on pourrait avoir
-% Que propose les concurents ?
-
 \section{VS Code}
 % TODO :
 % Peut être élaborer un peu plus : c'est quoi VS Code, pourquoi a-t-il été choisi ? Est-il populaire ? En quel langage a-t-il été écrit. Est-il entièrement open-source, est-ce qu'une extension peut être complètement indépendante de la base de code...
@@ -268,11 +260,11 @@ Nous avons donc vu les briques de bases pour la conception d'une extension. Mais
 Si vous souhaitez vous renseigner d'avantages sur l'élaboration d'une extension vous pouvez consulter la page \href{https://code.visualstudio.com/api}{suivante}.
 Concernant les fonctionnalitls générales de l'éditeur VS Code vous pouvez consulter consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
-\subsection{Support de langage}
+\section{Support de langage}
 VS Code fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories détaillées
 dans dans les sections \hyperref[Declarative language features][Declarative language features] et \hyperref[Programmatic language features][Programmatic language features] ci-dessous.
 
-\section{Declarative language features}\label{Declarative language features}
+\subsection{Declarative language features}\label{Declarative language features}
 Elles ajoutent un support d'édition de texte de base pour un langage de programmation.
 Par exemple, les éléments suivants :
 
@@ -291,11 +283,11 @@ Il s'agit de fonctionnalités implémentées à l'aide de fichier de configurati
 
 Puis, elles doivent être enregistrées comme \emph{Contribute Point}.
 
-\section{Programmatic language features}\label{Programmatic language features}
+\subsection{Programmatic language features}\label{Programmatic language features}
 Il s'agit de fonctionnalité plus riche et plus complexe à mettre en place (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
 Il y a 2 approches pour les implémenter que nous allons voir ci-dessous.
 
-\subsection{VS Code API (Direct implementation)}
+\subsubsection{VS Code API (Direct implementation)}
 La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'api vscode.languages.*}
 VS Code fournit sa propre API pour implémenter directement les fonctionnalités du langage.
 
@@ -303,7 +295,7 @@ Elles vont nous permettre de nous inscrire à des providers. L'éditeur de code 
 
 %TODO : Pas forcément uniquement des providers (ex suggestions)}
 
-\subsection{Langage server}
+\subsection{Language server}
 
 %L'idéal serait de pouvoir créer un support de langage pouvant être utilisé sur n'importe quels éditeurs.
 %Mais cela n'est malheurseuement pas possible pour plusieurs raisons.
@@ -335,7 +327,6 @@ On pourrait vite se réjouir est pensé que n'importe quelle éditeur ou IDE \do
 "NOTE: The first time I read about LSP I thought (naively) that any editor or IDE with LSP support could simply connect to any LSP language server. 
 This is not the case: most non-trivial LSP servers require each editor to also have a language-specific (even if small) LSP client. 
 The main responsibility of each LSP client is to launch the server, and then pass on the connection information to the editor/IDE."
-
 
 
 \subsection{API vs LSP}\label{api vs lsp}
@@ -1349,19 +1340,26 @@ L'indexation est gérée de 2 manières différentes. En fonction de la prise en
 Cela va dépendre si on décide d'ignorer ou non les espaces dans la grammaire g4.
 Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela permet de gérer plus de cas particuliers.
 
-%TODO : remplacer par Outline view ?}
-\section{Document outlining}
+\section{Outline view}
 
 %TODO : expliquer qu'on affiche pas les propriété pour l'instant ou pour toujours ?
 % si pas le cas, changer strucutre pour mieux représenter les propriétés...
 % Rajouter yaml
 
 La outline view est une représentation du fichier actuellement ouvert par l'éditeur.
-Les éléments peuvent être représenté de manière hiérarchique ou seulement être listés.
+On appel généralement cettre stucure étant le "document outlining" ou "code outlining".
+
+Les éléments peuvent être représentés de manière hiérarchique ou seulement être listés.
 
 Un élément de l'outline (noeud) représente un élément unique du texte ou une structure.
-Généralement un noeud nous permet de nous rediréger sur l'élément du fichier lorsqu'on le séléctionne.
-Il faut donc pouvoir être capable de récupérer la position d'un élément du fichier.
+
+On a accès à cette arbre sur l'espace adéquant...
+
+%TODO : picture
+
+ou depuis la barre de recherche
+
+%TODO : picture
 
 Il est possible obtenir la structure d'un fichier en analysant manuellement le texte (par exemple ligne par ligne). Mais cette approche n'est pas optimale et il serait diffile de représenter la strucutre hiérarchique du document.
 
@@ -1441,7 +1439,15 @@ On peut avoir pendant le parcours 2 structure différentes
 
 \subsection{La position}
 
-Comme expliqué précédemment, il est nécessaire d'obtenir la position. Cependant nous ne possédons pas cette informations \textbf{TODO : à controler}
+Généralement un noeud nous permet de nous rediréger sur l'élément du fichier lorsqu'on le séléctionne.
+Il faut donc pouvoir être capable de récupérer la position d'un élément du fichier.
+
+Cependant nous ne possédons pas cette informations lors du parcours \textbf{TODO : à controler}
+
+% Est-ce que c'est une bonne approche de se fier au terminal node pour la position ?
+
+% TODO : Montrer strucure d'un terminalNode
+
 On va donc manipuler l'input pour obtenir le numéro de ligne en se basant sur le nombre de retour à la ligne.
 Seul la ligne nous intéresse. VS code ne nous redirigant que sur celle-ci.
 
@@ -1657,9 +1663,6 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 \chapter{Conclusion}
 % TODO
 
-\chapter{Lexique}
-% TODO
-
 
 %% \vfil
 %% \hspace{8cm}\makeatletter\@author\makeatother\par
@@ -1674,11 +1677,15 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 %% \let\cleardoublepage\clearpage
 %% \backmatter
 
-%% \label{glossaire}
-%% \printnoidxglossary
+%% TODO : Ne fonctionne pas !!!
+\label{glossaire}
+\printnoidxglossary
+\addcontentsline{toc}{chapter}{Glossaire}
+
 \textbf{TODO : Ajouter dans la Bibliographie https://www.regular-expressions.info/anchors.html}
 \printbibliography
 \addcontentsline{toc}{chapter}{Bibliographie}
+
 %% \label{index}
 %% \printindex
 
