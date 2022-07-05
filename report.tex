@@ -82,43 +82,42 @@
 
 \titlespacing*{\chapter}{0pt}{-40pt}{20pt}
 
-
 %% Contenu
 \mainmatter
 \chapter{Introduction}
 
-% DONE
-% Il manque une partie "Contexte" qui explique comment s'insère ce travail de Bachelor. C'est quoi UON est-ce que quelqu'un a déjà travaillé dessus, ce qu'il a fait, ce qu'il reste à faire.
-
 Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VS Code.
 UON (abréviation de Unified Object Notation) est un format de sérialisation qui vise à rassembler les meilleures caractéristiques de tous les formats de sérialisation disponibles sur le marché, pour créer celui qui les unifie tous.
 
-Son intérêt principale est de \textbf{TODO} pour permettre de résoudre \textbf{TODO}
-
-Ce projet consiste donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON
-dans l'éditeur VS Code.
+Ce projet consiste donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON dans l'éditeur VS Code.
 
 C'est un nouveau langage complexe et une spécification détaillé existe. Il reste maintenant à construire les éléments permettant son utilisation.
 
-Un parser en Python à déja été implémenté par Stéphane Selim. Cepedendant ce travail de bachelor n'en est pas la suite directe.
-Il consite à founir une autre composante qui est de permettre l'utilisation du langage UON dans un éditeur pour qu'il soit utilisé par un plus grand nombre.
-Et cela sera possible quand sa syntaxe sera entièrement prise en charge par tous les principaux éditeurs de texte.
+%"Contexte" qui explique comment s'insère ce travail de Bachelor. C'est quoi UON est-ce que quelqu'un a déjà travaillé dessus, ce qu'il a fait, ce qu'il reste à faire.
 
+Un parser en Python à déja été implémenté par Stéphane Selim.
 Le travail précédent s'était concentrer sur 3 aspects : La sérialisation/deserialisation binaire et textuelle d'objet en python, la cohércient et la validation.
-Parmis ces trois, la validation pourrait être pertinente mais ne fait pas parti du CDC même si possible \textbf{TODO}
+Cepedendant ce travail de bachelor n'en est pas la suite directe.
 
-Nous nous focaliserons uniquement sur VS code dans un premier temps et expliquerons pourquoi plus tard.
+Il consite à founir une autre composante qui est de permettre l'utilisation du langage UON dans un éditeur pour qu'il soit utilisé par un plus grand nombre.
+
+Nous nous focaliserons uniquement sur VS code dans un premier temps et expliquerons pourquoi plus tard nous avons choisi cet éditeur.
 
 Ce projet consite à étudier les différentes approches et les mettre en oeuvre. Nous spécifierons également les alternatives et améliorations possible quand cela est pertinent.
 
-Il se veut aussi être expérimental. C'est-à-dire qu'aucun cadre précis sur sa réalisation n'a été établi et que les approches choisies sont libres tant qu'elles respectent le cahier des charges.
-% TODO : aussi on se permet d'explorer des possibilités...
+Il se veut aussi être expérimental et aussi ouvert à la discussion.
+Aucun cadre précis sur sa réalisation n'a été établi et les approches choisies sont libres tant qu'elles respectent le cahier des charges.
 
-Dans les chapitres suivants, nous allons voir ce qui est fourni par VS Code pour élaborer et déployer une extension.
-Les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
-Les aspects du langage UON à considérer dans le cadre de ce projet.
-Et présenterons en détail l'implémentation d'une extension ainsi que ses fonctionnalités. Puis détaillerons les tests effectués.
-Nous spécifierons également les alternatives et améliorations possible.
+Dans les chapitres suivants, nous allons :
+
+\begin{itemize}
+    \item Se renseigner concernant ce qui est fourni par VS Code pour élaborer et déployer une extension.
+    \item Se renseigner sur les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
+    \item Chosir les aspects du langage UON à traiter dans le cadre de ce projet.
+    \item Documenter et réaliser l'implémentation d'une extension, son intégration continue ainsi que ses fonctionnalités.
+    \item Documenter et mettre en place les tests effectués pour les différents composants du projet.
+    \item Documenter également des pistes de réflexions, les alternatives,et améliorations possible.
+\end{itemize}
 
 \let\cleardoublepage\clearpage
 
