@@ -1317,7 +1317,7 @@ Sans les espaces, il est difficle de gérer certains cas particuliers % TODO mon
 
 % TODO controler si on doit modifier l'indice ou ignorer ces tokens dans le ignore...
 % TODO résoudre le cas lorsque nous rajoutons manuellement des tokens depuis le lexer
-% Plus tard, nous verrons qu'il est nécessaire d'ajouter des tokens manuellement pour gérer l'indendation\dots 
+% Plus tard, nous verrons qu'il est nécessaire d'ajouter des tokens manuellement pour gérer l'indendation\dots
 
 
 Actuellement pour connaitre l'indice du ou des prochains candidats, on récupère le flux des tokens (tokenStream) trouvé lors du parsing.
@@ -1342,26 +1342,61 @@ Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela per
 
 \section{Outline view}
 
-%TODO : expliquer qu'on affiche pas les propriété pour l'instant ou pour toujours ?
-% si pas le cas, changer strucutre pour mieux représenter les propriétés...
-% Rajouter yaml
-
 La outline view est une représentation du fichier actuellement ouvert par l'éditeur.
-On appel généralement cettre stucure étant le "document outlining" ou "code outlining".
+On appel généralement cettre stucture le "document outlining" ou "code outlining".
 
-Les éléments peuvent être représentés de manière hiérarchique ou seulement être listés.
+% TODO : si le temps le permet
+À l'heure actuelle, le code outlining de UON ne concernera que les collections et les terminaux.
+Mais ce comportement pourra être étendu pour tenir compte des propriétés associés au types.
+% Mais il faudra créer un nouveau comportement est adapter la structure de manière adéquate
+% Exemple name : !str toto -> [abc] name toto
+%         name : !str(comment : "great name !") -> name : {
+%                                                          poperty : {comment : "great name}
+%                                                          value : "name"
+%}                                                         }
+
+% https://code.visualstudio.com/api/references/vscode-api
+% https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol
+% https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/
+On analysant les spécifications LSP ou le DocumentSymbolProvider de l'api VS Code, on constate que les
+éléments peuvent être représentés sous 2 formes :
+
+\begin{itemize}
+    \item SymbolInformation qui est une flat list de tous les symboles trouvés dans un document. Dans ce cas, ni le rage de localisation du symbole ni le nom du conteneur du symbole ne doivent être utilisés pour déduire une hiérarchie.
+    \item DocumentSymbol qui est une hiérarchie de symboles trouvés dans un document texte donné
+\end{itemize}
+
+la strucuture peut ête donc représenté de manière hiérarchique ou non (seulement être listés).
+
+
+%TODO Lien
+
 
 Un élément de l'outline (noeud) représente un élément unique du texte ou une structure.
 
-On a accès à cette arbre sur l'espace adéquant...
+On a accès à cette représentation dans le sidebar gauche par défaut.
 
 %TODO : picture
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=14cm]{assets/figures/outline-view-sidebar.PNG}}
+    \end{center}
+    \caption[outline-view-sidebar]{\label{outline-view-sidebar} outline-view-sidebar}
+\end{figure}
 
-ou depuis la barre de recherche
+ou depuis la barre de recherche en saisissant la commande "CTRL + SHIFT + o" :
 
 %TODO : picture
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=14cm]{assets/figures/outline-view-searchbar.PNG}}
+    \end{center}
+    \caption[outline-view-searchbar]{\label{outline-view-searchbar} outline-view-searchbar}
+\end{figure}
 
-Il est possible obtenir la structure d'un fichier en analysant manuellement le texte (par exemple ligne par ligne). Mais cette approche n'est pas optimale et il serait diffile de représenter la strucutre hiérarchique du document.
+Il est possible obtenir la structure d'un fichier en analysant manuellement le texte (par exemple ligne par ligne).
+Mais cette approche n'est pas optimale et il serait diffile de représenter la strucutre hiérarchique du document à l'aide de regex par exemple,
+comme mentionné au point : % TODO
 
 Nous allons donc utiliser notre parser.
 Le résulat du parsing est un "parse tree" (aussi nommé CST) qui est une représentation concrète de notre input. Le parse tree contient toutes les infomrations et beaucoup d'entre elles ne nous intéressent pas.
@@ -1383,7 +1418,6 @@ Un AST est une représentation abstraite de notre input. Il ne contient généra
     \end{center}
     \caption[UON AST]{\label{ast} UON AST}
 \end{figure}
-
 %TODO : Images non contractuelles
 
 Donc pour le générer on va vouloir récupérer uniquement les informations que l'on juge pertinentes pendant le parcours.
@@ -1392,10 +1426,57 @@ Pour parcourir un arbre, deux approches sont possibles : Le pattern Listener ou 
 La première consiste à écouter les types de noeuds traversés qui nous intéressent. Le problème et que c'est approche ne nous permet pas de manipuler un objet en cours de route, ni gérer le flux d'exécution.
 Car il n'est pas possible de communiquer entre les noeuds. Cela peut être tout de même utile si l'on veut afficher la strucure de l'arbre dans un terminal par exemple.
 
-Contrairement à la seconde apporche, qui nous permet de gérer ces 2 cas. Et c'est donc tout naturellement que cette solution a été prévilégiée.
+Contrairement à la seconde approche, qui nous permet de gérer ces 2 cas. Et c'est donc tout naturellement que cette solution a été prévilégiée.
 
 Cependant on ne va pas d'abord créer un AST puis construire la outline view à l'aide de celui-ci.
 Nous allors directement construire l'outline view à la volé, pendant le parcours du parse tree. L'outline view sera une représentation direct de notre AST.
+
+L'arbre sera donc de type : DocumentSymbol
+Sa spécification se trouve ici : % TODO
+
+Représente des constructions de programmation qui apparaissent dans un document.
+Les symboles de document peuvent être hiérarchisés ou non
+
+Il y a quelques points intéressant à commenter.
+
+La variable "children" qui nous permet d'avoir des encapsulations d'objets "DocumentSymol".
+
+Un noeud doit être représenter par un "Symbolkind" % https://vshaxe.github.io/vscode-extern/vscode/SymbolKind.html
+Nous sommes donc limités sur la représentation et devons faire les ajustements nécessaire.
+
+il ya 2 paramètres de ranges à fournir à la création de l'objet.: une qui contient leur définition et une qui pointe vers leur plage la plus intéressante, par exemple la plage d'un identifiant.
+
+Le premier se veut plus global que le second.
+Dans notre cas les 2 peuvents représenter la même chose et représenter la range du token affiché dans l'éditeur.
+
+%Car noeuds représentera généralement un token ...
+
+%range : C'est le "definition range" qui prends tout un symbole , par exemple une classe cela se traduirait
+%selectionRange : C'est la range du token
+
+% https://stackoverflow.com/questions/55846146/make-vs-code-parse-and-display-the-structure-of-a-new-language-to-the-outline-re/63060797#63060797
+%The range is the definition range (the whole definition of your symbol, e.g. for a typescript class, it starts at
+%the keyword class and ends with the closing }) and the selectionRange is often only the symbol's token range
+%(but according to the specification, it can also include the doc comment block and the visibility modifiers, it is the implementor's choice).
+
+
+
+Comme mentionné elle peut représenté une manière hiérarchique.
+
+
+DocumentSymbol
+
+class DocumentSymbol
+Represents programming constructs like variables, classes, interfaces etc. that appear in a document.
+Document symbols can be hierarchical and they have two ranges: one that encloses its definition and one
+that points to its most interesting range, e.g. the range of an identifier.
+
+
+% TODO : Comparaison du parcours
+% ce qui a été changé
+% - On aggregage pas forcément à chaque remontés du parent
+% - cela dans le but dêtre + libre selon la construction
+% etc.... pourquoi un flat ?
 
 
 "Both the listener and the visitor use depth-first search"
@@ -1406,12 +1487,7 @@ Que devons nous visualiser dans l'outline ?
 
 DFS permet de garder l'odre donc manipulations facilités
 
-DocumentSymbol
 
-class DocumentSymbol
-Represents programming constructs like variables, classes, interfaces etc. that appear in a document. 
-Document symbols can be hierarchical and they have two ranges: one that encloses its definition and one
-that points to its most interesting range, e.g. the range of an identifier.
 
 
 Dans un premier temps ne tient pas compte des popriété
