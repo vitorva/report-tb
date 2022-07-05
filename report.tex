@@ -4,6 +4,7 @@
     %confidential, % Décommentez si le travail est confidentiel
 ]{heig-tb}
 
+
 \usepackage{titlesec}
 
 \titleformat{\chapter}[display]
@@ -14,6 +15,13 @@
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{pdfpages}
+
+\usepackage{dirtree}
+\usepackage{caption}
+\usepackage{subcaption}
+
+
+
 %https://www.overleaf.com/project/62b06d8b8257fff1974999df
 %\signature{mbernasconi.svg} TODO : Gérer la taille
 \signature{va_signature.png}
@@ -234,15 +242,31 @@ En général, l'extension est une combinaison de plusieurs Conntribution Point e
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 
 %TODO : faire figurer un extrait de code / ou faire référence à la figure au lieu de "la suivante"
+La structure de base d'une extension est la suivante :
 
-La structure d'une extension est la suivante :
-
+% https://tex.stackexchange.com/questions/98703/framebox-and-subfigure-with-dirtree-package
 \begin{figure}[!h]
-    \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/extension-anatomy.PNG}}
-    \end{center}
-    \caption[Extension Anatomy]{\label{extension-anatomy} Extension Anatomy}
+    \centering
+    \framebox[\textwidth]{%
+        \begin{minipage}{0.9\textwidth}
+            \dirtree{%
+                .1 root.
+                .2 vscode.
+                .3 launch.json     // Config for launching and debugging the extension.
+                .3 tasks.json      // Config for build task that compiles TypeScript.
+                .2 .gitignore.
+                .2 README.md.
+                .2 src.
+                .3 extension.ts   // Extension source code.
+                .2 tsconfig.json  // TypeScript configuration.
+            }
+        \end{minipage}
+    }
+    \caption{basic VS Code structure}
 \end{figure}
+
+
+
 
 \textbf{Extension Manifest} :
 chaque extension doit contenir un fichier "package.json". En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à VS Code.
@@ -716,7 +740,13 @@ Mais on ne peut pas imaginer ignorer / modifier tout correctement\dots
 
 
 \section{Code}
-% TODO : mettre à jour le readme
+
+
+
+
+
+
+
 Le code de l'implémentation est disponible sur le dépôt public \href{https://github.com/vitorva/vscode-uon}{suivant}.
 
 \textbf{Remarque} : L'implémentation détaillée dans ce rapport pourrait ne plus représenter l'état du dépôt, car ce projet est sujet à évoluer.
