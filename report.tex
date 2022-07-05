@@ -250,7 +250,7 @@ La structure de base d'une extension est la suivante :
     \framebox[\textwidth]{%
         \begin{minipage}{0.9\textwidth}
             \dirtree{%
-                .1 root.
+                .1 ..
                 .2 vscode.
                 .3 launch.json     // Config for launching and debugging the extension.
                 .3 tasks.json      // Config for build task that compiles TypeScript.
@@ -262,10 +262,8 @@ La structure de base d'une extension est la suivante :
             }
         \end{minipage}
     }
-    \caption{basic VS Code structure}
+    \caption{basic VS Code extension structure}
 \end{figure}
-
-
 
 
 \textbf{Extension Manifest} :
@@ -742,6 +740,49 @@ Mais on ne peut pas imaginer ignorer / modifier tout correctement\dots
 \section{Code}
 
 
+Par rapport à la figure %todo
+les points suivants au été rajouté à la figure %todo
+
+\textbf{Remarque} : Les "..." signifie qu'il y a des sous fichiers et/ou répertoire mais ont été ignoré pous ne pas surcharger
+l'arborescence.
+
+\begin{figure}[!h]
+    \centering
+    \framebox[\textwidth]{%
+        \begin{minipage}{0.9\textwidth}
+            \dirtree{%
+                .1 ..
+                .2 github.
+                .3 workflows.
+                .4 pipeline.yml.
+                .2 vscode.
+                .3 launch.json.
+                .3 tasks.json.
+                .2 .gitignore.
+                .2 README.md.
+                .2 src.
+                .3 completion.
+                .4 completion.ts.
+                .3 error.
+                .4 ErrorListener.ts.
+                .4 UonCompletionErrorStrategy.ts.
+                .3 generated.
+                .4 ....
+                .3 grammar.
+                .4 .antlr.
+                .4 UON.g4.
+                .3 outline.
+                .4 UonASTVisitor.ts.
+                .4 UONDocumentSymbolProvider.ts.
+                .3 test.
+                .4 ....
+                .3 extension.ts.
+                .2 tsconfig.json.
+            }
+        \end{minipage}
+    }
+    \caption{UON VS Code extension structure}
+\end{figure}
 
 
 
