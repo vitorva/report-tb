@@ -1667,11 +1667,12 @@ Il faut toutefois juste corriger la position de la ligne en lui soustraiant une 
 
 C'est une fonctionnalité assez triviale qui consite à afficher une explication lorsque l'on passe le curseur sur un élément.
 
-Il s'agit donc d'une dictionnaire clé-valeur.
+Il s'agit d'une dictionnaire clé-valeur.
 
 Cependant, même si son implémentation est relativement simple, il n'en reste pas moins un élément fortement utile et pouvant être étendu par la suite.
 On pourrait le réutiliser dans la complétion pour pouvoir fournir une description d'un token dans la liste des suggestions.
 Cela n'a pas été fait à cause d'une question de temps.
+
 
 % TODO
 %Fichier json clé-valeur....
@@ -1687,10 +1688,52 @@ Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et 
 
 Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
 
+Il est possible de créer un listener qui aura pour rôle d'observer les erreurs lors du parsing avec ANLTR.
+Pour cela il faut créer une classe qui implémente l'interface "ANTLRErrorListener" et attribuer ce listener à notre parser
+avec la commande :
+%#parser.addErrorListener(errorListener);
 
-On affiche les erreurs trouvé avec antlr -> avantages positions
-Les erreurs sont liés au placement des tokens (manque un éléments du langages, mauvais token ou leur "ortographe").
-Message trop technique mais ok pour voir d'ou viens la faute.
+Cette interface définit la fonction \emph{syntaxError}.
+
+Cette fonction sera trigger comme sans nom l'indique lors d'une erreur de syntaxe.
+Une erreur de syntaxe peut survenir quand un élément et mal ortographié ou manquant.
+
+Il est bien de rappeler que certaines erreurs de syntaxes sont plus grave ques d'autres.
+Même si ANTLR propose des solutions pour se récupérer d'un processus de parsing défectueux, il reste limité et ne peux pas faire de miracle.
+
+Elle contient des paramètres intéressant à exploiter pour informer l'utilisateur.
+
+Sa définition est la suivante :
+syntaxError?: <T extends TSymbol>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number, charPositionInLine: number, msg: string, e: RecognitionException | undefined) => void;
+
+%Upon syntax error, notify any interested parties.
+%This is not how to recover from errors or compute error messages.
+%ANTLRErrorStrategy specifies how to recover from syntax errors and how to compute error messages.
+%This listener's job is simply to emit a computed message, though it has enough information to create its own message in many cases.
+
+Comme pour la outline %\ref*{} ,
+Il est possible de récupéer de la position du token. Il suffit de récupérer les valeurs des propriétés \emph{line} et \emph{charPositionInLine}.
+Il s'agira ici d'un token qui a posé problème et l'on voudra afficher à son emplacement l'indication visuelle (soulignement ondulé rouge) ainsi que le message d'erreur associé.
+
+Le message d'erreur peut-être récupéré de la proprété \emph{msg}. Même s'il est davantage destiné au debuggage. Les messages d'erreurs sont générament assez
+bon et peuvent être utilisé pour être afficher à l'utilisateur lorsqu'il passe sa souris sur l'erreur.
+
+Pour afficher ces informations sur l'éditeur, il faut utiliser un objet de type \emph{DiagnosticCollection}.
+
+Elle peut afficher une liste d'erreur.
+
+On va garder en mémoire cette liste dans la classe que l'on mettra à jour à chaque fois que le listener détecte une erreur.
+Et on actualisera à chaque fois l'objet \emph{DiagnosticCollection} avec cette liste.
+
+
+
+%problème je n'arrive pas à afficher plusieurs erreurs
+% avant un message en rouge dans la outline mais plus mnt :(
+
+
+%On affiche les erreurs trouvé avec antlr -> avantages positions
+%Les erreurs sont liés au placement des tokens (manque un éléments du langages, mauvais token ou leur "ortographe").
+%Message trop technique mais ok pour voir d'ou viens la faute.
 
 % https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorStrategy.html
 Antlr définit une interace pour définir une startégie concernant les erreurs recontrés durant une analyse syntaxique nommé "ANTLRErrorStrategy".
