@@ -1547,6 +1547,56 @@ Chacune de ses fonctions prends comme paramètre son contexte.
 La classe UonASTVisitor implémente cette interface et étend la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html}{AbstractParseTreeVisitor}
 pour obtenir le comportememt par défaut du pattern visitor.
 
+On doit donner le "parse tree" créer par le parser à la fonction d'entrée \emph{visit} de notre visitor. % const ast = uonASTVisitor.visit(tree);
+
+L'intéret d'utiliser le pattern Visitor est de pouvoir retourner un élément à chaque étape du parcours.
+
+Le type de classe est générique. Et ce qui nous permet de manipuler un objet VS code.
+
+%TODO : raison ?
+%La classe surchargée est de type "any" car pendant le parcours un élément peu être de deux natures différentes (Une valeur/terminal ou une strucutre Vscode).
+
+
+\subsection{Modification}
+Des fonctions de la classe AbstractParseTreeVisitor ont été surchargé pour adapter le comportement à notre situation.
+
+La fonction \emph{visitChildren} est la suivante :
+
+\begin{lstlisting}
+1.    visitChildren(node) {
+2.        let result : any = this.defaultResult();
+3.        let n = node.childCount;
+4.        for (let i = 0; i < n; i++) {
+5.            if (!this.shouldVisitNextChild(node, result)) {
+6.                break;
+7.            }
+8.            let c = node.getChild(i);
+9.            let childResult = c.accept(this);
+10.            result = this.aggregateResult(result, childResult);
+12.        }
+13.        return result;
+14.    }
+\end{lstlisting}
+
+Le résultat par défaut est une liste vide.
+
+Pourquoi ne pas manipuler directement un object DocumentSymbol ? Tout simplement car
+sinon on aurait du le faire dans la fonction d'aggrégation et l'on préfera ici déléguer la logique dans le noeud parent concerné
+qui pourra utiliser les valeurs récupérer pour construire l'information voulue.
+
+C'est un choix d'implémentation pour faciliter la construction d'un object DocumentSymbol.
+
+
+%TODO : Logique de l'agrégation
+
+
+
+
+
+
+
+
+\subsection{Parcours}
 Le parcours est effectué selon un algorithme de parcours en profondeur (DFS).
 
 %"Both the listener and the visitor use depth-first search"
@@ -1580,17 +1630,6 @@ dans un objet de type \emph{DocumentSymbol}.
 
 Modification de la fonction ....
 
-
-Lors de la génération du parser, une classe Visitor a été crée et son rôle est de pouvoir retourner un élément à chaque étape du parcours.
-
-Puis il faut ajouter le code suivant au paser \dots \textbf{TODO}
-
-Le type de classe est générique. Et ce qui nous permet de manipuler un objet VS code \textbf{TODO : le nom} en la surchagant.
-La classe surchargée est de type "any" car pendant le parcours un élément peu être de 2 natures différentes (Une valeur/terminal ou une strucutre Vscode)
-
-%TODO : expliquer en détail
-
-On peut avoir pendant le parcours 2 structure différentes
 
 \subsection{La position}
 
