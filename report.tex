@@ -1713,10 +1713,11 @@ syntaxError?: <T extends TSymbol>(recognizer: Recognizer<T, any>, offendingSymbo
 
 Comme pour la outline %\ref*{} ,
 Il est possible de récupéer de la position du token. Il suffit de récupérer les valeurs des propriétés \emph{line} et \emph{charPositionInLine}.
-Il s'agira ici d'un token qui a posé problème et l'on voudra afficher à son emplacement l'indication visuelle (soulignement ondulé rouge) ainsi que le message d'erreur associé.
+Il s'agira ici d'un token qui a posé problème et l'on voudra afficher à son emplacement l'indication visuelle (soulignement ondulé rouge) ainsi que le message d'erreur associé, lorsque l'utilisateur passe
+sa souris dessus.
 
-Le message d'erreur peut-être récupéré de la proprété \emph{msg}. Même s'il est davantage destiné au debuggage. Les messages d'erreurs sont générament assez
-bon et peuvent être utilisé pour être afficher à l'utilisateur lorsqu'il passe sa souris sur l'erreur.
+Le message d'erreur peut-être récupéré à partir de la propriété \emph{msg}. Même s'il est davantage destiné au debuggage.
+Les messages restent relativement simple. Ils indiquent à l'utilisateur quel token pose problème et quels sont les caractères qui pourrait y être subtituer.
 
 Pour afficher ces informations sur l'éditeur, il faut utiliser un objet de type \emph{DiagnosticCollection}.
 
@@ -1725,6 +1726,17 @@ Elle peut afficher une liste d'erreur.
 On va garder en mémoire cette liste dans la classe que l'on mettra à jour à chaque fois que le listener détecte une erreur.
 Et on actualisera à chaque fois l'objet \emph{DiagnosticCollection} avec cette liste.
 
+Cependant le parser ne pas se rendre compte si ce n'est pas plutôt le token précédent qui pourrait ammener à une erreur.
+Cela ne prends non plus pas en compte ce qu'il vient après et donc remplacer un token par un de ceux proposé peut se revélé contre productif.
+
+Pour l'instant, juste à titre de découverte sur comment implémenter un quickfix. %todo expliquer
+
+Il y a un quickfix pour supprimer le token qui pose problème en se basant sur les ranges fourni lors de la création d'un objet Diagnostic dans le listener %TODO
+
+A l'heure actuelle , il n'y a pas encore de suggestions à proprement parlé.
+
+L'idée serait de pouvoir remplacer le token par un ou plusieurs qui aurait du sens.
+Et l'idéal serait de prendre en compe le texte venant après le curseur.
 
 
 %problème je n'arrive pas à afficher plusieurs erreurs
