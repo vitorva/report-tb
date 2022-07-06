@@ -1547,18 +1547,17 @@ Chacune de ses fonctions prends comme paramètre son contexte.
 La classe UonASTVisitor implémente cette interface et étend la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html}{AbstractParseTreeVisitor}
 pour obtenir le comportememt par défaut du pattern visitor.
 
-On doit donner le "parse tree" créer par le parser à la fonction d'entrée \emph{visit} de notre visitor. % const ast = uonASTVisitor.visit(tree);
+On doit donner le "parse tree" créé par le parser à la fonction d'entrée \emph{visit} de notre visitor. % const ast = uonASTVisitor.visit(tree);
 
 L'intéret d'utiliser le pattern Visitor est de pouvoir retourner un élément à chaque étape du parcours.
-
-Le type de classe est générique. Et ce qui nous permet de manipuler un objet VS code.
+De plus note classe \emph{UONVisitor} étant générique, c'est ce qui nous permet de manipuler un objet VS code.
 
 %TODO : raison ?
 %La classe surchargée est de type "any" car pendant le parcours un élément peu être de deux natures différentes (Une valeur/terminal ou une strucutre Vscode).
 
 
-\subsection{Modification}
-Des fonctions de la classe AbstractParseTreeVisitor ont été surchargé pour adapter le comportement à notre situation.
+\subsection{visitChildren}
+%Des fonctions de la classe AbstractParseTreeVisitor ont été surchargé pour adapter le comportement à notre situation.
 
 La fonction \emph{visitChildren} est la suivante :
 
@@ -1578,23 +1577,13 @@ La fonction \emph{visitChildren} est la suivante :
 14.    }
 \end{lstlisting}
 
-Le résultat par défaut est une liste vide.
+Le résultat par défaut est une liste vide. Lors du parcours de la remonté dans un noeud parent, nous allons rassembler les enfants dans une liste.
 
-Pourquoi ne pas manipuler directement un object DocumentSymbol ? Tout simplement car
-sinon on aurait du le faire dans la fonction d'aggrégation et l'on préfera ici déléguer la logique dans le noeud parent concerné
+Pourquoi ne pas manipuler directement un object DocumentSymbol au lieu d'une liste ?
+Tout simplement car sinon on aurait du le faire dans la fonction d'aggrégation et l'on préfera ici déléguer la logique dans le noeud parent concerné
 qui pourra utiliser les valeurs récupérer pour construire l'information voulue.
 
 C'est un choix d'implémentation pour faciliter la construction d'un object DocumentSymbol.
-
-
-%TODO : Logique de l'agrégation
-
-
-
-
-
-
-
 
 \subsection{Parcours}
 Le parcours est effectué selon un algorithme de parcours en profondeur (DFS).
@@ -1613,7 +1602,7 @@ Le parcours est effectué selon un algorithme de parcours en profondeur (DFS).
 
 %pierre angulaire
 
-Pour rappel un parcours DFS et effectué de la manière affiché à la figure \ref*{Algorithme de parcours en profondeur (DFS)}
+Pour rappel un parcours DFS et effectué dans l'ordre affiché à la figure \ref*{Algorithme de parcours en profondeur (DFS)}
 
 \begin{figure}[!h]
     \begin{center}
@@ -1622,28 +1611,22 @@ Pour rappel un parcours DFS et effectué de la manière affiché à la figure \r
     \caption[Algorithme de parcours en profondeur (DFS)]{\label{Algorithme de parcours en profondeur (DFS)} Algorithme de parcours en profondeur (DFS)}
 \end{figure}
 
-%todo short explanation
+Ce qui est agréable en utilisant cet algorithme et qu'il nous permet de commencer à construire l'information à partir des noeuds terminaux
+de l'arbre et de remonter naturellement au parent le plus proche.
 
-Ce qui est agréable dans ce parcours, c'est qu'un parent va pouvoir obtenir la liste des enfants dans un ordre que l'on s'attendrait à recevoir.
+Un parent va pouvoir obtenir la liste des enfants dans un ordre que l'on s'attendrait à recevoir.
 Cela rend la manipulation dans un parent plus simple concernant des modifications que l'on voudrait effectuer pour représenter ces informations
 dans un objet de type \emph{DocumentSymbol}.
 
-Modification de la fonction ....
-
-
 \subsection{La position}
 
-Généralement un noeud nous permet de nous rediréger sur l'élément du fichier lorsqu'on le séléctionne.
+Généralement un noeud nous permet de nous rediréger sur l'élément du fichier lorsqu'on le séléctionne depuis la sidebar ou depuis la search bar. %todo reference
 Il faut donc pouvoir être capable de récupérer la position d'un élément du fichier.
 
-Cependant nous ne possédons pas cette informations lors du parcours \textbf{TODO : à controler}
-
-% Est-ce que c'est une bonne approche de se fier au terminal node pour la position ?
-
-% TODO : Montrer strucure d'un terminalNode
-
-On va donc manipuler l'input pour obtenir le numéro de ligne en se basant sur le nombre de retour à la ligne.
-Seul la ligne nous intéresse. VS code ne nous redirigant que sur celle-ci.
+Heursement on peut récupérer cette information lors d'un parcours d'un noeud terminal.
+Il suffit d'observer le token associé au symbole de ce noeud et plus particulièrement les
+propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait de "colonne")
+Il faut toutefois juste corriger la position de la ligne en lui soustraiant une valeur de 1 car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR % TODO
 
 
 %TODO :TODO : parler des 2 patterns listener et visitor
