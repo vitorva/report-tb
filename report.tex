@@ -440,7 +440,7 @@ C'est à dire en pratique un lexer et un parser.
 
 La grammaire est décrite en utilisant la notation EBNF (Extended Backus–Naur Form).
 
-Le parser peut automatiquement créer un "parse tree" qui est une structure représentant comment la grammaire interpète un input.
+Le parser peut automatiquement créer un "parse tree" (Arbre syntaxique) qui est une structure représentant comment la grammaire interpète un input.
 ANTLR peut génèrer également automatiquement un "tree walkers" qui nous permet de visiter chaque noeud de l'abre pour y exécuter des actions liés à notre application.
 %TODO : citer antlr.org et wikipedia ?
 % https://www.antlr.org/about.html
@@ -1417,7 +1417,7 @@ La outline view est une représentation du fichier actuellement ouvert par l'éd
 On appel généralement cettre stucture le "document outlining" ou "code outlining".
 
 % TODO : si le temps le permet
-À l'heure actuelle, le code outlining de UON ne concernera que les collections et les terminaux.
+À l'heure actuelle, le code outlining de UON ne concerne que les collections et les terminaux.
 Mais ce comportement pourra être étendu pour tenir compte des propriétés associés au types.
 % Mais il faudra créer un nouveau comportement est adapter la structure de manière adéquate
 % Exemple name : !str toto -> [abc] name toto
@@ -1429,13 +1429,14 @@ Mais ce comportement pourra être étendu pour tenir compte des propriétés ass
 % https://code.visualstudio.com/api/references/vscode-api
 % https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol
 % https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/
-On analysant les spécifications LSP ou le DocumentSymbolProvider de l'api VS Code, on constate que les
+En analysant les spécifications LSP ou le DocumentSymbolProvider de l'api VS Code, on constate que les
 éléments peuvent être représentés sous 2 formes :
 
 \begin{itemize}
-    \item SymbolInformation qui est une flat list de tous les symboles trouvés dans un document. Dans ce cas, ni le rage de localisation du symbole ni le nom du conteneur du symbole ne doivent être utilisés pour déduire une hiérarchie.
+    \item SymbolInformation qui est une flat list de tous les symboles trouvés dans un document. Dans ce cas, ni le range de localisation du symbole ni le nom du conteneur du symbole ne doivent être utilisés pour déduire une hiérarchie.
     \item DocumentSymbol qui est une hiérarchie de symboles trouvés dans un document texte donné
 \end{itemize}
+%TODO : citation ?
 
 la strucuture peut ête donc représenté de manière hiérarchique ou non (seulement être listés).
 
@@ -1491,7 +1492,7 @@ Un AST est une représentation abstraite de notre input. Il ne contient généra
 \end{figure}
 %TODO : Images non contractuelles
 
-Donc pour le générer on va vouloir récupérer uniquement les informations que l'on juge pertinentes pendant le parcours.
+Donc pour le générer on va vouloir récupérer uniquement ces informations pendant le parcours.
 
 Pour parcourir un arbre, deux approches sont possibles : Le pattern Listener ou Visitor.
 La première consiste à écouter les types de noeuds traversés qui nous intéressent. Le problème et que c'est approche ne nous permet pas de manipuler un objet en cours de route, ni gérer le flux d'exécution.
@@ -1502,10 +1503,9 @@ Contrairement à la seconde approche, qui nous permet de gérer ces 2 cas. Et c'
 Cependant on ne va pas d'abord créer un AST puis construire la outline view à l'aide de celui-ci.
 Nous allors directement construire l'outline view à la volé, pendant le parcours du parse tree. L'outline view sera une représentation direct de notre AST.
 
-L'arbre sera donc de type : DocumentSymbol
-Sa spécification se trouve ici : % TODO
+L'arbre sera donc un objet VS Code de type \href{https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol}{DocumentSymbol}.
 
-Représente des constructions de programmation qui apparaissent dans un document.
+Cette classe représente des constructions de programmation qui apparaissent dans un document.
 Les symboles de document peuvent être hiérarchisés ou non
 
 Il y a quelques points intéressant à commenter.
@@ -1515,7 +1515,7 @@ La variable "children" qui nous permet d'avoir des encapsulations d'objets "Docu
 Un noeud doit être représenter par un "Symbolkind" % https://vshaxe.github.io/vscode-extern/vscode/SymbolKind.html
 Nous sommes donc limités sur la représentation et devons faire les ajustements nécessaire.
 
-il ya 2 paramètres de ranges à fournir à la création de l'objet.: une qui contient leur définition et une qui pointe vers leur plage la plus intéressante, par exemple la plage d'un identifiant.
+Il y a deux paramètres de ranges à fournir à la création de l'objet.: une qui contient leur définition et une qui pointe vers leur plage la plus intéressante, par exemple la plage d'un identifiant.
 
 Le premier se veut plus global que le second.
 Dans notre cas les 2 peuvents représenter la même chose et représenter la range du token affiché dans l'éditeur.
@@ -1531,47 +1531,55 @@ Dans notre cas les 2 peuvents représenter la même chose et représenter la ran
 %(but according to the specification, it can also include the doc comment block and the visibility modifiers, it is the implementor's choice).
 
 
-
-Comme mentionné elle peut représenté une manière hiérarchique.
-
-
-DocumentSymbol
-
-class DocumentSymbol
-Represents programming constructs like variables, classes, interfaces etc. that appear in a document.
-Document symbols can be hierarchical and they have two ranges: one that encloses its definition and one
-that points to its most interesting range, e.g. the range of an identifier.
-
-
 % TODO : Comparaison du parcours
 % ce qui a été changé
 % - On aggregage pas forcément à chaque remontés du parent
 % - cela dans le but dêtre + libre selon la construction
 % etc.... pourquoi un flat ?
 
+Lors de la génération des fichiers ANTLR, il a été spécifié de générer également un fichier visiteur "UONVisitor" en précisant le tag "- visitor".
 
-"Both the listener and the visitor use depth-first search"
+Cela va nous créer un fichier qui contiendra une interface définissant une fonction pour chaque type de noeud de note parseur et retournera un résultat de type générique.
+Chacune de ses fonctions prends comme paramètre son contexte.
 
-Je me suis inspiré de l'outline json et yaml pour obtenir un résultat visuel similaire.
+%Cette interface étends la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/ParseTreeVisitor.html}{ParseTreeVisitor} de ANTLR qui gère le méchanisme de parcours et d'aggrégation des résulats.
 
-Que devons nous visualiser dans l'outline ?
+La classe UonASTVisitor implémente cette interface et étend la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html}{AbstractParseTreeVisitor}
+pour obtenir le comportememt par défaut du pattern visitor.
 
-DFS permet de garder l'odre donc manipulations facilités
+Le parcours est effectué selon un algorithme de parcours en profondeur (DFS).
 
+%"Both the listener and the visitor use depth-first search"
 
+%Je me suis inspiré de l'outline json et yaml pour obtenir un résultat visuel similaire.
 
+%Que devons nous visualiser dans l'outline ?
 
-Dans un premier temps ne tient pas compte des popriété
-rajouter ça....
+% ----------------
+%DFS permet de garder l'odre donc manipulations facilités
 
-pierre angulaire
+%Dans un premier temps ne tient pas compte des popriété
+%rajouter ça....
+
+%pierre angulaire
+
+Pour rappel un parcours DFS et effectué de la manière affiché à la figure \ref*{Algorithme de parcours en profondeur (DFS)}
 
 \begin{figure}[!h]
     \begin{center}
         \frame{\includegraphics[width=10cm]{assets/figures/DFS.PNG}}
     \end{center}
-    \caption[Algorithme de parcours en profondeur (DFS)]{\label{ast} Algorithme de parcours en profondeur (DFS)}
+    \caption[Algorithme de parcours en profondeur (DFS)]{\label{Algorithme de parcours en profondeur (DFS)} Algorithme de parcours en profondeur (DFS)}
 \end{figure}
+
+%todo short explanation
+
+Ce qui est agréable dans ce parcours, c'est qu'un parent va pouvoir obtenir la liste des enfants dans un ordre que l'on s'attendrait à recevoir.
+Cela rend la manipulation dans un parent plus simple concernant des modifications que l'on voudrait effectuer pour représenter ces informations
+dans un objet de type \emph{DocumentSymbol}.
+
+Modification de la fonction ....
+
 
 Lors de la génération du parser, une classe Visitor a été crée et son rôle est de pouvoir retourner un élément à chaque étape du parcours.
 
