@@ -507,6 +507,7 @@ L'implémentation de son parser n'a pas été privilégié car il aurait été n
 Et Antlr semble être un choix plus naturel dans notre environnement VS Code.
 %TODO : Founir une meilleur explication
 
+%% UON se veut ête moins ambigue que ces alternatives pour l'utilisateur\dots
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML.
 Il cherche à regrouper les meilleures caractéristiques de ces formats de sérialisation en un seul format.
@@ -599,6 +600,30 @@ D'autres sont relativement approprié
 Tout est une valeur avec un type et des propriétés associés. Ces propriétés sont parfois unique.
 
 
+
+%% Résumé rapide de la grammaire initiale + dire qu'elle est relativement bonne et qu'on a pas modifier grand chose
+%% Modification apporté pour le support de langage (pas grand chose)
+%  Adaptation (passé de lark à antlr) (regex, espace différents, pas de librairie pour les indentations, ...)
+%   YAML
+%       Retirer dans un premiers temps le yaml
+%   Indentation
+%   Propriétés dans les types + de units
+
+%  ANTLR short tuto (useless ?)
+
+% On va pas tout spécifier mais relever certains point de la grammaire qui est pertinent
+% Apercu de la grammaire plus en détail et exmple avec arbre + Examples
+% Collection
+% map
+% seq
+% clé-valeur
+% clé IDENTIFIER
+% nombbre
+
+
+
+% Faire attention de faire le découpage pour la completion
+
 \chapter{Scope de la grammaire}\label{grammar scope}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
 Il est donc important de préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
@@ -609,63 +634,81 @@ De plus même si elle couvre énormément d'aspects, tout n'est pas détailler e
 Heurseuement pour nous, une grammaire concrète avait déjà été écrit en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON".
 Son travail se trouve sur \href{https://github.com/uon-language/uon-parser}{ici}
 
-Nous nous appuyeront sur cette grammaire, que nous appelerons grammaire intiale, que nous convertirons en format ANTLR et ferons les modifications jugés nécessaire.
+Nous nous appuyeront sur cette grammaire que nous convertirons en format ANTLR et ferons les modifications jugés nécessaire.
 
-Nous fairons attention à son extensibilitéset expliquerons des choix d'implémentation.
+Les fonctionnalités se baseront sur celle-ci. Ceci dans le but de rester cohérents entre eux.
+Nous ferons attention à son extensibilité et expliquerons les choix d'implémentations.
+Elle sera complétée et améliorée après la mise en place des fonctionnalités attendues, si le temps le permet.
 
-\subsection{Rappel}
-Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initiale.
-On peut définir dans un fichier deux structures différentes : une collection et un schéma.
+Cette grammaire se trouve décrite dans le fichier UON.g4 du projet.
 
-\textbf{Collection :}
-Une collection est un mapping ou une séquence dans un format proche du JSON ou en YAML.
-Les collections peuvent être imbriqués.
-Mapping :
-Définit des clé-valeur.
-Une clé peut posséder des attribut de présentation (ex name( optional : true) : name);
-Une valeur peut être une collection ou un scalaire
-Un scalaire est une valeur\dots
+
+\subsection{Résumé}
+Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
+Nous utiliserons la grammaire adapté en ANTLR pour illustrer nos exemples.
+
+On peut définir dans un fichier une des deux structures suivantes : une collection ou un schéma.
+
+Une collection est soit une map ou soit une séquence en UON dans un format proche du JSON ou en YAML.
+
+% TODO : exemple de séquence
+
+% TODO : exemple de map
+
+% TODO : grammaire explained
 
 Un schéma est un document qui décrit la spécification d'un nouveau type.
 
-Nous allons garder plus au moins cette strucure qui regroupe des éléments importants du langage UON.
+% TODO : exemple de schéma
 
+% TODO : grammaire explained
+
+Cette séparation permet d'éviter des ambiguités. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
 
 \subsection{Modification}
-En résumé ...
-J'ai fait en sorte que les clé peuvents avoir des guillemets
-Jai rajouter ke fait que des types peut avoir des propriété, c'était manquant.
-J'ai rajouter des unités
-Chiffres + scientifiques
-json5
-parler des grammaires ANTLR
+Nous allons garder presque la même structure car cette grammaire regroupe déjà des éléments importants du langage UON.
+Cependant quelques points concernant la strucutre général ont été modifiés.
 
-Pour commencer, la grammaire initiale était conçu pour avoir deux notations différentes : une proche de json et l'autre de yaml.
+\subsubsection{Adaptation}
+Il a fallu reconvertir la grammaire dans un autre langage à la main car aucun convertisseur existe. Heursement ANTLR et Lark se base sur une notation EBNF.
+Ce qui fait que la strucure reste relativement semblable.
+Le seul point de divergence, à été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci change.
+
+\subsubsection{YAML}
+La grammaire permettait deux notations différentes pour les collections : une proche de json et l'autre de yaml.
 
 %Car UON est un superset de JSON et un set partiel de yaml.
 %La spécification indique bien que UON doit être compatible avec yaml 1.2 sans toutefois mention explicitement tous les points
 % TODO
 
-% Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cette aspect quand la prière version a été réalisé.
+% Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cette aspect cette phase réalisé.
 Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cet aspect si le temps le permet.
-Car la notation en YAML pose quelques difficultés.
+Car la notation en YAML pose quelques difficultés. % posait
 En JSON les retours à la lignes et indentations ne sont pas nécessaire à la compréhension du langage, contrairement à YAML.
-Nous expliquons ici comment nous pourrions faire cohabiter ces 2 formats avec ANTLR.
-Puis il ne s'aggira que de reféter ces changements dans les fonctionnalités.
+Nous expliquons ici comment nous pourrions faire cohabiter ces 2 formats avec ANTLR. % nous avons fait
+Puis il ne s'aggira que de reféter ces changements dans les fonctionnalités. % Et avons refléter ces changements...
 
+\subsubsection{String}
+Une valeur textuelle peut soit être entre guillement ou non.
 
-Un point contraignant, et que la grammaire est intrinsèquement liés à certaines fonctionnalités.
-La coloration syntaxique doit refléter au mieux cette grammaire.
-Mais les règles de construction sont différentes. Et l'on a envie parfois d'avoir des comportements spécifiques.
+C'est donc aussi le cas pour la clé d'une map.
 
+Cela se rapproche par exemple, un peu plus de ce que fait JSON5 par exemple. % TODO lien
+Aussi cela permet d'avoir des clés qui peuvent contenir exactement ce que l'on veut.
+Car encapsuler entre des caractères spécifiques, il n'y pas d'ambiguités possible. Alors que sans on est contraint de limiter la forme de la clé.
 
-UON se veut ête moins ambigue que ces alternatives pour l'utilisateur.
+Par contre un cas spécial a du être traiter. Si l'on veut pouvoir utiliser directement un mot sans guillemet mais qu'il existe dans la grammaire.
+Il faut ajouter ce cas\dots
 
-Cette grammaire se trouve dans le fichier UON.g4. Nous allons mentionner les points les plus importants
+%TODO
 
-Elle sera complétée et améliorée après la mise en place des fonctionnalités attendues, si le temps le permet.
+\subsubsection{Propriétés, unités et nombres}
 
-Les fonctionnalités implémentées s'appuieront sur cette grammaire. Ceci dans le but de rester cohérents entre eux.
+Des propriétés de présentation %TODO : voir ....
+ainsi que des unités ont été rajouté en se basant sur la spécification.
+
+Les règles concernant les nombres ont été modifiés pour ne gérer maintenant qu'un type number
+pour gérer à un plus de cas dans la notation scientifique
 
 \subsection{ANTLR}
 
@@ -681,17 +724,8 @@ fragement
 
 lexer and parser rule
 
-\subsection{Adaption}
-
-%les points à considérer lorsqu'on passe d'une syntaxe à une autre
-
-Il a fallu réadapté la grammaire dans un autre langage. Heursement ANTLR et Lark se base sur une notation EBNF.
-Ce qui fait que la strucure reste semblable.
-Le seul point de divergence, à été l'utilisation de regex.
-Des règles changes mais de toute façon, certaines on été changé...
-
 \subsection{Implémentation}
-Nous allons parcourir ensemble les points les plus importants de la grammaire etc\dots
+Nous allons mentionner les points les plus importants du langages et utiliser des exemples.
 
 %Construction
 \begin{lstlisting}
@@ -715,10 +749,7 @@ Nous allons parcourir ensemble les points les plus importants de la grammaire et
 
 % symbol
 
-
-
-
-
+\subsection{Example}
 
 
 \subsection{Construction}
@@ -1059,6 +1090,9 @@ Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) po
 
 
 \section{Syntax highlighting}
+
+%% La coloration syntaxique doit refléter au mieux cette grammaire.
+%% Mais les règles de construction sont différentes. Et l'on a envie parfois d'avoir des comportements spécifiques.
 
 %TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema, Il faudrait une explication sur les "composition"  }
 %TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...
@@ -2038,6 +2072,9 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 
 \chapter{Conclusion}
 % TODO
+
+Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liés à certaines fonctionnalités.
+Un changement peu avoir des repercussions sur l'ensemble de celles-ci\dots
 
 
 %% \vfil
