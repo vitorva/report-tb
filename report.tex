@@ -600,7 +600,6 @@ D'autres sont relativement approprié
 Tout est une valeur avec un type et des propriétés associés. Ces propriétés sont parfois unique.
 
 
-
 %% Résumé rapide de la grammaire initiale + dire qu'elle est relativement bonne et qu'on a pas modifier grand chose
 %% Modification apporté pour le support de langage (pas grand chose)
 %  Adaptation (passé de lark à antlr) (regex, espace différents, pas de librairie pour les indentations, ...)
@@ -619,8 +618,6 @@ Tout est une valeur avec un type et des propriétés associés. Ces propriétés
 % clé-valeur
 % clé IDENTIFIER
 % nombbre
-
-
 
 % Faire attention de faire le découpage pour la completion
 
@@ -642,12 +639,21 @@ Elle sera complétée et améliorée après la mise en place des fonctionnalité
 
 Cette grammaire se trouve décrite dans le fichier UON.g4 du projet.
 
-
 \subsection{Résumé}
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
 Nous utiliserons la grammaire adapté en ANTLR pour illustrer nos exemples.
 
+% La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml.
+% D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
 On peut définir dans un fichier une des deux structures suivantes : une collection ou un schéma.
+
+\begin{lstlisting}
+    uon: root_value;
+
+    root_value: json_collection | schema;
+
+    json_collection: json_map | json_seq;
+\end{lstlisting}
 
 Une collection est soit une map ou soit une séquence en UON dans un format proche du JSON ou en YAML.
 
@@ -669,10 +675,22 @@ Cette séparation permet d'éviter des ambiguités. On incite comme ça à l'uti
 Nous allons garder presque la même structure car cette grammaire regroupe déjà des éléments importants du langage UON.
 Cependant quelques points concernant la strucutre général ont été modifiés.
 
-\subsubsection{Adaptation}
+\subsubsection{ANTLR}
 Il a fallu reconvertir la grammaire dans un autre langage à la main car aucun convertisseur existe. Heursement ANTLR et Lark se base sur une notation EBNF.
 Ce qui fait que la strucure reste relativement semblable.
 Le seul point de divergence, à été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci change.
+
+%TODO expliquer ici les règles et subtilités
+Le fichier doit comporter le même nom que la règle de départ.
+UON.g4 -> uon
+
+fragement
+
+%WS: [ \n\r\t] -> channel(HIDDEN);
+
+%LINE_COMMENT: '#' ~[\r\n]* -> skip;
+
+lexer and parser rule
 
 \subsubsection{YAML}
 La grammaire permettait deux notations différentes pour les collections : une proche de json et l'autre de yaml.
@@ -710,77 +728,22 @@ ainsi que des unités ont été rajouté en se basant sur la spécification.
 Les règles concernant les nombres ont été modifiés pour ne gérer maintenant qu'un type number
 pour gérer à un plus de cas dans la notation scientifique
 
-\subsection{ANTLR}
-
-%TODO expliquer ici les règles et subtilités
-Le fichier doit comporter le même nom que la règle de départ.
-UON.g4 -> uon
-
-fragement
-
-%WS: [ \n\r\t] -> channel(HIDDEN);
-
-%LINE_COMMENT: '#' ~[\r\n]* -> skip;
-
-lexer and parser rule
-
-\subsection{Implémentation}
-Nous allons mentionner les points les plus importants du langages et utiliser des exemples.
-
-%Construction
-\begin{lstlisting}
-    uon: root_value;
-
-    root_value: json_collection | schema;
-
-    json_collection: json_map | json_seq;
-\end{lstlisting}
-
 
 %Json map
-
 %pair key - josn pair
-
 % propriétés clé
-
 % propriésé types
-
 % key -> string-litteral expliquer pourquoi
-
 % symbol
-
-\subsection{Example}
-
-
-\subsection{Construction}
-Dans un document on peut définir une collection d'objet (un mapping ou un séquence) ou un schéma.
-Avoir une sépération permet d'éviter les ambuiguités.
-1 fichier pour 1 role distincs
-
-\subsection{Clé}
-Une clé peut être annoté entre guillement ou non
 
 
 \subsection{Debugging}
 
-Il n'est pas simple de debugger une grammaire seulement à l'aide d'un terminal, cela peut même se revéler extremement difficile.
-Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visulaiser en temps réel, le parse tree équivalent au texte que l'on saisie.
+Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l'aide d'un terminal, cela peut même se revéler extremement difficile.
+Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visulaiser en temps réel, le parse tree du texte que l'on est en train de saisir.
 
 
-
-
-
-
-
-
-\textbf{Rappel} :
-La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
 % TODO : 3 embranchements différents -> Json(seq et map), Yaml(seq et map) et schema. Donc pas possible de combiner du yaml avec du json
-
-\section{Modification}
-
-
-
 % TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple
 % TODO : ajouter la gestion des indent pour les sequences en version yaml
 % TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...) + faire attention aux erreurs de saisies
@@ -805,7 +768,6 @@ La grammaire actuelle nous permet de définir des maps, séquences dans le forma
 % Bug : Resolu en créant un lexer token pour les mots et l'utiliser dans le parser rule "string"
 % Le truc avec UON c'est qu'on a plein de mon clé. Mais on aussi envie de les utilisers parfois dans les clés
 % Si on crée un nouveau token (le fait automatiquemnt meme si on fait jusqze qu écrire du texte) alors il faudra le spécifier dans les clé sinon erreur !!!!
-
 
 
 \subsection{L'indentation}
