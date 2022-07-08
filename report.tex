@@ -600,22 +600,156 @@ Tout est une valeur avec un type et des propriétés associés. Ces propriétés
 
 
 \chapter{Scope de la grammaire}\label{grammar scope}
-Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera. Il est donc important préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
-Nous allons donc partir d'une grammaire la plus minimale possible tout en faisant attention à son extensibilité par la suite.
-Cette grammaire se trouve dans le fichier UON.g4.
+Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
+Il est donc important de préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
+Une spécifiation d'UON existe, mais c'est un langage complexe et qui pourrait encore, selon son créateur, être ammener à évoluer.
+Des améliorations peuvent même être discuter durant ce Travail de bachelor.
+De plus même si elle couvre énormément d'aspects, tout n'est pas détailler et donc des points sont sujet à intérprétation.
 
-Elle est une adaptation de la grammaire écrite en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON". Son travail se trouve sur :
-\href{https://github.com/uon-language/uon-parser}{https://github.com/uon-language/uon-parser}
+Heurseuement pour nous, une grammaire concrète avait déjà été écrit en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON".
+Son travail se trouve sur \href{https://github.com/uon-language/uon-parser}{ici}
+
+Nous nous appuyeront sur cette grammaire, que nous appelerons grammaire intiale, que nous convertirons en format ANTLR et ferons les modifications jugés nécessaire.
+
+Nous fairons attention à son extensibilitéset expliquerons des choix d'implémentation.
+
+\subsection{Rappel}
+Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initiale.
+On peut définir dans un fichier deux structures différentes : une collection et un schéma.
+
+\textbf{Collection :}
+Une collection est un mapping ou une séquence dans un format proche du JSON ou en YAML.
+Les collections peuvent être imbriqués.
+Mapping :
+Définit des clé-valeur.
+Une clé peut posséder des attribut de présentation (ex name( optional : true) : name);
+Une valeur peut être une collection ou un scalaire
+Un scalaire est une valeur\dots
+
+Un schéma est un document qui décrit la spécification d'un nouveau type.
+
+Nous allons garder plus au moins cette strucure qui regroupe des éléments importants du langage UON.
+
+
+\subsection{Modification}
+En résumé ...
+J'ai fait en sorte que les clé peuvents avoir des guillemets
+Jai rajouter ke fait que des types peut avoir des propriété, c'était manquant.
+J'ai rajouter des unités
+Chiffres + scientifiques
+json5
+parler des grammaires ANTLR
+
+Pour commencer, la grammaire initiale était conçu pour avoir deux notations différentes : une proche de json et l'autre de yaml.
+
+%Car UON est un superset de JSON et un set partiel de yaml.
+%La spécification indique bien que UON doit être compatible avec yaml 1.2 sans toutefois mention explicitement tous les points
+% TODO
+
+% Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cette aspect quand la prière version a été réalisé.
+Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cet aspect si le temps le permet.
+Car la notation en YAML pose quelques difficultés.
+En JSON les retours à la lignes et indentations ne sont pas nécessaire à la compréhension du langage, contrairement à YAML.
+Nous expliquons ici comment nous pourrions faire cohabiter ces 2 formats avec ANTLR.
+Puis il ne s'aggira que de reféter ces changements dans les fonctionnalités.
+
+
+Un point contraignant, et que la grammaire est intrinsèquement liés à certaines fonctionnalités.
+La coloration syntaxique doit refléter au mieux cette grammaire.
+Mais les règles de construction sont différentes. Et l'on a envie parfois d'avoir des comportements spécifiques.
+
+
+UON se veut ête moins ambigue que ces alternatives pour l'utilisateur.
+
+Cette grammaire se trouve dans le fichier UON.g4. Nous allons mentionner les points les plus importants
 
 Elle sera complétée et améliorée après la mise en place des fonctionnalités attendues, si le temps le permet.
 
 Les fonctionnalités implémentées s'appuieront sur cette grammaire. Ceci dans le but de rester cohérents entre eux.
+
+\subsection{ANTLR}
+
+%TODO expliquer ici les règles et subtilités
+Le fichier doit comporter le même nom que la règle de départ.
+UON.g4 -> uon
+
+fragement
+
+%WS: [ \n\r\t] -> channel(HIDDEN);
+
+%LINE_COMMENT: '#' ~[\r\n]* -> skip;
+
+lexer and parser rule
+
+\subsection{Adaption}
+
+%les points à considérer lorsqu'on passe d'une syntaxe à une autre
+
+Il a fallu réadapté la grammaire dans un autre langage. Heursement ANTLR et Lark se base sur une notation EBNF.
+Ce qui fait que la strucure reste semblable.
+Le seul point de divergence, à été l'utilisation de regex.
+Des règles changes mais de toute façon, certaines on été changé...
+
+\subsection{Implémentation}
+Nous allons parcourir ensemble les points les plus importants de la grammaire etc\dots
+
+%Construction
+\begin{lstlisting}
+    uon: root_value;
+
+    root_value: json_collection | schema;
+
+    json_collection: json_map | json_seq;
+\end{lstlisting}
+
+
+%Json map
+
+%pair key - josn pair
+
+% propriétés clé
+
+% propriésé types
+
+% key -> string-litteral expliquer pourquoi
+
+% symbol
+
+
+
+
+
+
+
+\subsection{Construction}
+Dans un document on peut définir une collection d'objet (un mapping ou un séquence) ou un schéma.
+Avoir une sépération permet d'éviter les ambuiguités.
+1 fichier pour 1 role distincs
+
+\subsection{Clé}
+Une clé peut être annoté entre guillement ou non
+
+
+\subsection{Debugging}
+
+Il n'est pas simple de debugger une grammaire seulement à l'aide d'un terminal, cela peut même se revéler extremement difficile.
+Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visulaiser en temps réel, le parse tree équivalent au texte que l'on saisie.
+
+
+
+
+
+
+
 
 \textbf{Rappel} :
 La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml. D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
 % TODO : 3 embranchements différents -> Json(seq et map), Yaml(seq et map) et schema. Donc pas possible de combiner du yaml avec du json
 
 \section{Modification}
+
+
+
 % TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple
 % TODO : ajouter la gestion des indent pour les sequences en version yaml
 % TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...) + faire attention aux erreurs de saisies
@@ -943,7 +1077,9 @@ Il y a 2 composantes principales.
     \item La tokenisation qui consiste à séparer le texte en une liste de token.
     \item La thémisation (Theming) qui permet d'attribuer à un token une couleur et un style.
 \end{itemize}
+% Citation vscode ?
 
+%TODO : à changer
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/basic-uon.png}
@@ -1065,6 +1201,14 @@ Par exemple avec du code Typescript :
 On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d'une fonction.
 Cela est donc intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas.
 Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
+
+\subsection{Mots-clés reservés}
+UON contient une liste de mot clé reservés
+%\begin{array}{l | r}
+%    Symbol & Description
+%    \hline
+%    :      & Key value separator
+%\end{array}
 
 \section{Auto-completion}
 
