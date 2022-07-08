@@ -1053,22 +1053,8 @@ Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) po
 
 \section{Syntax highlighting}
 
-%% La coloration syntaxique doit refléter au mieux cette grammaire.
-%% Mais les règles de construction sont différentes. Et l'on a envie parfois d'avoir des comportements spécifiques.
-
-%TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema, Il faudrait une explication sur les "composition"  }
-%TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...
-%Vérifier ça ! -> par ex. "key(description) : faux... en json et yaml"}
-%TODO : key avec et sans guillemet ? Quelles règles pour une clé ? (voir grammaire originel)}
-%TODO :: Approfondir explication des règles + regex (montrer des exemples ?) + Mentionner la découverte personnel dans le fichier tm : Captures + appliquer une règle à une capture spécifique}
-%TODO : difficulté regex ne fonctionne pas...}
-
-%TODO : Reserved Symbols}
-% TODO : quelle couleur par défaut (gérer les entres deux) ?
-% quand afficher des erreurs
-
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
-Il y a 2 composantes principales.
+Il y a deux composantes principales.
 \begin{itemize}
     \item La tokenisation qui consiste à séparer le texte en une liste de token.
     \item La thémisation (Theming) qui permet d'attribuer à un token une couleur et un style.
@@ -1086,15 +1072,30 @@ Il y a 2 composantes principales.
 
 VS code utilise Textmate grammars \cite{textmate-grammars} comme le moteur de tokénisation de la syntaxe.
 Cette grammaire a été inventée par l'éditeur TextMate est a été adopté par de nombreux éditeurs et IDE.
-Elle contient une liste structurée d'expressions régulières qui permet d'associer un scope à un token.
-Nous définissons notre grammaire TextMate dans le fichier "uon.tmLanguage.json" qui  se trouve dans le dossier "syntax" à la racine du projet.
+Elle contient une liste structurée d'expressions régulières qui permet d'associer un scope
+à un ou plusieurs tokens qui déclencherait l'activation d'une de ces expression.
+
+
+Nous définissons notre grammaire TextMate dans le fichier "uon.tmLanguage.json" qui se trouve dans le dossier "syntaxes" à la racine du projet.
 Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
 
-Le but de ce fichier en plus de permettre la coloration syntaxique, et qu'il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le caret. Cela permet d'avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
+% TODO
+%Le but de ce fichier en plus de permettre la coloration syntaxique, et qu'il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le caret.
+%Cela permet d'avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
 
 \subsection{Scope}
-Un scope défini le contexte du token et peut-être considéré comme son type.
-TextMate fournit une liste de scope commun que de nombreux thèmes ciblent déjà et recommande de les utiliser. Ceci dans le but de permettre à notre langage d'être supporté le plus possible.
+Un scope défini le contexte d'un groupe de token et peut-être considéré comme son type.
+
+C'est grâce au scope d'un token, qu'un fichier de thème peut attribuer une couleur.
+
+TextMate liste une liste de scope commun que de nombreux thèmes ciblent déjà et recommande de les utiliser.
+Ceci dans le but de permettre à notre langage d'être supporté le plus possible.
+
+Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut sur VS Code). Et de réutiliser les scopes.
+
+Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
+Mais peut être également généré depuis le contrôle panel à l'aide de la commande suivante : % TODO   .
+
 Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
 Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
 
@@ -1107,15 +1108,10 @@ Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visual
 
 La section "textmate scopes" montre la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
 
-La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par la spécification LSP et donc l'api de VS Code non plus. Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
+La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par la spécification LSP et donc l'api de VS Code non plus. 
+Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
 
-\subsection{Stratégie concernant les noms}
-Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut). Et de réutiliser les scopes.
-
-Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
-Mais peut être également généré depuis le contrôle panel.
-
-\subsection{Forcer le choix des couleurs}
+\subsection{Définir son thème}
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/manual-settings-color.png}
@@ -1123,14 +1119,15 @@ Mais peut être également généré depuis le contrôle panel.
     \caption[Choix manuel des couleurs]{\label{manual-settings-color} Choix manuel des couleurs}
 \end{figure}
 
-On peut manuellement définir une couleur à un scope dans le fichier package.json.
-Cela peut-être intéressant si aucun thème n'est associé de base à un scope.
-Il est également possible de créer directement un fichier de thème.
+On peut manuellement définir une couleur à un scope dans le fichier package.json. Ceci n'est pas la méthode la plus éléguente.
+Cela peut-être intéressant si aucun thème n'est associé de base à un scope mais il est préférable de créer directement un fichier de thème.
+
+% TODO :
 
 \subsection{Fonctionnement}
 \textbf{Exemple simple}
 
-Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le mécanisme général utilisé dans notre fichier "uon.tmLanguage.json" :
+Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le méchanisme général utilisé dans notre fichier "uon.tmLanguage.json" :
 \begin{lstlisting}[frame=single, caption={Textmate grammar},label={Textmate grammar}]
  1  {  scopeName = 'source.untitled';
  2     patterns = (
@@ -1149,16 +1146,18 @@ Voici ci-dessous un exemple relativement simple, mais permettant de comprendre l
 14     );
 15  }
 \end{lstlisting}
-\textbf{"scopeName"} (ligne 1) : Identifiant unique
+\textbf{"scopeName"} (ligne 1) : Identifiant unique du fichier
 
-\textbf{"patterns"} (ligne 2) : C'est un tableau contenant les règles actuelles utilisé pour parser le document. Elles sont appliquées dans l'ordre.
+\textbf{"patterns"} (ligne 2) : C'est un tableau contenant les règles actuelles utilisées pour parser le document. Elles sont appliquées dans l'ordre.
 Ces règles peuvent être directement écrites à cet emplacement, mais il est aussi possible de les définir dans le "repository". Puis de les inclure.
 
 \textbf{"repository"} : Un dictionnaire (clé-valeur) de règles.
 
-\textbf{"name"} : Nom du scope.
+\textbf{"name"} : Nom du scope
 
-Contrairement à la première règle qui ne faisait qu'un match, la deuxième définit un début et une fin sur laquelle seront appliquées les règles se trouvant dans le "patterns" suivant (à la ligne 12) . On voit qu'il est donc possible d'imbriquer les règles.
+Contrairement à la première règle qui ne faisait qu'un match, la deuxième définit un délimiteur de début et de fin.
+
+Les règles se trouvant dans le "patterns" suivant (à la ligne 12) seront appliqué au éléments se trouvant à l'intérieur de ces délimiteurs. On voit qu'il est donc possible d'imbriquer les règles.
 
 Capture : \textbf{TODO} : expliquer fonctionnement capture -> exemple "float 12 C"
 
@@ -1198,13 +1197,69 @@ On voit à la ligne 10 que la colorisation de la fonction a changé et correspon
 Cela est donc intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas.
 Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
 
-\subsection{Mots-clés reservés}
-UON contient une liste de mot clé reservés
-%\begin{array}{l | r}
-%    Symbol & Description
-%    \hline
-%    :      & Key value separator
-%\end{array}
+\subsection{uon.tmLanguage}
+
+Parcourons ensemble certains éléments de ce fichier.
+
+Tous d'abord il suit globalement la même strcuture que la grammaire g4.
+
+%TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema, Il faudrait une explication sur les "composition"  }
+
+Les mots-clé concernant les structures ont un scope pour bien les différencier
+Il s'agit ici juste d'un mot clé , ne fais pas parti
+
+les types ont un scope
+Les quoted et unquoted string ont un scope
+J'ai du aussi définir ces règles pour les key pour avoir un scope différent
+
+J'ai définis une strucutre pour les map seq (délimiteur) schema pas à cause de la syntaxe mais ne pose pas de problème dans ce cas parce que...
+
+Les propriéts sont associé à un type, ce qui fait que leur propriété sont connu de la grammaire et l'on sait si il fait bien parti du type.
+Le point contraignant et que cela couple énormlment la grammaire g4 avec celle-Ci
+
+%TODO examples
+
+% TODO : quelle couleur par défaut (gérer les entres deux) ?
+% TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...
+Je n'ai pas trouvé de consensus sur la manière de procéder. Ce que j'ai vite remarqué et qu'il est préférable de rester cohérent pour ne pas
+trop involontairement l'utilisateur.
+
+%TODO : Reserved Symbols
+
+% TODO : Quand afficher des erreurs
+On affiche le texte en rouge quand un caractère non attendu est écrit.
+% [^\\s,!] donc généralement cette règle se trouve à la fin de toutes les autres.
+% Seul les espaces, virgule et ! peuvent encore être écrit sans "erreur"
+
+\subsection{Propriétés}
+
+La coloration syntaxique doit refléter au mieux cette grammaire. On pourrait prévilégier une grammaire texmate relativement simple. Mais on manquerait certaines informations.
+
+% TODO example avec
+
+% TODO example sans
+
+\subsection{Capture}
+
+Il y a globalement deux manières pour appliquer un scope.
+
+La première et de définir un caractère de départ et un autre de fin. Puis définir les patterns que l'on appliquera au élément se trouvant à l'intérieur.
+
+% exemple : !str(comment : "mon premier commentaire")
+
+Mais dans certains cas, il n'y a pas de délimiteur et on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
+a déclenché.
+
+%TODO PHOTO :Typiquement : 12 k
+
+Il s'agit d'un nombre mais l'option "Capture" nous permet d'appliquer un scope au groupe de selection.
+Il n'est pas facile pour des expressions assez complexe de trouver ce nombre mais on peut s'aider du site \href{https://regex101.com/}{suivant}
+
+%\subsection{Adaptation}
+%Une des difficultés observés lors de l'implémentation de la coloration et le couplage à faire avec la grammaire.
+%On a pas envie de copier exactement la grammaire car ce qui nous intéresse ici est la coloration
+%Et l'on a envie parfois d'avoir des comportements spécifiques.
+
 
 \section{Auto-completion}
 
