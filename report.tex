@@ -1099,7 +1099,7 @@ Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/bl
 Mais peut être également généré depuis le contrôle panel à l'aide de la commande suivante : % TODO 
 
 %TODO : grâce à cette réflexion on a par défaut plusieurs thèmes (ceux présents dans vscode).
-% Montrer un thème supplémentaire
+% comparer 2 thèmes vs codes
 % Donc créer un thème pas forcément bien et contraignant...
 
 Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
@@ -1563,11 +1563,13 @@ Car normalement en cas d'erreur, le parser va essayé de continuer l'analyse syn
 Cependant il se peut qu'il n'y ait rien après. C'est presque tout le temps le cas lorsqu'on est en train d'écrire.
 On va donc juste s'arrêter.
 
-%%%
+% citation https://tomassetti.me/code-completion-with-antlr4-c3/
+Le moteur de complétion n'utlise pas le parse tree pour proposer ses suggestions mais on quand même besoin de lancer le parser pour remplir le stream de token (tokenStream) sur lequel le moteur s'appuyera.
 
-Comme le moteur de complétion se base principalement sur le stream de token trouvé (tokenStream), on ne peut donc pas profiter autant de la stratégie d'erreur
-d'ANTLR, car ce stream est généré avant la phase de création du parser comme illustré par la figure\ref*{antlr-setup}. Et c'est pendant la phase du parser que le processus de stratégie est appliqué.
-Mais on doit quand même donner le parser au moteur parce que\dots
+Une conséquence à cela et qu'on ne peut pas profiter de la stratégie d'erreur d'ANTLR, car ce stream est généré avant la phase de création du parser tree comme illustré par la figure\ref*{antlr-setup}. Et c'est pendant la phase du parser que le processus de stratégie est appliqué.
+
+%% TODO : ...
+Mais on doit quand même donner le parser au moteur pour qu'il puisse se baser sur les ATN (machines à état) du parser.
 
 
 Donc pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
@@ -1925,7 +1927,7 @@ dans un objet de type \emph{DocumentSymbol}.
 Généralement un noeud nous permet de nous rediréger sur l'élément du fichier lorsqu'on le séléctionne depuis la sidebar ou depuis la search bar. %todo reference
 Il faut donc pouvoir être capable de récupérer la position d'un élément du fichier.
 
-Heursement on peut récupérer cette information lors d'un parcours d'un noeud terminal.
+Heursement on peut récupérer cette information lors d'un parcours d'un noeud terminal du parse tree.
 Il suffit d'observer le token associé au symbole de ce noeud et plus particulièrement les
 propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait de "colonne")
 Il faut toutefois juste corriger la position de la ligne en lui soustraiant une valeur de 1 car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR % TODO
@@ -2078,6 +2080,10 @@ Le problème et que cette information ne se trouve sous forme textuelle.
 Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifiers pour en récuper la liste des tokens....
 
 % TODO surcharger des méthodes pour pouvoir être notifié des tokens manquant
+
+\subsection{Quick fick}
+% TODO
+
 \section{Fonctionnalités triviales}
 Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
 Les suivantes ont été implémentées :
