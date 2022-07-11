@@ -1094,7 +1094,11 @@ Ceci dans le but de permettre à notre langage d'être supporté le plus possibl
 Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut sur VS Code). Et de réutiliser les scopes.
 
 Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
-Mais peut être également généré depuis le contrôle panel à l'aide de la commande suivante : % TODO   .
+Mais peut être également généré depuis le contrôle panel à l'aide de la commande suivante : % TODO 
+
+%TODO : grâce à cette réflexion on a par défaut plusieurs thèmes (ceux présents dans vscode).
+% Montrer un thème supplémentaire
+% Donc créer un thème pas forcément bien et contraignant...
 
 Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
 Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
@@ -1407,7 +1411,7 @@ De ce fait nous n'avons alors pas besoin d'une telle source d'information compl�
 \textbf{Sorting}
 
 %  fuzzy search algorithms to match identifiers
-Pour rendre la recherche plus agréable on peut utiliser un algotihme de recheche aproximative (Fuzzy search).
+Par défaut VS code implémente un algorithme de fuzzy search...
 % TODO
 
 %Filtering
@@ -1525,10 +1529,16 @@ Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le proces
 Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On peut s'aider en parallèle de la coloration syntaxique.
 
 \subsection{Mécanisme automatique}
-VS Code va automatiquement filtrer les suggestions pendant la saisie.
-Par défaut il propose également des symboles déjà existants dans le code.
+VS Code va automatiquement filtrer les suggestions pendant la saisie à l'aide d'un algorithme de fuzzing search.
+Pour rappel le fuzzy search (ou recherche approximative) permet de trouver une chaine de caractère en fournissant une chaine qui n'a besoin d'avoir une correspondance exacte
+avec le texte que l'on cherche.
 
-\subsection{Gestion des erreurs }\label{error handle}
+% TODO : exemple de fuzy search dans VS Code (comportement par défaut)
+
+% abc suggestion
+Par défaut la complétion proposé par VS Code porte sur les symboles déjà existants dans le code.
+
+\subsection{Gestion des erreurs }\label{error handle} % TODO : déplacer les explciation sur le parser error recovery
 
 ANTLR à un méchanisme avancé de récupération d'erreur (Parser Error Recovery Strategy).
 % TODO : centraliser les gestion d'erreur d'antlr avec celui dans le lint...
@@ -1545,6 +1555,8 @@ Car normalement en cas d'erreur, le parser va essayé de continuer l'analyse syn
 Cependant il se peut qu'il n'y ait rien après. C'est presque tout le temps le cas lorsqu'on est en train d'écrire.
 On va donc juste s'arrêter.
 
+
+
 \subsection{Snippets}
 Il est possible d'ajouter des snippets sous VS Code. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
 C'est utile si à un moment donné on a le choix entre plusieurs suggestions et que l'on veut tous les avoir d'un coup.
@@ -1557,7 +1569,52 @@ Par exemple, on peut en UON, ajouter des attributs à un schéma :
     \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
 \end{figure}
 
-Cependant toute la difficulté et de proposer ces suggestions au bon moment, car ne faisant pas partie du moteur de complétions d'antlr. Une idée et de se baser sur le dernier token reconnu. On pourrait ici savoir qu'il est le moment d'ajouter ce snippet, si le dernier token est de type "!schema".
+Cependant toute la difficulté et de proposer ces suggestions au bon moment, car ne faisant pas partie du moteur de complétions d'antlr.
+Une idée et de se baser sur le dernier token reconnu. On pourrait ici savoir qu'il est le moment d'ajouter ce snippet, si le dernier token est de type "!schema".
+
+\subsection{Séquence de token}
+
+%Le moteur va récupérer la liste des tokens.
+%Exemple d'un ligne de la grammaire et de ce qu'on récupre
+%BOOL_TYPE = !bool
+
+Nous avons vu qu'il est possible, à l'aide du moteur, de récupérer la liste des candidats possible à un emplacement du code.
+Pour l'instant un candidat correspond à un seul token.
+
+Mais on peut récupérer également une liste de tokens depuis le moteur.
+
+\begin{lstlisting}
+    class CandidatesCollection {
+        public tokens: Map<number, TokenList>;
+        public rules: Map<number, CandidateRule>;
+    };
+\end{lstlisting}
+
+
+À l'exécution de ce moteur on reçoit un object "CadidatesCollection"
+Comme illustrer à la figure %TODO
+Il s'agit d'une liste de token et de règles.
+
+Un token correspond donc à un mapping faisant la correspondance entre le numéro d'un token pouvant être proposé avec une liste de potentiel token qui pourrait le suivre.
+
+En prenant en compte cet aspect il est possible d'obtenir le résultat suivant :
+
+\begin{lstlisting}
+    !map {switch : |}
+                   - !bool
+                   - !bool true
+\end{lstlisting}
+
+Cependant cela nécessite d'adapter la grammaire en conséquence.
+
+Ces tokens doivent obligatoirement se suivre dans la grammaire % TODO : être de type lexer ?
+et ne peuvent pas être omis.
+
+Par exemple : % TODO : code
+
+
+
+
 
 \subsection{Triggers}
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space" (par défaut).
@@ -2089,6 +2146,9 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 
 \chapter{Conclusion}
 % TODO
+
+Travailler sur ce projet s'est revélé être passionnant.
+
 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liés à certaines fonctionnalités.
 Un changement peu avoir des repercussions sur l'ensemble de celles-ci\dots
