@@ -1406,10 +1406,10 @@ Mais il est mentionné dans la spécification qu'un schéma pourrait être défi
 Avec ce scénario en tête, une table de symbole pourrait se revélé utile.
 Car on pourrait imagine proposer de la complétion basé sur les clés (même si vscode le ferait grâce au mécanisme par défaut). % TODO : à  moins d'avoir des schéma linked aussi ?
 
-ou bien garder en mémoire les règles pour une valeur à saisir pour une clé.
-Ou bien les propriétés pour un nouveau types....
+Garder en mémoire les règles pour une valeur à saisir pour une clé.
+Ou bien mêmes les propriétés pour un nouveau type définit dans le schéma.
 
-% Donc si on définit un nouveau 
+% Donc si on définit un nouveau
 % Actuellement seulement un schéma de document ?
 
 \textbf{Rule}
@@ -1446,7 +1446,7 @@ Elle a été conçu par Mike Lischke.
 % TODO
 Setup basique :
 
-\begin{lstlisting}[frame=single]
+\begin{lstlisting}[frame=single,caption={antlr-setup},label={antlr-setup}]
     let inputStream = new ANTLRInputStream("var c = a + b()");
     let lexer = new ExprLexer(inputStream);
     let tokenStream = new CommonTokenStream(lexer);
@@ -1562,6 +1562,44 @@ Mais on peut l'étendre pour redéfinir les fonctions.
 Car normalement en cas d'erreur, le parser va essayé de continuer l'analyse syntaxique jusqu'à trouver un token valide.
 Cependant il se peut qu'il n'y ait rien après. C'est presque tout le temps le cas lorsqu'on est en train d'écrire.
 On va donc juste s'arrêter.
+
+%%%
+
+Comme le moteur de complétion se base principalement sur le stream de token trouvé (tokenStream), on ne peut donc pas profiter autant de la stratégie d'erreur
+d'ANTLR, car ce stream est généré avant la phase de création du parser comme illustré par la figure\ref*{antlr-setup}. Et c'est pendant la phase du parser que le processus de stratégie est appliqué.
+Mais on doit quand même donner le parser au moteur parce que\dots
+
+
+Donc pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
+Car sinon on pourrait avoir dans notre stream de token des éléments qui ne seront pas compris par le moteur et l'on obtiendra pas de candidats.
+
+Une explication fourni par un internaute dans la rubrique "issues" du dépot du \href{ https://github.com/mike-lischke/antlr4-c3/issues/29}{projet}.
+% https://github.com/mike-lischke/antlr4-c3/issues/29
+
+Et que du moment où le moteur est confronté à une erreur de syntax (token inattendu ou invalide), le moteur n'a plus moyen de trouver un chemin valide.
+Et que parcourir toutes les possiblités jusqu'à trouver le token qui suit celui qui pose problème est trop long et peut mener à des erreurs d'ambiguités si le token suivant se trouve dans plusieurs règles de la grammaire.
+
+Mais l'on pourrait s'en contenter car finalement, il est logique qu'une erreur puisse entrainer un tel comportement.
+Si dans un langage de programmation un utilisateur saisit du code erroné, il fort possible que la complétion cesse de fonctionner.
+
+Cependant comme nous travaillons avec une syntaxe beacoup moins complexe l'on pourrait modifier le texte pour corriger voir supprimer le problème.
+Par exmple, dans le cas d'un mapping de clé valeur, une ligne pourrait être omis sans nuir à la compéhension du document.
+
+C'est ce qui a été fait de la manière suivante :
+
+Créer une nouvelle classe de listener qui détecte les erreurs lors du parsing.
+Stocker la position des tokens qui posent problème.
+Modifier le texte récupérer dans l'éditeur localement en conséquence.
+Relancer la phase de la création du parser en lui donnant le texte modifié.
+
+
+Avec ce mécanisme personnalisé on arrive à rendre la completion un peu plus tolérant au erreur mais le problème et que l'on couple la logique du moteur avec l'application et que c'est pas du tout une bonne pratique.
+car si on modifie la grammaire il faudra repércuté les changements dans l'application.
+
+
+
+%Malheursement des fois on n'a pas trop d'alternatives possibles
+
 
 
 
