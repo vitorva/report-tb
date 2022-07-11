@@ -1586,27 +1586,24 @@ Cependant comme nous travaillons avec une syntaxe beacoup moins complexe l'on po
 Par exmple, dans le cas d'un mapping de clé valeur, une ligne pourrait être omis sans nuir à la compéhension du document.
 
 C'est ce qui a été fait de la manière suivante :
-
-Créer une nouvelle classe de listener qui détecte les erreurs lors du parsing.
-Stocker la position des tokens qui posent problème.
-Modifier le texte récupérer dans l'éditeur localement en conséquence.
-Relancer la phase de la création du parser en lui donnant le texte modifié.
-
+\begin{enumerate}
+    \item Créer une nouvelle classe de listener qui détecte les erreurs lors du parsing.
+    \item Stocker la position des tokens qui posent problème.
+    \item Modifier le texte récupérer dans l'éditeur localement en conséquence.
+    \item Relancer la phase de la création du parser en lui donnant le texte modifié.
+\end{enumerate}
 
 Avec ce mécanisme personnalisé on arrive à rendre la completion un peu plus tolérant au erreur mais le problème et que l'on couple la logique du moteur avec l'application et que c'est pas du tout une bonne pratique.
 car si on modifie la grammaire il faudra repércuté les changements dans l'application.
 
-
-
 %Malheursement des fois on n'a pas trop d'alternatives possibles
-
-
-
 
 \subsection{Snippets}
 Il est possible d'ajouter des snippets sous VS Code. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
-C'est utile si à un moment donné on a le choix entre plusieurs suggestions et que l'on veut tous les avoir d'un coup.
-Par exemple, on peut en UON, ajouter des attributs à un schéma :
+%C'est utile si à un moment donné on a le choix entre plusieurs suggestions et que l'on veut tous les avoir d'un coup.
+C'est utile si on a envie d'avoir des suggestions un peu plus personnalisés.
+Typiquement on pourrait vouloir avoir comme suggestion direment un ensemble de propriétés comme illusté par la figure \ref*{snippet-suggestion}.
+Ce qui n'est pas possible avec le moteur.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1615,8 +1612,19 @@ Par exemple, on peut en UON, ajouter des attributs à un schéma :
     \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
 \end{figure}
 
-Cependant toute la difficulté et de proposer ces suggestions au bon moment, car ne faisant pas partie du moteur de complétions d'antlr.
-Une idée et de se baser sur le dernier token reconnu. On pourrait ici savoir qu'il est le moment d'ajouter ce snippet, si le dernier token est de type "!schema".
+%TODO : résultat
+
+
+Il est possible de passer à la case suivante à l'aide de la touche tab. %case..
+Cependant il est nécessaire de proposer ces suggestions au bon moment. La solution envisagé et de vérifier que le token du type possédant ces propriété ce trouve dans les candidats du moteur.
+
+C'est un mécanisme intéressant mais fortement lié à l'application
+%Couplage grammaire - app
+
+\subsection{Types des suggestion}
+abc
+nous
+snippet
 
 \subsection{Séquence de token}
 
@@ -1627,7 +1635,7 @@ Une idée et de se baser sur le dernier token reconnu. On pourrait ici savoir qu
 Nous avons vu qu'il est possible, à l'aide du moteur, de récupérer la liste des candidats possible à un emplacement du code.
 Pour l'instant un candidat correspond à un seul token.
 
-Mais on peut récupérer également une liste de tokens depuis le moteur.
+Mais on peut récupérer également une liste de tokens depuis le candidat.
 
 \begin{lstlisting}
     class CandidatesCollection {
@@ -1657,10 +1665,6 @@ Ces tokens doivent obligatoirement se suivre dans la grammaire % TODO : être de
 et ne peuvent pas être omis.
 
 Par exemple : % TODO : code
-
-
-
-
 
 \subsection{Triggers}
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctr + space" (par défaut).
