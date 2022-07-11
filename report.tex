@@ -584,6 +584,8 @@ Chaque élément est composé d'un type. Et chacun de ces types peut avoir des p
 Dans de telles communications, la validation des données transmises entre des machines dont la puissance de calcul est très limitée est un atout majeur.
 Une des propriétés uniques de UON est l'usage de schéma directement intégré dans le langage.
 
+% TODO : Lister les différents forme de shcéma de validation
+
 \subsection{Liens}
 Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
 Et le dépôt du projet se trouve \href{https://github.com/uon-language/specification}{ici}.
@@ -1394,19 +1396,25 @@ Cela rend bien entendu le travail plus conséquent.
 
 \textbf{Symbol tables}
 
-C'est un méchanisme important de c3 mais que nous n'allons pas exploiter.
+C'est un méchanisme puissant de c3 mais que nous n'allons pas exploiter car non spécifié dans le cahier des charges et par manque de temps.
 
-Une table de symbole est une structure qui contient des informations sur des symboles, cela peut s'agir de noms, leur scopes et d'autre caractèrisiques.
+Une table de symbole est une structure qui contient des informations complémentaires sur des symboles, cela peut s'agir de noms, leur scopes et d'autre caractèrisiques.
 Cependant, un langage de sérialisation est relativement moins complexe à gérer qu'un langage de programmation.
-Nous n'avons par exemple pas à gérer des variables et leur visibilité au sein du code.
+Nous n'avons par exemple pas à mémoriser des variables et leur visibilité au sein du code.
 
-De ce fait nous n'avons alors pas besoin d'une telle source d'information complémentaire.
+Mais il est mentionné dans la spécification qu'un schéma pourrait être définit au même niveau que le payload.
+Avec ce scénario en tête, une table de symbole pourrait se revélé utile.
+Car on pourrait imagine proposer de la complétion basé sur les clés (même si vscode le ferait grâce au mécanisme par défaut). % TODO : à  moins d'avoir des schéma linked aussi ?
 
+ou bien garder en mémoire les règles pour une valeur à saisir pour une clé.
+Ou bien les propriétés pour un nouveau types....
+
+% Donc si on définit un nouveau 
+% Actuellement seulement un schéma de document ?
 
 \textbf{Rule}
 
 %todo
-
 
 \textbf{Sorting}
 
