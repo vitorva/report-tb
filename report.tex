@@ -714,7 +714,6 @@ Car encapsuler entre des caractères spécifiques, il n'y pas d'ambiguités poss
 Par contre un cas spécial a du être traiter. Si l'on veut pouvoir utiliser directement un mot sans guillemet mais qu'il existe dans la grammaire.
 Il faut ajouter ce cas %TODO
 
-
 \subsection{Propriétés, unités et nombres}
 
 Des propriétés de présentation %TODO : voir ....
@@ -737,30 +736,23 @@ Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
 Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
 
-% TODO : Taux "d'erreur" acceptable pour le rendu final ?
-\section{Tolérance}
+%TODO
+%\section{Tolérance}
+%Le parseur ne devrait uniquement controler la syntaxe. une bonne règle à se rappeler et que dans le doute il est préférable de laisser l'analyser syntaxique (parser) 
+%Le document et controler la sémantique pour s'assurer que la règle a du sens
 
-"The parser should only check the syntax. So the rule of thumb is that when in doubt you 
-let the parser pass the content up to your program. Then, in your program, you check the semantics and make sure that the rule actually have a proper meaning."
-% Citation !!!
-
-
-Le parseur doit pouvoir traiter un fichier correct
-Mais si trop correct il y a potentiellement + d'erreurs qui peuvents être detecté
-
-La gestion des erreurs se fait à l'aide des fichiers de stratégies.
-
-Mais on ne peut pas imaginer ignorer / modifier tout correctement\dots
+%"The parser should only check the syntax. So the rule of thumb is that when in doubt you 
+%let the parser pass the content up to your program. Then, in your program, you check the semantics and make sure that the rule actually have a proper meaning."
+% Citation !!! mégathread ?
 
 
 \section{Code}
-
 
 Par rapport à la figure %todo
 les points suivants au été rajouté à la figure %todo
 
 \textbf{Remarque} : Les "..." signifie qu'il y a des sous fichiers et/ou répertoire mais ont été ignoré pous ne pas surcharger
-l'arborescence.
+la figure.
 
 \begin{figure}[!h]
     \centering
@@ -800,37 +792,39 @@ l'arborescence.
     \caption{UON VS Code extension structure}
 \end{figure}
 
-
-
-
-
 Le code de l'implémentation est disponible sur le dépôt public \href{https://github.com/vitorva/vscode-uon}{suivant}.
 
 \textbf{Remarque} : L'implémentation détaillée dans ce rapport pourrait ne plus représenter l'état du dépôt, car ce projet est sujet à évoluer.
 
 \section{Extension}
-Nous allons voir maintenant, la procédure pour créer et publier son extension.
+Nous allons voir maintenant, l'essentiel de la procédure pour créer et publier son extension.
 
-% TODO : Expliquer que c'est une procédure minimaliste, les explications détaillés sur la documentation vs code
+La procèdure détaillé se trouve \href{https://code.visualstudio.com/api/get-started/your-first-extension
+}{ici}
 
 \subsection{Génération de l'extension}
-% TODO : expliquer qu'est-ce que Yeoman
 
-VS Code permet de générer un squelette (boilerplate) pour la réalisation d'une extension. Pour ce faire il faut avoir Node.js et Git installés, pour installer Yeoman et VS Code Extension Generator avec la commande :
+VS Code permet de générer un squelette (boilerplate) pour la réalisation d'une extension.
+Pour ce faire il faut avoir Node.js et Git installés.
 
-% TODO : yeoman Generator to scaffold an extension...
+Ceci dans le but d'installer Yeoman et VS Code Extension Generator.
+
+\href{https://yeoman.io/}{Yeoman} est un outil permettant de créer un générateur et de l'exécuter dans un environnement adapté.
+\href{https://www.npmjs.com/package/generator-code}{VS Code Extension Generator} et le générateur implémenté par VS Code pour générer la structure de l'extension.
+
+La commande pour l'installation est la suivante :
 
 \begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
 npm install -g yo generator-code
 \end{lstlisting}
 
-Puis il suffit de saisir la commande :
+Puis il suffit de lancer le générateur :
 
 \begin{lstlisting}[frame=single]
 yo code
 \end{lstlisting}
 
-et de compléter ce qui est attendu dans le terminal.
+Et de compléter ce qui est attendu dans le terminal pour créer notre extension.
 
 \begin{figure}[!h]
     \begin{center}
@@ -841,12 +835,12 @@ et de compléter ce qui est attendu dans le terminal.
 
 Cela nous créera l'arborescence mentionnée précédemment au point \hyperref[Extension File Structure]{Extension File Structure}.
 
-\subsection{Lancement de l'extension en debug}
-On peut lancer une nouvelle fenêtre (f5) qui va contenir notre extension.
+\subsection{Lancement de l'extension}
+On peut lancer notre application en mode debug avec la touche F5. Cela va ouvrir une nouvelle fenêtre VS Code qui va contenir notre extension.
 
 Par défaut, l'application générée vient avec du code permettant d'afficher un message de bienvenu. On l'affiche au travers du command pannel (CTRL + SHIFT + P). On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
-On constate donc que l'on peut lancer notre application au travers d'une commande, mais pour notre cas il sera plus intéressant que VS Code nous propose les fonctionnalités à l'ouverture d'un fichier uon.
-Pour cela, il faut modifier l'activation events dans le fichier package.json par :
+On constate donc que par défaut, l'application doit être lancé au travers d'une commande, mais pour notre cas il sera plus intéressant que VS Code nous propose les fonctionnalités à l'ouverture d'un fichier UON.
+Pour cela, il faut modifier \emph{l'activation events} dans le fichier package.json par :
 \begin{lstlisting}[frame=single]
     "activateEvents" : [
 	"onLanguage:uon"
@@ -861,8 +855,6 @@ Pour cela, il faut modifier l'activation events dans le fichier package.json par
 % https://dev.azure.com/Stev03/_usersSettings/tokens
 
 \textbf{Prérequis} : Posséder un compte Azure.
-
-% En gros on va créer un acces TOKEN depuis notre compte qui nous permettre d'avoir les droits pour publier une extension
 
 Il faut d'abord récupérer un Personal Access Token. Pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
 Puis, créer un access token avec ces paramètres :
@@ -879,13 +871,13 @@ Pour créer un publisher, il faut se connecter avec le même compte qui a créé
 
 Quand cela est fait, il faut ensuite ajouter la propriété "publisher" et saisir l'id de celui-ci dans le package.json de notre extension.
 
-Puis finalement, il suffit dans un terminal les commandes suivantes :
+Puis finalement, il suffit dans un terminal de saisir les commandes suivantes :
 \begin{lstlisting}[frame=single]
     vsce login [le nom du publisher]
     Vsce publish
 \end{lstlisting}
 
-\textbf{Remarque} : Attention au terminal utilisé. Le terminal de node (git.bash) ne propose pas toujours les options de sélections à l'utilisateur. Dans mon cas il était impossible de saisir le PAT et donc une erreur était affichée.
+\textbf{Remarque} : Attention au terminal utilisé. Dans mon cas, le terminal de node (git.bash) sur windows ne fonctionne pas lorsque des interactions avec le terminal est nécessaire.
 
 \begin{figure}[!h]
     \begin{center}
@@ -899,33 +891,22 @@ L'extension apparaitra automatiquement dans le marketplace si elle est publiée.
 
 \subsection{Intégration continue (CI)}
 
-% TODO : expliquer l'architecture des fichiers test
-https://code.visualstudio.com/api/working-with-extensions/testing-extension
-
-%If you are using the Yeoman Generator to scaffold an extension, integration tests are already created for you....
-
-Commme le squelette de base de l'extension à été créé en utilisant le générateur Yeoman, la structure pour écrire nos tests d'intégrations
+Commme le squelette de base de l'extension à été créé en utilisant le générateur Yeoman de VS Code, la structure pour écrire nos tests d'intégrations
 existe déjà.
-% citation
+% citation : https://code.visualstudio.com/api/working-with-extensions/testing-extension
 
 Il suffit de lancer la commande "npm run test" ou "yarn test" pour lancer les tests se trouvant dans le repertoire % TODO.
 
 C'est l'api \href{https://mochajs.org/api/}{mocha} qui est utilisé pour ces tests.
 
-Actuellement on test de cette facon les fonctionnalités de la complétion et de l'outline.
+Actuellement on test de cette facon les fonctionnalités de la complétion et de l'outline view.
 
-%In the generated extension, you can use npm run test or yarn test to run the integration tests that:
-
-%Downloads and unzips latest version of VS Code.
-%Runs the Mocha tests specified by the extension test runner script.
-
-Concernant les tests pour la coloration syntaxique , le module \href{https://github.com/PanAeon/vscode-tmgrammar-test}{vscode-tmgrammar-test} a été choisi.
+Concernant les tests pour la coloration syntaxique, le module \href{https://github.com/PanAeon/vscode-tmgrammar-test}{vscode-tmgrammar-test} a été choisi.
 Car depuis mocha on a pas moyen de le faire.
 
 Nous avons donc quelques tests unitaire simples mais qui permet toutefois de s'assurer qu'un changement ne viens pas modifier le comportement d'une manière inattendu.
-Tous les fonctionnalités ne sont pas tester.
 
-tous ces tests se trouvent dans le dossier test.
+Tous les tests se trouvent dans le dossier test à la racine du projet. % TODO lien avec l'arborescence
 
 \subsubsection{Autocomplétion}
 On s'assure que les candidates de complétions attendues à un emplacement soit les bons selon une entré de code.
