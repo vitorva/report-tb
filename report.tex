@@ -1340,13 +1340,23 @@ Comme mentionné au début de ce document, une approche typique pour implémente
 Mais en complément nous allons aussi exploiter \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
 Cet outil est écrit en Typescript mais existe aussi en version JAVA et C\#.
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
+Nous utiliserons principalement ces candidats pour les suggestions proposé dans l'éditeur de code.
 
 % citation ?
-Le moteur ne va pas utiliser le résultat du parse tree pour la complétion. Mais l'exécution du parser est nécessaire pour remplir le token stream sur lequelle s'appuyera le moteur.
+%Le moteur ne va pas utiliser le résultat du parse tree pour la complétion. Mais l'exécution du parser est nécessaire pour remplir le token stream sur lequelle s'appuyera le moteur.
+% TODO : 
+
+% citation https://tomassetti.me/code-completion-with-antlr4-c3/
+% Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats, mais est il est quand même nécessaire de lancer l'exéction du parser (parser.uon()) pour remplir le stream de token (tokenStream).
+
+Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream.
+Car le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état (ATN) d'antlr disponible dans le parser.
 
 % citation ?
 \textbf{Remarque} : Le résultat du parsing n'a pas besoin d'être correcte. Il est possible de travailler avec du code incomplet ou malformé, ce qui est relativement fréquent dans un éditeur.
-ANTLR4 est capable de se rétablir des erreurs et si nous utilisons le DefaultErrorStrategy nous obtiendrons un parse tree dans tous les cas.
+
+ANTLR4 est capable de se rétablir des erreurs plus grave qui pourrait faire échouer le processus de parsing.
+Si nous utilisons le DefaultErrorStrategy nous obtiendrons un parse tree dans tous les cas.
 
 Pourquoi un telle moteur ?
 
@@ -1563,14 +1573,10 @@ Car normalement en cas d'erreur, le parser va essayé de continuer l'analyse syn
 Cependant il se peut qu'il n'y ait rien après. C'est presque tout le temps le cas lorsqu'on est en train d'écrire.
 On va donc juste s'arrêter.
 
-% citation https://tomassetti.me/code-completion-with-antlr4-c3/
-Le moteur de complétion n'utlise pas le parse tree pour proposer ses suggestions mais on quand même besoin de lancer le parser pour remplir le stream de token (tokenStream) sur lequel le moteur s'appuyera.
+%%%%%
 
-Une conséquence à cela et qu'on ne peut pas profiter de la stratégie d'erreur d'ANTLR, car ce stream est généré avant la phase de création du parser tree comme illustré par la figure\ref*{antlr-setup}. Et c'est pendant la phase du parser que le processus de stratégie est appliqué.
-
-%% TODO : ...
-Mais on doit quand même donner le parser au moteur pour qu'il puisse se baser sur les ATN (machines à état) du parser.
-
+On aurait donc pu penser naivement que le Parser Error Revory Strategy d'ANTLR nous permettrait également de rendre le mécanisme de la complétion aussi plus tolérant.
+Mais ce mécanisme n'est utilisé que pour générer un parse tree, cela est donc inutile pour ce cas. % car se base sur TODO
 
 Donc pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
 Car sinon on pourrait avoir dans notre stream de token des éléments qui ne seront pas compris par le moteur et l'on obtiendra pas de candidats.
@@ -1583,6 +1589,8 @@ Et que parcourir toutes les possiblités jusqu'à trouver le token qui suit celu
 
 Mais l'on pourrait s'en contenter car finalement, il est logique qu'une erreur puisse entrainer un tel comportement.
 Si dans un langage de programmation un utilisateur saisit du code erroné, il fort possible que la complétion cesse de fonctionner.
+
+
 
 Cependant comme nous travaillons avec une syntaxe beacoup moins complexe l'on pourrait modifier le texte pour corriger voir supprimer le problème.
 Par exmple, dans le cas d'un mapping de clé valeur, une ligne pourrait être omis sans nuir à la compéhension du document.
@@ -1938,6 +1946,7 @@ Il faut toutefois juste corriger la position de la ligne en lui soustraiant une 
 %    Mentionner la provenance de la base du code (github antlr4ts) + les fichiers utilsés par le module antlrts (TreeVisitor etc...)
 
 
+% https://github.com/tunnelvisionlabs/antlr4ts/issues/305
 % visiteur explications : https://www.youtube.com/watch?v=BD-I3f0aTbs
 
 %TODO : expliquer qu'on gènère finalement pas un AST pour l'utiliser mais qu'on crée l'arbe de symbole de manière récusrive lors du parcours (sorte d'ast directement utilisable)
@@ -2203,7 +2212,85 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 \chapter{Conclusion}
 % TODO
 
-Travailler sur ce projet s'est revélé être passionnant.
+% what should be included in a conclusion ?
+% Restate your thesis.
+% Synthesize or summarize your major points.
+% Make the context of your argument clear.
+
+
+Travailler sur ce projet s'est revélé être très intéressant.
+
+%L'objectif de ce travail de bachelor est de pouvoir avoir à disposition dans l'éditeur, les éléments de base pour
+%Sans devoir consulter la documentation
+
+Il a fallu découvrir et analyser un nouveau langage.
+Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouvant s'avérer utiles comme support pour ce langage.
+
+Découvrir les technologies permettant leur implémentation et ensuite pouvoir les utiliser en sein de notre application. % fonctionnalité cohereent entre elles
+
+
+%TODO : déplacer
+%Il a été mentionner à plusieurs reprise qu'un parser est un élément pouvant nous faire aboutir à notre but.
+%Heursement pour nous, des outils existent pour en générer un depuis une grammaire, nous faisant gagner un temps de développement énorme.
+% De plus avec cette approche cela nous permet de travailler sur la grammaire en même temps que les fonctionnalités à implémenter.
+
+Nous avons vu qu'il est possible de s'aider d'outils déja existant et que cela peut, si bien utiliser, accelérer grandement la mise en place d'un support de langage.
+
+ANTLR s'est avérer être une composante dominante du projet. De plus sa gestion des erreurs permet d'avoir une meilleur tolérance concernant les erreurs
+qui sont fréquent dans un éditeur.
+
+L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte\dots
+
+% TODO : Déplacer
+%Nous avons vu est pu classifier les fonctionnalités dans deux catégories : Declarative et Programmatic features
+%La première est fortement couplé à l'editeur. Pour la seconde nous avons choisi l'approche consistant à utiliser l'api de vscode.
+%Mais cette api étant standardisé avec la norme LSP.
+%Déplacer ces fonctionnalités en sein d'un langage serveur est possible
+
+%% Les points d'améliorations : LSP
+%% Avoir une notion de scope / schéma de validation interne si possible
+
+
+
+%Implémenter du support nous oblige à analyser un langage en profondeur\dots
+
+%Le support d'un langage est un sujet vaste et nous n'avons vu qu'une infime parti de ce qui est possible de faire.
+
+%C'est aussi un sujet qui est très libre
+
+
+Pour pouvoir fournir du support pour un lanagage, on est obliger de connaitre la grammaire sur laquelle ces fonctionnalités porteront.
+Heursement pour nous nous avons pu reprendre une implémentation existante que nous avons adapté pour couvrir nos besoins.
+
+
+Les éléments qui on recquis le plus de travail ont été la complétion.
+Car même si le moteur est extrêment puissant et qu'il convient très bien pour notre utilisation. Il reste toutefois important de comprendre son fonctionnement et que c'est un outil pouvant s'avérer complexe.
+
+Adapter la grammaire a été un challenge ANTLR et différent de lark, la complétion nécessite aussi d'adapter la grammaire.
+
+La outline ?
+La subtiliter concernant les capture regex dans la grammaires
+
+Nous avons fais le choix de travailler uniquement dans un environnement mais fournissant toutes les clés pour une extensibilités futurs
+
+VS Code est un environnement riche et complexe mais qui est extrêmement bien documenter et agréable à utiliser.
+Il est toutefois parfois même difficile de savoir ce que peut faire cet éditeur par défaut ou non.
+
+
+
+
+De plus chaque langage ayant ses spécifités, les besoins peuvent variées les uns des autres.
+
+De même, les même fonctionnalités entre deux langage peuvent avoir des comportements relativement différent.
+
+L'avantage d'avoir travaillé sur un langage de sérialisation comme UON est que cela est relativement moins complexe à gérer qu'un langage de programmation.
+C'est une bonne porte d'entrée ...
+Cela nous oublige à découvrir et prendre conscience ce qu'il est possible de faire plus généralement.
+
+Mais UON est aussi plus complexe que ces concurents sur pleins de points.
+Ce qu'il fait qu'il reste encore des améliorations possibles
+
+Lors de la réalisation de ce Travail de bachelor, nous avons mis on place des méchanismes
 
 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liés à certaines fonctionnalités.
