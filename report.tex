@@ -422,6 +422,25 @@ ANTLR est composé de deux parties principales : l'outil en java qui permet de g
 %The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
 %Typical Workflow
 
+\subsection{Arbre (CST)}
+
+%"Notice that technically what you get from ANTLR is a parse tree rather than an AST.
+% The difference is that a parse tree is exactly what comes out of the parser, while the AST is a more refined version
+%of the parse tree. You create the AST by manipulating the parse tree, in order to get something that is easier to use by subsequent parts of your program"
+% Citation ?
+
+ANTLR va générer un parsed tree. Plus précisément un CST (concrete syntax tree).
+Il contient tous les noeuds de la grammaire. Certains sont superflus pour en tirer un sens.
+
+Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre plus simple.
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=3cm]{assets/figures/tree.png}}
+    \end{center}
+    \caption[UON CST]{\label{uon-tree} UON CST}
+\end{figure}
+
 \subsubsection{antlr4ts}
 Nous utiliserons antlr4ts, qui est un environement d'éxécution en typescript et donc parfaitement adapté pour VS Code.
 
@@ -625,6 +644,8 @@ Le fichier doit comporter le même nom que la règle de départ. %UON.g4 -> uon
 
 Les règles de lexer définisse comment une chaine de texte doit être tokenifier. Elle doivent être écrit en majuscule !
 Les règles de parser définisse comment une suite de token sera intérpréter. Elle doivent être écrit en miniscule !
+
+% \textbf{Attention} : Utiliser des majuscules pour une règle, correspond à définir un "Lexer rule" et utiliser des minuscules à un  "Parser rule".
 
 %Par défaut un fichier de grammaire peut contenir des règles de lexer et de parser. Mais l'on peut les séparer pour améliorer la visibilié.
 
@@ -908,6 +929,7 @@ Nous avons donc quelques tests unitaire simples mais qui permet toutefois de s'a
 
 Tous les tests se trouvent dans le dossier test à la racine du projet. % TODO lien avec l'arborescence
 
+% TODO
 \subsubsection{Autocomplétion}
 On s'assure que les candidates de complétions attendues à un emplacement soit les bons selon une entré de code.
 
@@ -920,18 +942,16 @@ on peut mnt le tester avec -test
 
 \subsubsection{Outline view}
 Un visiteur pour compter le nombre de noeud attendu pour s'assurer qu'on soit bien passer par les noeuds
-% TODO : Créer les construction à la main et comparer leur sorti textuelles
+Créer les construction à la main et comparer leur sorti textuelles
 
-
-%\section{Regex ?}
-% TODO
-% regex utilisé dans la grammaire g4 + tm à vérifier ?
+%REGEX
 % utilisation d'outils en ligne : ex : https://regex101.com/
 % référence officielle : https://www.regular-expressions.info/
 
 
 \subsection{Deployement automatisé (CD)}
 
+% TODO
 % Parler du CD ? Ajouter notre access Token comme secret
 % Ajouter le script pour déployer dans le package.json
 % Installer vsce ? pourquoi ?
@@ -939,19 +959,16 @@ Un visiteur pour compter le nombre de noeud attendu pour s'assurer qu'on soit bi
 % On ne peut pas mettre une version inférieur ou égale
 
 % TODO : maintenance
-%Les explications permettant de  reprendre le projet se trouve sur le Readme à la racine du repository...
+%Les explications permettant de reprendre le projet se trouve sur le Readme à la racine du repository
 
 
-\section{Génération du Parser ANTLR}
+\section{Génération du parser ANTLR}
 \subsubsection{Grammaire}
-Le fichier de grammaire doit respecter les points suivants : \textbf{[TODO]}
-
-\textbf{Attention} : Utiliser des majuscules pour une règle, correspond à définir un "Lexer rule" et utiliser des minuscules à un  "Parser rule".
 
 Quand le fichier de grammaire est écrit, il suffit de lancer le code suivant :
 
 \begin{lstlisting}[frame=single]
-    antlr4ts UON.g4 -no-listener -no-visitor -o generated -Xexact-output-dir
+    antlr4ts -visitor path/to/MyGrammar.g4
 \end{lstlisting}
 
 Il nous génère ces fichiers :
@@ -963,26 +980,6 @@ Il nous génère ces fichiers :
     \item UONLexer.ts
     \item UONParser.ts
 \end{itemize}
-
-\subsection{Arbre (CST)}
-
-%"Notice that technically what you get from ANTLR is a parse tree rather than an AST.
-% The difference is that a parse tree is exactly what comes out of the parser, while the AST is a more refined version
-%of the parse tree. You create the AST by manipulating the parse tree, in order to get something that is easier to use by subsequent parts of your program"
-% Citation ?
-
-ANTLR va générer un arbre parsé. Plus précisément un CST (concrete syntax tree).
-Il contient tous les noeuds de la grammaire. Certains sont superflus pour en tirer un sens.
-
-Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre plus simple.
-
-\begin{figure}[!h]
-    \begin{center}
-        \frame{\includegraphics[width=3cm]{assets/figures/tree.png}}
-    \end{center}
-    \caption[UON CST]{\label{uon-tree} UON CST}
-\end{figure}
-
 
 \section{Syntax highlighting}
 
