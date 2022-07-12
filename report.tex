@@ -355,7 +355,7 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux s
 % TODO : bcp de fonctionnalités, pas clair...
 
 Pour fournir des fonctionnalités de langue, un point souvent mentionnée est l'utilisation d'un parser.
-Car cette arbre contient des informations concernant la structure du document utiles pour certaines fonctionnalités.
+Car l'arbre généré par celui-ci contient des informations concernant la structure du document utiles pour certaines fonctionnalités.
 % TODO arbre / parse tree / ast ?
 
 Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant".
@@ -370,6 +370,11 @@ Cependant un problème majeur survient rapidement si on choisit cette approche, 
 "you cannot find a (regular) expression inside another one, unless you code it by hand for each level. Something that quickly became unmaintainable."
 
 Example : % TODO
+
+\subsubsection{Génration de parser}
+Des outils permettant la génération d'un parser existent à partir d'une grammaire.
+
+% TODO
 
 \section{Choix technologiques}
 Nous allons maintenant mentionner les technologies et approches choisies et expliquer les raisons.
@@ -387,7 +392,7 @@ Si le temps le permet, toute la logique du code concernant les fonctionnalités 
 
 \subsection{ANTLR}
 
-Il s'agit d'un générateur de parseur, il est actuellement dans sa quatrième version.
+ANTLR (ANother Tool for Language Recognition) est un générateur de parser, il est actuellement dans sa quatrième version.
 
 Il a été créé par Terence Parr à l'Université de San Francisco.
 
@@ -410,6 +415,14 @@ Il n'y a seulement qu'un seul outil qui permet de générer le code des lexer et
 Pour pouvoir utiliser cet outil dans un environnement autre que java, il est nécessaire de l'utiliser dans un runtime (environnement d'éxécution) propre au langage shouhaité.
 %TODO : citer target.md de antlr et repo antlr4ts + mega thread
 
+Lorsque que la grammaire a été défini, on peut demander à antlr de générer des parsers dans différents langages.
+
+ANTLR est composé de deux parties principales : l'outil en java qui permet de générer le lexer et le parseur, aisni que l'environnement d'éxecution (runtime) qui permet leur exécution
+
+%The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
+%Typical Workflow
+
+\subsubsection{antlr4ts}
 Nous utiliserons antlr4ts, qui est un environement d'éxécution en typescript et donc parfaitement adapté pour VS Code.
 
 Il a été conçu par Sam Harwell indépendamment de l'organisation ANTLR.
@@ -423,44 +436,19 @@ L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citat
 % lecture
 %https://stackoverflow.com/questions/41427905/how-many-ways-are-there-to-build-a-parser
 
-Cette implémentation semble très apprécié et utilisé.
+C'est un outil populaire est très utilisé.
 
+\textbf{Remarque} :
+Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une spécifiation Lark.
+L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
+Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
 
-Lorsque que la grammaire a été défini, on peut demander à antlr de générer des parsers dans différents langages.
-
-ANTLR est composé de 2 parties principales : L'outil en java qui permet de générer le lexer et le parseur, aisni que l'environnement d'éxecution (runtime) qui permet leur exécution
-
-%The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
-%Typical Workflow
 
 \subsubsection{Gestion des erreurs}
 %TODO : gérer correctement les erreurs. On devrait pourvoir continuer le plus possible, actuellement ça bloque la suite ?
 %    expliquer les fonctions / ErrorListener
 %    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
 
-
-
-\subsubsection{Parser}
-Étant donné que ce n'est pas le sujet de ce Travail de Bachelor, il a été choisi d'utiliser un générateur de parser pour en extraire le plus possible de complexité sur son implémentation.
-
-Des outils permettant la génération d'un parser existent à partir d'une grammaire.
-J'ai opté pour le générateur d'ANTLR (ANother Tool for Language Recognition), car :
-
-% use ANTLR 4 for parsing tasks inside of a TypeScript application
-% tree-sitter ????
-\begin{itemize}
-    \item C'est un outil populaire est encore utilisé.
-    \item Il est disponible directement en Typescript \cite{antlr4ts}.
-    \item Un moteur de complétion existe avec les parser générés avec antlr. Nous simplifions de grandes étapes pour implémenter l'auto-complétion \cite{antlr4-c3}.
-    \item Quelques exemples existent d'implémentation.
-    \item La génération est simple.
-\end{itemize}
-
-\textbf{Remarque} :
-Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une spécifiation Lark.
-L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
-Et Antlr semble être un choix plus naturel dans notre environnement VS Code.
-%TODO : Founir une meilleur explication
 
 %% UON se veut ête moins ambigue que ces alternatives pour l'utilisateur\dots
 \section{UON}
@@ -491,7 +479,7 @@ Pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un enviro
 Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l'IoT (Internet of Things).
 Ces communications nécessitent souvent de communiquer entre de petits appareils dont la puissance de calcul est très limitée.
 La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adapté aux échanges à faible puissance est très appréciable.
-Parce que \textbf{TODO....}
+Parce que % TODO
 
 \subsection{Communication}
 Lorsque deux appareils veulent échanger des informations, ils disposent de deux canaux de communication :
@@ -545,27 +533,16 @@ Une des propriétés uniques de UON est l'usage de schéma directement intégré
 Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
 Et le dépôt du projet se trouve \href{https://github.com/uon-language/specification}{ici}.
 
-\textbf{TODO : Datatypes ?}
-
-\subsection{Quoi traiter ?}
-Il est important d'avoir une bonne compréhension de ce que le langage propose afin de fournir un support pertinent.
-Uon est un langage comprenant plusieurs composantes est particulatités qui ne peuvent pas tous être traiter dans un simple éditeur de texte.
-La cohercien....
-
-D'autres sont relativement approprié
-
-Tout est une valeur avec un type et des propriétés associés. Ces propriétés sont parfois unique.
+% TODO : Datatypes ?
 
 
 %% Résumé rapide de la grammaire initiale + dire qu'elle est relativement bonne et qu'on a pas modifier grand chose
-%% Modification apporté pour le support de langage (pas grand chose)
+
 %  Adaptation (passé de lark à antlr) (regex, espace différents, pas de librairie pour les indentations, ...)
 %   YAML
 %       Retirer dans un premiers temps le yaml
 %   Indentation
 %   Propriétés dans les types + de units
-
-%  ANTLR short tuto (useless ?)
 
 % On va pas tout spécifier mais relever certains point de la grammaire qui est pertinent
 % Apercu de la grammaire plus en détail et exmple avec arbre + Examples
@@ -580,15 +557,15 @@ Tout est une valeur avec un type et des propriétés associés. Ces propriétés
 
 \chapter{Scope de la grammaire}\label{grammar scope}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
-Il est donc important de préciser sur quels éléments du langage (grammaire) nous nous focaliserons.
-Une spécifiation d'UON existe, mais c'est un langage complexe et qui pourrait encore, selon son créateur, être ammener à évoluer.
-Des améliorations peuvent même être discuter durant ce Travail de bachelor.
-De plus même si elle couvre énormément d'aspects, tout n'est pas détailler et donc des points sont sujet à intérprétation.
+Il est donc important de préciser sur quels éléments du langage nous nous focaliserons.
+
+Une spécifiation d'UON existe, elle couvre énormément d'aspects. Cependant tout n'est pas détailler et donc des points sont sujet à intérprétation.
+C'est un langage complexe et qui pourrait encore, être ammener à évoluer. Les propositions et les suggestions sont les bienvenues.
 
 Heurseuement pour nous, une grammaire concrète avait déjà été écrit en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON".
 Son travail se trouve sur \href{https://github.com/uon-language/uon-parser}{ici}
 
-Nous nous appuyeront sur cette grammaire que nous convertirons en format ANTLR et ferons les modifications jugés nécessaire.
+Nous nous appuyeront sur cette grammaire que nous la convertirons en format ANTLR et ferons les modifications jugés nécessaire.
 
 Les fonctionnalités se baseront sur celle-ci. Ceci dans le but de rester cohérents entre eux.
 Nous ferons attention à son extensibilité et expliquerons les choix d'implémentations.
@@ -596,7 +573,7 @@ Elle sera complétée et améliorée après la mise en place des fonctionnalité
 
 Cette grammaire se trouve décrite dans le fichier UON.g4 du projet.
 
-\subsection{Résumé}
+\section{Résumé}
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
 Nous utiliserons la grammaire adapté en ANTLR pour illustrer nos exemples.
 
@@ -628,28 +605,39 @@ Un schéma est un document qui décrit la spécification d'un nouveau type.
 
 Cette séparation permet d'éviter des ambiguités. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
 
-\subsection{Modification}
+\section{Modification}
+% TODO
+Uon est un langage comprenant plusieurs composantes est particulatités qui ne peuvent pas tous être traiter dans un simple éditeur de texte. (ex : cohercien)
+Tout est une valeur avec un type et des propriétés associés. Ces propriétés sont parfois unique.
+%
+
 Nous allons garder presque la même structure car cette grammaire regroupe déjà des éléments importants du langage UON.
 Cependant quelques points concernant la strucutre général ont été modifiés.
 
-\subsubsection{ANTLR}
-Il a fallu reconvertir la grammaire dans un autre langage à la main car aucun convertisseur existe. Heursement ANTLR et Lark se base sur une notation EBNF.
+Pour commencer il a fallu convertir la grammaire dans à la main car aucun convertisseur existe. Heursement ANTLR et Lark se base sur une notation EBNF.
 Ce qui fait que la strucure reste relativement semblable.
-Le seul point de divergence, à été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci change.
 
-%TODO expliquer ici les règles et subtilités
-Le fichier doit comporter le même nom que la règle de départ.
-UON.g4 -> uon
+Le seul point de divergence, à été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci varie légèrement. Et sur la gestion de l'indentation expliqué % ici todo
 
-fragement
+Concernant la structure d'un fichier de grammaire ANTLR .g4 il y a quelques subtilités à connaitre :
+
+Le fichier doit comporter le même nom que la règle de départ. %UON.g4 -> uon
+
+Les règles de lexer définisse comment une chaine de texte doit être tokenifier. Elle doivent être écrit en majuscule !
+Les règles de parser définisse comment une suite de token sera intérpréter. Elle doivent être écrit en miniscule !
+
+%Par défaut un fichier de grammaire peut contenir des règles de lexer et de parser. Mais l'on peut les séparer pour améliorer la visibilié.
+
+%On peut ignorer des tokens.
+
+%fragement
 
 %WS: [ \n\r\t] -> channel(HIDDEN);
 
 %LINE_COMMENT: '#' ~[\r\n]* -> skip;
 
-lexer and parser rule
-
-\subsubsection{YAML}
+\subsection{YAML}
+%TODO : permet
 La grammaire permettait deux notations différentes pour les collections : une proche de json et l'autre de yaml.
 
 %Car UON est un superset de JSON et un set partiel de yaml.
@@ -660,74 +648,9 @@ La grammaire permettait deux notations différentes pour les collections : une p
 Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cet aspect si le temps le permet.
 Car la notation en YAML pose quelques difficultés. % posait
 En JSON les retours à la lignes et indentations ne sont pas nécessaire à la compréhension du langage, contrairement à YAML.
-Nous expliquons ici comment nous pourrions faire cohabiter ces 2 formats avec ANTLR. % nous avons fait
-Puis il ne s'aggira que de reféter ces changements dans les fonctionnalités. % Et avons refléter ces changements...
+Nous expliquons ici comment nous pourrions faire cohabiter ces deux formats avec ANTLR. % nous avons fait
 
-\subsubsection{String}
-Une valeur textuelle peut soit être entre guillement ou non.
-
-C'est donc aussi le cas pour la clé d'une map.
-
-Cela se rapproche par exemple, un peu plus de ce que fait JSON5 par exemple. % TODO lien
-Aussi cela permet d'avoir des clés qui peuvent contenir exactement ce que l'on veut.
-Car encapsuler entre des caractères spécifiques, il n'y pas d'ambiguités possible. Alors que sans on est contraint de limiter la forme de la clé.
-
-Par contre un cas spécial a du être traiter. Si l'on veut pouvoir utiliser directement un mot sans guillemet mais qu'il existe dans la grammaire.
-Il faut ajouter ce cas\dots
-
-%TODO
-
-\subsubsection{Propriétés, unités et nombres}
-
-Des propriétés de présentation %TODO : voir ....
-ainsi que des unités ont été rajouté en se basant sur la spécification.
-
-Les règles concernant les nombres ont été modifiés pour ne gérer maintenant qu'un type number
-pour gérer à un plus de cas dans la notation scientifique
-
-
-%Json map
-%pair key - josn pair
-% propriétés clé
-% propriésé types
-% key -> string-litteral expliquer pourquoi
-% symbol
-
-
-\subsection{Debugging}
-
-Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l'aide d'un terminal, cela peut même se revéler extremement difficile.
-Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visulaiser en temps réel, le parse tree du texte que l'on est en train de saisir.
-
-
-% TODO : 3 embranchements différents -> Json(seq et map), Yaml(seq et map) et schema. Donc pas possible de combiner du yaml avec du json
-% TODO : expliquer la strucutre du fichier json5.g4 que j'ai adapté. Car il conntenait les regex pour gérer les string de manière souple
-% TODO : ajouter la gestion des indent pour les sequences en version yaml
-% TODO : rajouter ce qui manque dans la grammaire (minus,plus etc...) + faire attention aux erreurs de saisies
-% DONE : Gestion des INDENT ET DEDENT (Modification de la grammaire ?), + explication (parti avec grammaire sans la gestion des espaces....)
-% TODO : gérer erreur grammaire -> caractère qui bloque le parsing, des erreurs devraient être générés à la place , erreur avec "name", "parameters"
-% TODO : visualisation graphique de l'arbre (java ou extension intellij)
-% TODO : utiliser les types correctes ou avoir 2 grammaires différentes et donc 2 parsers en paralleles ?
-% TODO : autocomplétion dans les commentaires ?
-% TODO : expliquer les règles : https://github.com/antlr/antlr4/blob/master/doc/grammars.md
-% TODO : règle Clé
-% @members -> injection code
-% regex pas possible genre ^ symbole ...
-% fragments: they are reusable building blocks for lexer rules.
-% Error tolerance: This can partly be resolved by making the grammar itself more error tolerant and solving those errors later. -> https://github.com/lark-parser/lark/issues/684 
-
-
-% Rajout d'unités
-% Rajout de propriétés au types (présentation) directement dans le payload
-% Rajout des validation propriétés dans un schéma
-% Remettre le yaml ??
-
-% Bug : Resolu en créant un lexer token pour les mots et l'utiliser dans le parser rule "string"
-% Le truc avec UON c'est qu'on a plein de mon clé. Mais on aussi envie de les utilisers parfois dans les clés
-% Si on crée un nouveau token (le fait automatiquemnt meme si on fait jusqze qu écrire du texte) alors il faudra le spécifier dans les clé sinon erreur !!!!
-
-
-\subsection{L'indentation}
+\subsubsection{L'indentation}
 
 % TODO : Détailler en détail la réflexion ci-dessous
 Après refléxion, la gestion des indentations n'a pas été implémentée. Cependant, il est intéressant de détailler son implémentation dans un environnement ANTLR
@@ -788,7 +711,43 @@ Pour créer les tokens INDENT et DEDENT
 \textbf{Remarque : } Mais cette solution n'est pas optimale car si on modifie la grammaire il faudra probabement modifier ce code.
 
 %Il faut prendre en compte les retours à la ligne.
-\subsection{Token DEDENT et INDENT}
+\subsubsection{Token DEDENT et INDENT}
+
+
+\subsection{String}
+Une valeur textuelle peut soit être entre guillement ou non.
+
+C'est donc aussi le cas pour la clé d'une map.
+
+Cela se rapproche par exemple, un peu plus de ce que fait JSON5 par exemple. % TODO lien
+Aussi cela permet d'avoir des clés qui peuvent contenir exactement ce que l'on veut.
+Car encapsuler entre des caractères spécifiques, il n'y pas d'ambiguités possible. Alors que sans on est contraint de limiter la forme de la clé.
+
+Par contre un cas spécial a du être traiter. Si l'on veut pouvoir utiliser directement un mot sans guillemet mais qu'il existe dans la grammaire.
+Il faut ajouter ce cas %TODO
+
+
+\subsection{Propriétés, unités et nombres}
+
+Des propriétés de présentation %TODO : voir ....
+ainsi que des unités ont été rajouté en se basant sur la spécification.
+
+Les règles concernant les nombres ont été modifiés pour ne gérer maintenant qu'un type number
+pour gérer à un plus de cas dans la notation scientifique
+
+\section{Debugging}
+
+Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l'aide d'un terminal, cela peut même se revéler extremement difficile.
+Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visulaiser en temps réel, le parse tree du texte que l'on est en train de saisir.
+
+% TODO : Figure d'intelj
+
+% Les figures représentants les arbres se baseront sur ce plugin ...
+
+
+
+
+
 Ces deux tokens sont ajoutés depuis le lexer. Cela nécessite d'y rajouter le code pour le faire.
 
 % TODO mieux...
