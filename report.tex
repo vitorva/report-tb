@@ -263,14 +263,13 @@ La structure de base d'une extension est illustré par la figure \ref{basic VS C
     \caption[basic VS Code extension structure]{\label{basic VS Code extension structure} basic VS Code extension structure}
 \end{figure}
 
-
 \textbf{Extension Manifest} :
-chaque extension doit contenir un fichier "package.json". En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à VS Code.
+chaque extension doit contenir un fichier \emph{package.json}. En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à VS Code.
 
 \textbf{Extension Entry File} :
 il s'agit du fichier prinicipal de l'extension (Extension.js).
 De base il contient 2 fonctions : \emph{activate} et \emph{deactivate}.
-La fonction activate est executée à l'activation de notre extension par un Activation Event. On initialisera ici notre extension.
+La fonction activate est executée à l'activation de notre extension par un \emph{Activation Event}. On initialisera ici notre extension.
 La fonction \emph{deactivate} est exécutée lorsque l'application devient inactive et sert principalement à nettoyer le code avant la désactivation de l'extension
 
 \textbf{Remarque} : le niveau de customisation est assez élevé. La seule limitation indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
@@ -281,7 +280,7 @@ Si vous souhaitez vous renseigner d'avantages sur l'élaboration d'une extension
 Concernant les fonctionnalitls générales de l'éditeur VS Code vous pouvez consulter consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \section{Support de langage}
-VS Code fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en 2 catégories détaillées
+VS Code fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en deux catégories détaillées
 dans dans les sections \hyperref[Declarative language features][Declarative language features] et \hyperref[Programmatic language features][Programmatic language features] ci-dessous.
 
 \subsection{Declarative language features}\label{Declarative language features}
@@ -301,33 +300,29 @@ Par exemple, les éléments suivants :
 
 Il s'agit de fonctionnalités implémentées à l'aide de fichier de configuration.
 
+% TODO : faire ref à l'explication ci-dessus ?
 Puis, elles doivent être enregistrées comme \emph{Contribute Point}.
 
 \subsection{Programmatic language features}\label{Programmatic language features}
 Il s'agit de fonctionnalité plus riche et plus complexe à mettre en place (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
-Il y a 2 approches pour les implémenter que nous allons voir ci-dessous.
+Il y a deux approches pour les implémenter que nous allons voir ci-dessous.
 
 \subsubsection{VS Code API (Direct implementation)}
-La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'api vscode.languages.*}
-VS Code fournit sa propre API pour implémenter directement les fonctionnalités du langage.
+La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'API de VS Code} pour les fonctionnalités de langage.
+Cette API permet d'implémenter directement les fonctionnalités du langage.
+% TODO : s'assurer que l'api vscode une implementation de LSP ?
+% Comment faire la transition entre mon implémentationa avec celle d'un langage server
 
-Elles vont nous permettre de nous inscrire à des providers. L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
-
-%TODO : Pas forcément uniquement des providers (ex suggestions)}
+Beacoup de fonctionnalités se font en s'inscrivant à des providers depuis notre application.
+L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
 
 \subsection{Language server}
-
-%L'idéal serait de pouvoir créer un support de langage pouvant être utilisé sur n'importe quels éditeurs.
-%Mais cela n'est malheurseuement pas possible pour plusieurs raisons.
-%Des fonctionnalités ne peuvent être implémenté que sur un éditeur spécifique. Par ex coloration syntaxique
 
 La seconde solution est de fournir nous-mêmes ces méthodes en respectant la spécifiation LSP \cite{lsp-specification} au travers d'un langage serveur.
 Les avantages souvent mentionnés ce cette approche sont que le langage server peut être écrit avec le langage que l'on souhaite et
 que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ces fonctionnalités sans devoir les implémenter de nouveau.
 
-Mais comme points négatifs cette approche est plus complexe à implémenter et dans notre cas n'est pas un choix primordial.
-
-Pour être utilisé sur VS Code, un langage server à 2 parties :
+Pour être utilisé sur VS Code, un langage server à deux parties :
 \begin{itemize}
     \item \textbf{Un client} : c'est une extension écrite en Javascript ou Typescript qui à accès à tous les endpoints de VS Code.
     \item \textbf{Langage server} : un outil d'analyse linguistique fonctionnant dans un processus séparé.
@@ -335,24 +330,19 @@ Pour être utilisé sur VS Code, un langage server à 2 parties :
 
 \vspace{\parskip}
 
-Le client et le serveur communiquent à l'aide du protocole LSP (pour "language server") dès que des informations riches devraient être fournies à l'éditeur.
-Le langage server devrait ensuite pouvoir "consommer" un parser pour traiter les fonctionnalités. C'est-à-dire être capable d'analyser un AST et de fournir une réponse adéquate.
-L'implémentation d'un tel serveur peut être libre, mais des implémentations existent déjà. Telle que "LSP4" implémenté en Java ou  "VS Code-languageserver-node" implémenté en Typescript qui n'est pas exclusivement réservé à VS Code comme son nom pourrait l'indiquer.
-On remarque donc avec cette approche que deux composantes existent (le client et le serveur).
-Un langage server peut être utilisé sur d'autre éditeur compatible. Mais le client devra être implémenté de nouveau.
+Le client et le serveur communiquent à l'aide du protocole LSP (pour "language server") dès que des informations devraient être fournies à l'éditeur.
 
-% TODO
-On pourrait vite se réjouir est pensé que n'importe quelle éditeur ou IDE \dots
+L'implémentation d'un tel serveur peut être libre en respect avec la spécification, mais des implémentations existent déjà. Telle que \emph{LSP4} implémenté en Java ou \emph{VS Code-languageserver-node}
+implémenté en Typescript qui n'est pas exclusivement réservé à VS Code comme son nom pourrait l'indiquer.
 
-"NOTE: The first time I read about LSP I thought (naively) that any editor or IDE with LSP support could simply connect to any LSP language server. 
-This is not the case: most non-trivial LSP servers require each editor to also have a language-specific (even if small) LSP client. 
-The main responsibility of each LSP client is to launch the server, and then pass on the connection information to the editor/IDE."
-
+Un langage server peut être utilisé sur d'autre éditeur compatible mais le client devra être implémenté de nouveau pour chaque éditeur.
+Cette approche est aussi plus complexe à implémenter.
 
 \subsection{API vs LSP}\label{api vs lsp}
 
 Le schéma suivant \ref{api vs lsp} montre la correspondance des méthodes entre la première et seconde approche.
-Cette liste est non exhaustive, mais permet de montrer l'équivalence des 2 méthodes.
+
+Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux solutions.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -362,62 +352,40 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des 2 mét
 \end{figure}
 
 \subsection{Parser}
-Pour fournir des fonctionnalités de langue, une approche souvent mentionnée est l'utilisation d'un parser
-car les fonctionnalités se baseront sur l'AST qu'il générera.
+% TODO : bcp de fonctionnalités, pas clair...
 
-%TODO : être plus clair
-Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant". Le parseur doit pouvoir générer un AST (abstract syntax tree) qui à du sens depuis du code incomplet
-car il ne devrait pas s'arrêter dès la première erreur.
-La plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect, et les développeurs s'attendent tout de même à ce que la complétion automatique et d'autres fonctions de langue fonctionnent.
+Pour fournir des fonctionnalités de langue, un point souvent mentionnée est l'utilisation d'un parser.
+Car cette arbre contient des informations concernant la structure du document utiles pour certaines fonctionnalités.
+% TODO arbre / parse tree / ast ?
 
-% \section{Generator de parser}
-% https://en.wikipedia.org/wiki/Comparison_of_parser_generators
+Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant".
+Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect.
+Mais l'on s'attend tout de même que certaines fonctionnalités continuent à fonctionner (ex : la outline view).
 
-\subsection{Grammaire}
-Il faudra aussi élaborer une grammaire pour le langage de sérialisation UON utilisable par le parser.
-Pour faciliter l'étape de l'analyse syntaxique ("Parsing"), cette grammaire pourrait être plus permissive, en particulier concernant les types attendus (Terminaux).
-Ainsi si l'utilisateur entre une valeur dont le type attendu est incorrect (par rapport aux spécifications du langage). Nous n'avons pas à traiter ce type d'erreur.
+Le parseur doit donc pouvoir générer au mieux un parse tree qui à du sens depuis du code erroné.
 
-% Différente catégorie de grammaire (nous la 2 ?)
+On pourrait également se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expression régulières.
+Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrèment difficle à traiter.
+
+"you cannot find a (regular) expression inside another one, unless you code it by hand for each level. Something that quickly became unmaintainable."
+
+Example : % TODO
 
 \section{Choix technologiques}
-Nous allons mentionner les technologies et approches choisies et expliquer les raisons.
+Nous allons maintenant mentionner les technologies et approches choisies et expliquer les raisons.
 
 \subsection{Direct implementation}
-L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, l'approche de contacter directement l'api de VS Code sera choisi.
-Si le temps le permet, toute la logique du code concernant les fonctionnalités pourrait être déplacée dans un langage server.
+L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, la solution de contacter directement l'API de VS Code sera choisi.
+Si le temps le permet, toute la logique du code concernant les fonctionnalités riches\ref{Programmatic language features} pourrait être déplacée dans un langage server.
 
-Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
-
-\begin{itemize}
-    \item \textbf{registerCompletionItemProvider} : Pour afficher des suggestions de complétions.
-    \item \textbf{registerHoverProvider} : Pour gérer le hover.
-    \item \textbf{registerDocumentSymbolProvider} : Pour afficher les éléments dans la Outline View.
-\end{itemize}
+%%Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
+%%\begin{itemize}
+%%    \item \textbf{registerCompletionItemProvider} : pour afficher des suggestions de complétions.
+%%    \item \textbf{registerHoverProvider} : pour gérer le hover.
+%%    \item \textbf{registerDocumentSymbolProvider} : pour afficher les éléments dans la Outline View.
+%%\end{itemize}
 
 \subsection{ANTLR}
-
-%TODO : Détailler en détail l'histoire d'antlr...etc...
-%    A l'origine en java, une implémentation en typescript existent
-%    Pourquoi prévilégier celui-ci et pas un autre
-%    Liste des parseur de générateur existant
-
-
-%TODO : Bien mentionner que l'on va utiliser antlrts et pas sa version en java}
-%TODO : Détailler antrlts ? (Les erreurs etc... dans auto-completion ?)}
-%TODO : Gérer les commentaires lors du parsing (analyse syntaxique)}
-%TODO : gérer correctement les erreurs. On devrait pourvoir continuer le plus possible, actuellement ça bloque la suite ?
-%    expliquer les fonctions / ErrorListener
-%    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
-
-% TODO
-\textbf{Debugging}
-JAVA - vaut pas trop la peine de détailler
-Affichage Vscode (arbre mais sans strucutre)
-Outil pour voir les ATN (plugin vscode)
-Intelej plugin
-fonction antl4-c3
-
 
 Il s'agit d'un générateur de parseur, il est actuellement dans sa quatrième version.
 
@@ -431,30 +399,20 @@ L'algorithme de parsing utilisé dans sa version la plus récente est le "Adapti
 % https://en.wikipedia.org/wiki/LL_parser
 % https://www.antlr.org/papers/allstar-techreport.pdf
 
-Dans les grandes lignes  % TODO %
-
-Depuis une grammaire, qui est un fichier décrivant formellement le langage, ANTLR génère le code perméttant de reconnaitre ce langage.
-C'est à dire en pratique un lexer et un parser.
+Depuis une grammaire, qui est un fichier décrivant formellement le langage, ANTLR génère le code permettant de reconnaitre ce langage.
+C'est à dire en pratique un lexer et un parser. % TODO ref ?
 
 La grammaire est décrite en utilisant la notation EBNF (Extended Backus–Naur Form).
-
-Le parser peut automatiquement créer un "parse tree" (Arbre syntaxique) qui est une structure représentant comment la grammaire interpète un input.
-ANTLR peut génèrer également automatiquement un "tree walkers" qui nous permet de visiter chaque noeud de l'abre pour y exécuter des actions liés à notre application.
-%TODO : citer antlr.org et wikipedia ?
-% https://www.antlr.org/about.html
-% https://en.wikipedia.org/wiki/ANTLR
+% lien, citation ?
 
 Il n'y a seulement qu'un seul outil qui permet de générer le code des lexer et parsers pour tous les langages cibles, et il est écrit en Java.
 
 Pour pouvoir utiliser cet outil dans un environnement autre que java, il est nécessaire de l'utiliser dans un runtime (environnement d'éxécution) propre au langage shouhaité.
-%TODO : citer target.md de antlr et repo antlr4ts ?
+%TODO : citer target.md de antlr et repo antlr4ts + mega thread
 
-% TODO : liens + emph ?
-
-% fork du répo principal antl ?
 Nous utiliserons antlr4ts, qui est un environement d'éxécution en typescript et donc parfaitement adapté pour VS Code.
 
-Il a été conçu par l'organisation principalement par Sam Harwell indépendamment de l'organisation ANTLR.
+Il a été conçu par Sam Harwell indépendamment de l'organisation ANTLR.
 L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citation
 % https://github.com/antlr/antlr4/blob/master/doc/targets.md
 % https://github.com/tunnelvisionlabs/antlr4/blob/master/doc/targets.md
@@ -467,13 +425,6 @@ L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citat
 
 Cette implémentation semble très apprécié et utilisé.
 
-La raison principal d'utiliser parseur est de pouvoir exploiter un arbre contenant la structure du document.
-On pourrait se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expression régulières.
-Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrèment difficle à traiter.
-
-"you cannot find a (regular) expression inside another one, unless you code it by hand for each level. Something that quickly became unmaintainable."
-
-Example : % TODO
 
 Lorsque que la grammaire a été défini, on peut demander à antlr de générer des parsers dans différents langages.
 
@@ -481,6 +432,12 @@ ANTLR est composé de 2 parties principales : L'outil en java qui permet de gén
 
 %The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
 %Typical Workflow
+
+\subsubsection{Gestion des erreurs}
+%TODO : gérer correctement les erreurs. On devrait pourvoir continuer le plus possible, actuellement ça bloque la suite ?
+%    expliquer les fonctions / ErrorListener
+%    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
+
 
 
 \subsubsection{Parser}
