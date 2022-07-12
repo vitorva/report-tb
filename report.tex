@@ -4,6 +4,8 @@
     %confidential, % Décommentez si le travail est confidentiel
 ]{heig-tb}
 
+\usepackage{float} % pour forcer l'empalcement d'une image
+% https://tex.stackexchange.com/questions/8625/force-figure-placement-in-text
 
 \usepackage{titlesec}
 
@@ -19,7 +21,6 @@
 \usepackage{dirtree}
 \usepackage{caption}
 \usepackage{subcaption}
-
 
 
 %https://www.overleaf.com/project/62b06d8b8257fff1974999df
@@ -94,17 +95,17 @@
 \mainmatter
 \chapter{Introduction}
 
+%"Contexte" qui explique comment s'insère ce travail de Bachelor. C'est quoi UON est-ce que quelqu'un a déjà travaillé dessus, ce qu'il a fait, ce qu'il reste à faire.
+
 Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VS Code.
 UON (abréviation de Unified Object Notation) est un format de sérialisation qui vise à rassembler les meilleures caractéristiques de tous les formats de sérialisation disponibles sur le marché, pour créer celui qui les unifie tous.
 
 Ce projet consiste donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON dans l'éditeur VS Code.
 
-C'est un nouveau langage complexe et une spécification détaillé existe. Il reste maintenant à construire les éléments permettant son utilisation.
-
-%"Contexte" qui explique comment s'insère ce travail de Bachelor. C'est quoi UON est-ce que quelqu'un a déjà travaillé dessus, ce qu'il a fait, ce qu'il reste à faire.
+C'est un nouveau langage complexe et une spécification détaillé mais non terminé existe. Il reste maintenant à construire les éléments permettant son utilisation.
 
 Un parser en Python à déja été implémenté par Stéphane Selim.
-Le travail précédent s'était concentrer sur 3 aspects : La sérialisation/deserialisation binaire et textuelle d'objet en python, la cohércient et la validation.
+Le travail précédent s'était concentrer sur trois aspects : La sérialisation/deserialisation binaire et textuelle d'objet en python, la cohércient et la validation.
 Cepedendant ce travail de bachelor n'en est pas la suite directe.
 
 Il consite à founir une autre composante qui est de permettre l'utilisation du langage UON dans un éditeur pour qu'il soit utilisé par un plus grand nombre.
@@ -187,7 +188,11 @@ Le flow d'exécution standard est représenté par la figure \ref{interpreter-fl
 
 \section{VS Code}
 % TODO :
-% Peut être élaborer un peu plus : c'est quoi VS Code, pourquoi a-t-il été choisi ? Est-il populaire ? En quel langage a-t-il été écrit. Est-il entièrement open-source, est-ce qu'une extension peut être complètement indépendante de la base de code...
+% Peut être élaborer un peu plus :
+% c'est quoi VS Code, pourquoi a-t-il été choisi ?
+% Est-il populaire ?
+% En quel langage a-t-il été écrit. Est-il entièrement open-source ?
+% est-ce qu'une extension peut être complètement indépendante de la base de code ?
 % Pour le rapport final j'attends plus de détails
 
 Il a été choisi car il fait partie des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déja familier de son environement.
@@ -196,40 +201,34 @@ C'est donc un choix personnel.
 
 Comme il est pensé pour être étendu, il fourni et détaille très clairement les étapes pour la création d'une extension, son déployement continue ainsi que le support de langage en lui-même.
 
-La communauté est très active.
-De nombreux exemples officieles et d'utilisateurs existents.
+Le code source de VS Code de Microsoft est open source (sous licence MIT) mais... % TODO
 
-Le code source de vscode de Microsoft estopen source (sous licence MIT) mais...
+Il a été écrit en Typscript et Javascript.
 
 Une extension peut être écrite en Typescript ou en Javascript.
 Nous choisirons le Typescript car VS Code recommande ce langage.
 
-Mais certaines composantes externes (langage server) peuvent être écrit dans n'importe quel langage. Tant qu'elle fournisse l'API adéquat pour communiquer.
-
+Mais certaines composantes externes (langage server) peuvent être écrit dans n'importe quel langage. Tant qu'elle fournisse l'API adéquate pour communiquer.
 
 Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit qui est pensé pour être extensible (de L'UI à l'expérience utilisateur).
 Presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
 
-
 Un éditeur de code est décris selon wikipédia comme un logiciel destiné à la création et l'édition de fichiers textes.
 Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debuggage de programme plus complexe.
 
-\textbf{TODO : Faire la distinction de ce qu'on peut faire ou pas dans le cadre d'un éditeur.}
-
 Nous manipulerons des fichiers statiques par la nature même de UON qui est un langage de sérialisation.
-
-Il a été écrit en Typscript et Javascript.
 
 L'Extension API nous permet donc de gérér un certain nombre de choses.
 On se focalisera sur le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
 
 VS Code fournit des documentations détaillées sur plein de sujets, des guides, ainsi que des exemples de codes.
 Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cette éditeur.
+% TODO : code sample https://github.com/microsoft/VS Code-extension-samples
 
-//TODO : code sample https://github.com/microsoft/VS Code-extension-samples
+La communauté est aussi très active.
 
 \subsection{Extension Anatomy}
-Il y a 3 concepts cruciaux à comprendre pour réaliser une extension.
+Il y a tois concepts cruciaux à comprendre pour réaliser une extension.
 
 \begin{itemize}
     \item \textbf{Activation Events}: Des événements à partir desquels l'extension devient active \cite{activation-events}.
@@ -237,15 +236,14 @@ Il y a 3 concepts cruciaux à comprendre pour réaliser une extension.
     \item \textbf{VS Code API}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code \cite{vs-code-api}.
 \end{itemize}
 
-En général, l'extension est une combinaison de plusieurs Conntribution Point et de VS code API pour étendre les fonctionnalités de VS Code.
+En général, l'extension est une combinaison de plusieurs \emph{Conntribution Point} et l'utilisation de l'API pour étendre les fonctionnalités de VS Code.
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 
-%TODO : faire figurer un extrait de code / ou faire référence à la figure au lieu de "la suivante"
-La structure de base d'une extension est la suivante :
+La structure de base d'une extension est illustré par la figure \ref{basic VS Code extension structure}.
 
 % https://tex.stackexchange.com/questions/98703/framebox-and-subfigure-with-dirtree-package
-\begin{figure}[!h]
+\begin{figure}[H] % \begin{figure}[!h]
     \centering
     \framebox[\textwidth]{%
         \begin{minipage}{0.9\textwidth}
@@ -262,7 +260,7 @@ La structure de base d'une extension est la suivante :
             }
         \end{minipage}
     }
-    \caption{basic VS Code extension structure}
+    \caption[basic VS Code extension structure]{\label{basic VS Code extension structure} basic VS Code extension structure}
 \end{figure}
 
 
@@ -1009,6 +1007,69 @@ Puis finalement, il suffit dans un terminal les commandes suivantes :
 
 Il est ensuite facile de manager l'extension au travers de la page web.
 L'extension apparaitra automatiquement dans le marketplace si elle est publiée.
+
+\subsection{Intégration continue (CI)}
+
+% TODO : expliquer l'architecture des fichiers test
+https://code.visualstudio.com/api/working-with-extensions/testing-extension
+
+%If you are using the Yeoman Generator to scaffold an extension, integration tests are already created for you....
+
+Commme le squelette de base de l'extension à été créé en utilisant le générateur Yeoman, la structure pour écrire nos tests d'intégrations
+existe déjà.
+% citation
+
+Il suffit de lancer la commande "npm run test" ou "yarn test" pour lancer les tests se trouvant dans le repertoire % TODO.
+
+C'est l'api \href{https://mochajs.org/api/}{mocha} qui est utilisé pour ces tests.
+
+Actuellement on test de cette facon les fonctionnalités de la complétion et de l'outline.
+
+%In the generated extension, you can use npm run test or yarn test to run the integration tests that:
+
+%Downloads and unzips latest version of VS Code.
+%Runs the Mocha tests specified by the extension test runner script.
+
+Concernant les tests pour la coloration syntaxique , le module \href{https://github.com/PanAeon/vscode-tmgrammar-test}{vscode-tmgrammar-test} a été choisi.
+Car depuis mocha on a pas moyen de le faire.
+
+Nous avons donc quelques tests unitaire simples mais qui permet toutefois de s'assurer qu'un changement ne viens pas modifier le comportement d'une manière inattendu.
+Tous les fonctionnalités ne sont pas tester.
+
+tous ces tests se trouvent dans le dossier test.
+
+\subsubsection{Autocomplétion}
+On s'assure que les candidates de complétions attendues à un emplacement soit les bons selon une entré de code.
+
+\subsubsection{Syntax highlight}
+créer un fichier .uon
+faire un -snap
+modifier le fichier snap et rajouter l'entete qui nous permet de définir que c'est un fichier tests
+on peut mnt le tester avec -test
+
+
+\subsubsection{Outline view}
+Un visiteur pour compter le nombre de noeud attendu pour s'assurer qu'on soit bien passer par les noeuds
+% TODO : Créer les construction à la main et comparer leur sorti textuelles
+
+
+%\section{Regex ?}
+% TODO
+% regex utilisé dans la grammaire g4 + tm à vérifier ?
+% utilisation d'outils en ligne : ex : https://regex101.com/
+% référence officielle : https://www.regular-expressions.info/
+
+
+\subsection{Deployement automatisé (CD)}
+
+% Parler du CD ? Ajouter notre access Token comme secret
+% Ajouter le script pour déployer dans le package.json
+% Installer vsce ? pourquoi ?
+% Il faut s'assurer de changer la version de l'extension dans le package.json
+% On ne peut pas mettre une version inférieur ou égale
+
+% TODO : maintenance
+%Les explications permettant de  reprendre le projet se trouve sur le Readme à la racine du repository...
 
 
 \section{Génération du Parser ANTLR}
@@ -2118,69 +2179,6 @@ Les suivantes ont été implémentées :
 % Couplage de fonctionnalité - logique
 % Info on hover - autocompletion
 % lint - code outline
-
-\chapter{Intégration continue}
-
-% TODO : expliquer l'architecture des fichiers test
-https://code.visualstudio.com/api/working-with-extensions/testing-extension
-
-%If you are using the Yeoman Generator to scaffold an extension, integration tests are already created for you....
-
-Commme le squelette de base de l'extension à été créé en utilisant le générateur Yeoman, la structure pour écrire nos tests d'intégrations
-existe déjà.
-% citation
-
-Il suffit de lancer la commande "npm run test" ou "yarn test" pour lancer les tests se trouvant dans le repertoire % TODO.
-
-C'est l'api \href{https://mochajs.org/api/}{mocha} qui est utilisé pour ces tests.
-
-Actuellement on test de cette facon les fonctionnalités de la complétion et de l'outline.
-
-%In the generated extension, you can use npm run test or yarn test to run the integration tests that:
-
-%Downloads and unzips latest version of VS Code.
-%Runs the Mocha tests specified by the extension test runner script.
-
-Concernant les tests pour la coloration syntaxique , le module \href{https://github.com/PanAeon/vscode-tmgrammar-test}{vscode-tmgrammar-test} a été choisi.
-Car depuis mocha on a pas moyen de le faire.
-
-Nous avons donc quelques tests unitaire simples mais qui permet toutefois de s'assurer qu'un changement ne viens pas modifier le comportement d'une manière inattendu.
-Tous les fonctionnalités ne sont pas tester.
-
-tous ces tests se trouvent dans le dossier test.
-
-\section{Autocomplétion}
-On s'assure que les candidates de complétions attendues à un emplacement soit les bons selon une entré de code.
-
-\section{Syntax highlight}
-créer un fichier .uon
-faire un -snap
-modifier le fichier snap et rajouter l'entete qui nous permet de définir que c'est un fichier tests
-on peut mnt le tester avec -test
-
-
-\section{Outline view}
-Un visiteur pour compter le nombre de noeud attendu pour s'assurer qu'on soit bien passer par les noeuds
-% TODO : Créer les construction à la main et comparer leur sorti textuelles
-
-
-%\section{Regex ?}
-% TODO
-% regex utilisé dans la grammaire g4 + tm à vérifier ?
-% utilisation d'outils en ligne : ex : https://regex101.com/
-% référence officielle : https://www.regular-expressions.info/
-
-
-%\chapter{Publication (CD ???) et maintenance}
-
-% Parler du CD ? Ajouter notre access Token comme secret
-% Ajouter le script pour déployer dans le package.json
-% Installer vsce ? pourquoi ?
-% Il faut s'assurer de changer la version de l'extension dans le package.json
-% On ne peut pas mettre une version inférieur ou égale
-
-% TODO : maintenance
-%Les explications permettant de  reprendre le projet se trouve sur le Readme à la racine du repository...
 
 \chapter{Planning}
 
