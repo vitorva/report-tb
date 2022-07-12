@@ -648,31 +648,18 @@ La grammaire permettait deux notations différentes pour les collections : une p
 Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cet aspect si le temps le permet.
 Car la notation en YAML pose quelques difficultés. % posait
 En JSON les retours à la lignes et indentations ne sont pas nécessaire à la compréhension du langage, contrairement à YAML.
-Nous expliquons ici comment nous pourrions faire cohabiter ces deux formats avec ANTLR. % nous avons fait
+Nous expliquons dans le chapitre suivant il faudrait faire pour cohabiter ces deux formats avec ANTLR. % nous avons fait
 
 \subsubsection{L'indentation}
-
-% TODO : Détailler en détail la réflexion ci-dessous
-Après refléxion, la gestion des indentations n'a pas été implémentée. Cependant, il est intéressant de détailler son implémentation dans un environnement ANTLR
-et plus particulièrement typescript.
-
-L'idée de gérer l'indentation venait du fait que le UON est décrit comme un set partielle de YAML\dots
-
-Pourquoi ? Yaml compliant... / être au plus proche de la specs
-Ne pas séparpillier...
-
-On veut éviter au maximum la confusion sur ce qui est possible de faire (ex yaml avec les sequence ? que le prof m'a montré)
-Les indentations complexifie énormément dans une contexte (JSON et schéma)
-Parler de l'envie exploratoire
-Grammaire reprise mais du coup sera réadapté
-%%%%%
 
 Contrairement au parser lark, la gestion des indentations n'est pas géré automatiquement à l'aide d'une librairie externe.
 Ce méchanisme doit malheurseuement être traité par nos soins.
 
 La grande modularité d'ANTLR est un avantage mais peu se revéler très contraignant pour ce genres de tâches.
 
-Mais avant de résoudre ce problème, il est nécessaire de rappeler que notre grammaire n'est pas uniforme concernant la gestion des retours à la ligne.
+Mais avant de résoudre ce problème, il est nécessaire de rappeler que notre grammaire n'est pas uniforme concernant la gestion des retours à la ligne. 
+
+Et c'est là où se trouve la vrai probématique.
 
 En effet, UON peut-être écrit sous une forme proche de JSON ou de YAML. Le premier ne tient pas compte des indentations contrairement à la seconde.
 
@@ -680,39 +667,40 @@ Et la gestion des indentations nécessite de prendre en compte les retour à la 
 
 Il y a donc trois solutions qui ont été envisagées.
 
-La première est de rajouter des token de retour à la ligne partout ou il serait possible d'en avoir. Mais ce n'est pas très propre et on risque d'en placer énormément.
-Le problème et que dans le cas du format proche de JSON, il faudrait traiter énormément de cas pour rester cohérent.
+La première est de rajouter des token de retour ou il serait jugé bon de les avoir, et de les rendres optionnel.
+Mais ce n'est pas très propre et on risque d'en placer énormément.
 
 Le deuxième serait d'ignorer tout simplement les erreurs. C'est à dire que si on à un token de retour à la ligne qui ne devrait pas être là, alors l'ignorer tout simplement.
-On pourrait penser ce mécanisme simple se révelerait efficace. Cependant je n'ai malheurseuement pas réussi à faire que le moteur de complétion c3 \textbf{TODO : ICI}
+On pourrait penser ce mécanisme simple se révelerait efficace. Cependant je n'ai malheurseuement pas réussi à faire que le moteur de complétion c3
 puisse ignorer ces erreurs.
 
 La troisième solution trouvée et celle actuellement utilisée. Elle consite à prendre en compte uniquement les retours à la ligne si le lexer à détecter les tokens initiaux
-nous permettant de savoir si oui ou non les retours à la ligne doivent être pris en compte.
+nous permettant de savoir nous avons à faire à une construction proche du JSON ou du YAML et donc savoir si les retours à la ligne doivent être pris en compte ou non.
 
-Par exemple, tester que le premier token est un token de type MINUS ("-"). On peut déduire qu'il s'agira d'une séquence en format yaml. % TODO
+Par exemple, tester si le premier token est un token de type MINUS ("-"). Si c'est le cas, on peut déduire qu'il s'agira d'une séquence en format YAML.
 
-Dès lors que les retours à la ligne existe, nous pouvons maintenant placer les tokens INDENT et DEDENT nécessaire dans le lexer
+Dès lors que les retours à la ligne existe, nous pouvons maintenant placer les tokens INDENT et DEDENT depuis le lexer
 pour pouvoir gérer les imbrications correctement.
 
-Pour ce faire, à chaque fois qu'un espace qu'un retour à la ligne est detécté, nous prenons compte de la taille de l'espacemment qu'il contient ("\\r\\n    ")
+Pour ce faire, à chaque fois qu'un espace qu'un retour à la ligne est detécté par le lexer, nous prenons compte de la taille de l'espacemment qu'il contient ("\\r\\n    ")
 Cet espacement nous permettra de savoir si l'on doit rajouter des INDENT ou DEDENT.
 
-% À chaque fois que le lexer detecte un token on regarde le suivant. Si c'est un retour à la ligne on va appliquer un traitement spécifique
-% TODO : More explications -> nextToken , @members, fonction pour ajouter INDENT et DEDENT etc...
+Le code permettant ce mécanisme peut être placé dans le fichier grammaire, en le placant dans le block \emph{lexer:@member{}}.
+Lors de la génération le code est placé dans le lexer.
+
+Cependant lors de la génération les imports seront manquants, il est nécessaire d'aller les rajouter manuellement.
+
+%Le code se trouvant sur le dépot suivant à été fortement utile : https://github.com/umaranis/FastYaml
+
+% TODO : manque la partie avec le switch si on skip ou non les espaces utiles pour créer les tokens indent ou dendent
+
+Il est maintenant possible d'avoir par exemple la règle suivante :
 
 \begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
     yaml_seq : INDENT (SEQUENCE_TYPE)? seq_item+ DEDENT;
 \end{lstlisting}
 
-Pour créer les tokens INDENT et DEDENT
-
-
-\textbf{Remarque : } Mais cette solution n'est pas optimale car si on modifie la grammaire il faudra probabement modifier ce code.
-
-%Il faut prendre en compte les retours à la ligne.
-\subsubsection{Token DEDENT et INDENT}
-
+\textbf{Remarque : } Mais cette solution n'est pas optimale car si on modifie la grammaire il faudra modifier ce code.
 
 \subsection{String}
 Une valeur textuelle peut soit être entre guillement ou non.
@@ -740,25 +728,10 @@ pour gérer à un plus de cas dans la notation scientifique
 Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l'aide d'un terminal, cela peut même se revéler extremement difficile.
 Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visulaiser en temps réel, le parse tree du texte que l'on est en train de saisir.
 
-% TODO : Figure d'intelj
+% TODO : Figure d'intelj en action
 
 % Les figures représentants les arbres se baseront sur ce plugin ...
 
-
-
-
-
-Ces deux tokens sont ajoutés depuis le lexer. Cela nécessite d'y rajouter le code pour le faire.
-
-% TODO mieux...
-On peut le faire depuis la grammaire. Il suffit d'écrire le code permettant de le faire à l'intérieur de @lexer:members{}.
-Lors de la génération, ce code sera déplacé dans le lexer.
-Mais j'ai constaté quelques bugs, probablement du au faites que cette implémentation en typescript et récente et que tout n'a pas été pris en compte.
-Par exemple il est nécessaire après coup de corriger ce fichier en y rajoutant les imports manquants.
-
-% TODO
-\subsection{Règles ?}
-Une règle doit suivre le pattern suvant : NEWLINE DEDENT [RULE] INDENT
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
