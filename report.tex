@@ -2122,67 +2122,56 @@ Les suivantes ont été implémentées :
 \chapter{Intégration continue}
 
 % TODO : expliquer l'architecture des fichiers test
-
 https://code.visualstudio.com/api/working-with-extensions/testing-extension
 
-If you are using the Yeoman Generator to scaffold an extension, integration tests are already created for you....
+%If you are using the Yeoman Generator to scaffold an extension, integration tests are already created for you....
 
-In the generated extension, you can use npm run test or yarn test to run the integration tests that:
+Commme le squelette de base de l'extension à été créé en utilisant le générateur Yeoman, la structure pour écrire nos tests d'intégrations
+existe déjà.
+% citation
 
-Downloads and unzips latest version of VS Code.
-Runs the Mocha tests specified by the extension test runner script.
+Il suffit de lancer la commande "npm run test" ou "yarn test" pour lancer les tests se trouvant dans le repertoire % TODO.
 
-use mocha api...
-https://mochajs.org/api/
+C'est l'api \href{https://mochajs.org/api/}{mocha} qui est utilisé pour ces tests.
 
+Actuellement on test de cette facon les fonctionnalités de la complétion et de l'outline.
 
-Expliquer les différents types de tests automatisés (unitaire, intégrations, de bout en bout)
+%In the generated extension, you can use npm run test or yarn test to run the integration tests that:
 
-focalisation sur les tests unitaires ?
+%Downloads and unzips latest version of VS Code.
+%Runs the Mocha tests specified by the extension test runner script.
 
-Ce qu'on veut tester et pourquoi...
+Concernant les tests pour la coloration syntaxique , le module \href{https://github.com/PanAeon/vscode-tmgrammar-test}{vscode-tmgrammar-test} a été choisi.
+Car depuis mocha on a pas moyen de le faire.
 
-Penser au futur...extensibilité
+Nous avons donc quelques tests unitaire simples mais qui permet toutefois de s'assurer qu'un changement ne viens pas modifier le comportement d'une manière inattendu.
+Tous les fonctionnalités ne sont pas tester.
 
-Est-ce que tout est testable ?
-
+tous ces tests se trouvent dans le dossier test.
 
 \section{Autocomplétion}
-% Todo : expliquer les tests
-example c3, on peut tester qu'un token attendu soit le bon à un emplacemente de la
-Revoir c3 pour autres types de test
+On s'assure que les candidates de complétions attendues à un emplacement soit les bons selon une entré de code.
 
 \section{Syntax highlight}
-% TODO
-Est-il possible de faire appel au scope inspector dans visual studio ? pourquoi faire (je crois pas) ? -> tester qu'un token soit bien dans son scope
-Regarder ça : https://github.com/PanAeon/vscode-tmgrammar-test
-tester les expressions régulières ?
+créer un fichier .uon
+faire un -snap
+modifier le fichier snap et rajouter l'entete qui nous permet de définir que c'est un fichier tests
+on peut mnt le tester avec -test
 
 
 \section{Outline view}
-% TODO
-Comment tester la outline view ? car le code final est fortement couplé avec la logique ?
-Comment savoir que le code outline est le bon....
-Tester les tailles selon différent scénario
-tester le noeud parent etc...
+Un visiteur pour compter le nombre de noeud attendu pour s'assurer qu'on soit bien passer par les noeuds
+% TODO : Créer les construction à la main et comparer leur sorti textuelles
 
 
-\section{Information Hover}
-% TODO
-Trivial ?
-
-\section{Lint}
-% TODO
-Compter le nombre d'erreur et localiser leur emplacement
-
-\section{Regex ?}
+%\section{Regex ?}
 % TODO
 % regex utilisé dans la grammaire g4 + tm à vérifier ?
 % utilisation d'outils en ligne : ex : https://regex101.com/
 % référence officielle : https://www.regular-expressions.info/
 
 
-\chapter{Publication (CD ???) et maintenance}
+%\chapter{Publication (CD ???) et maintenance}
 
 % Parler du CD ? Ajouter notre access Token comme secret
 % Ajouter le script pour déployer dans le package.json
@@ -2191,7 +2180,7 @@ Compter le nombre d'erreur et localiser leur emplacement
 % On ne peut pas mettre une version inférieur ou égale
 
 % TODO : maintenance
-Les explications permettant de  reprendre le projet se trouve sur le Readme à la racine du repository...
+%Les explications permettant de  reprendre le projet se trouve sur le Readme à la racine du repository...
 
 \chapter{Planning}
 
