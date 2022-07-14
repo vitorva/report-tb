@@ -422,25 +422,6 @@ ANTLR est composé de deux parties principales : l'outil en java qui permet de g
 %The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
 %Typical Workflow
 
-\subsection{Arbre (CST)}
-
-%"Notice that technically what you get from ANTLR is a parse tree rather than an AST.
-% The difference is that a parse tree is exactly what comes out of the parser, while the AST is a more refined version
-%of the parse tree. You create the AST by manipulating the parse tree, in order to get something that is easier to use by subsequent parts of your program"
-% Citation ?
-
-ANTLR va générer un parsed tree. Plus précisément un CST (concrete syntax tree).
-Il contient tous les noeuds de la grammaire. Certains sont superflus pour en tirer un sens.
-
-Si on veut un AST, on doit parcouir l'arbre (avec des visiteurs ou listeners) pour en tirer un arbre plus simple.
-
-\begin{figure}[!h]
-    \begin{center}
-        \frame{\includegraphics[width=3cm]{assets/figures/tree.png}}
-    \end{center}
-    \caption[UON CST]{\label{uon-tree} UON CST}
-\end{figure}
-
 \subsubsection{antlr4ts}
 Nous utiliserons antlr4ts, qui est un environement d'éxécution en typescript et donc parfaitement adapté pour VS Code.
 
@@ -554,7 +535,6 @@ Et le dépôt du projet se trouve \href{https://github.com/uon-language/specific
 
 % TODO : Datatypes ?
 
-
 %% Résumé rapide de la grammaire initiale + dire qu'elle est relativement bonne et qu'on a pas modifier grand chose
 
 %  Adaptation (passé de lark à antlr) (regex, espace différents, pas de librairie pour les indentations, ...)
@@ -594,11 +574,12 @@ Cette grammaire se trouve décrite dans le fichier UON.g4 du projet.
 
 \section{Résumé}
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
-Nous utiliserons la grammaire adapté en ANTLR pour illustrer nos exemples.
+Nous utiliserons la grammaire qui a été adapté dans le format d'ANTLR pour illustrer nos exemples.
 
-% La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml.
-% D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
-On peut définir dans un fichier une des deux structures suivantes : une collection ou un schéma.
+% TODO EBNF ICI ? Type 2 de grammaire ?
+
+La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml.
+D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
 
 \begin{lstlisting}
     uon: root_value;
@@ -627,7 +608,6 @@ Cette séparation permet d'éviter des ambiguités. On incite comme ça à l'uti
 \section{Modification}
 % TODO
 Uon est un langage comprenant plusieurs composantes est particulatités qui ne peuvent pas tous être traiter dans un simple éditeur de texte. (ex : cohercien)
-Tout est une valeur avec un type et des propriétés associés. Ces propriétés sont parfois unique.
 %
 
 Nous allons garder presque la même structure car cette grammaire regroupe déjà des éléments importants du langage UON.
@@ -672,6 +652,10 @@ En JSON les retours à la lignes et indentations ne sont pas nécessaire à la c
 Nous expliquons dans le chapitre suivant il faudrait faire pour cohabiter ces deux formats avec ANTLR. % nous avons fait
 
 \subsubsection{L'indentation}
+
+% TODO : tsconfig.json
+% TODO : stratégie switch
+% TODO : changement minus
 
 Contrairement au parser lark, la gestion des indentations n'est pas géré automatiquement à l'aide d'une librairie externe.
 Ce méchanisme doit malheurseuement être traité par nos soins.
@@ -951,15 +935,23 @@ Créer les construction à la main et comparer leur sorti textuelles
 
 \subsection{Deployement automatisé (CD)}
 
-% TODO
-% Parler du CD ? Ajouter notre access Token comme secret
-% Ajouter le script pour déployer dans le package.json
-% Installer vsce ? pourquoi ?
-% Il faut s'assurer de changer la version de l'extension dans le package.json
-% On ne peut pas mettre une version inférieur ou égale
+L'extension est actuellement automatiquement déployé lorsqu'une release sur la branche main est réalisé.
+L'étape de mise en place est détaillé par VS Code à cet \href{https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions}{emplacement}.
+
+Il s'agit d'une étape supplémentaire dans la pipeline après que les tests soient effectués.
+
+Elle consite à exécuter la commande vsce publish depuis notre package.json pour publier l'extension.
+
+\href{https://www.npmjs.com/package/vsce}{vsce} est le gestionnaire d'extension de VS Code.
+
+Il est nécessaire d'ajouter le token (PAT) comme secret dans notre dépot github. %todo ref
+
+\textbf{Remarque } : On ne peut déployer qu'une extension avec une version supérieur que la précédente. % TODO : automatisé ça ?
+
 
 % TODO : maintenance
 %Les explications permettant de reprendre le projet se trouve sur le Readme à la racine du repository
+% Ne devrait pas faire parti de l'organisation du prof ?
 
 
 \section{Génération du parser ANTLR}
@@ -1009,7 +1001,7 @@ Elle contient une liste structurée d'expressions régulières qui permet d'asso
 Nous définissons notre grammaire TextMate dans le fichier "uon.tmLanguage.json" qui se trouve dans le dossier "syntaxes" à la racine du projet.
 Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
 
-% TODO
+% TODO : https://macromates.com/manual/en/language_grammars
 %Le but de ce fichier en plus de permettre la coloration syntaxique, et qu'il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le caret.
 %Cela permet d'avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
 
@@ -1042,25 +1034,13 @@ Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visual
 
 La section "textmate scopes" montre la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
 
-La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par la spécification LSP et donc l'api de VS Code non plus. 
+La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas géré par la spécification LSP et par l'API de VS Code non plus.
 Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
-
-\subsection{Définir son thème}
-\begin{figure}[!h]
-    \begin{center}
-        \includegraphics[width=10cm]{assets/figures/manual-settings-color.png}
-    \end{center}
-    \caption[Choix manuel des couleurs]{\label{manual-settings-color} Choix manuel des couleurs}
-\end{figure}
-
-On peut manuellement définir une couleur à un scope dans le fichier package.json. Ceci n'est pas la méthode la plus éléguente.
-Cela peut-être intéressant si aucun thème n'est associé de base à un scope mais il est préférable de créer directement un fichier de thème.
-
-% TODO :
+%citation d'un repo
 
 \subsection{Fonctionnement}
-\textbf{Exemple simple}
 
+% TODO
 Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le méchanisme général utilisé dans notre fichier "uon.tmLanguage.json" :
 \begin{lstlisting}[frame=single, caption={Textmate grammar},label={Textmate grammar}]
  1  {  scopeName = 'source.untitled';
@@ -1137,8 +1117,6 @@ Parcourons ensemble certains éléments de ce fichier.
 
 Tous d'abord il suit globalement la même strcuture que la grammaire g4.
 
-%TODO : Expliquer la stratégie pour la coloration du format json, yaml et schema, Il faudrait une explication sur les "composition"  }
-
 Les mots-clé concernant les structures ont un scope pour bien les différencier
 Il s'agit ici juste d'un mot clé , ne fais pas parti
 
@@ -1151,16 +1129,13 @@ J'ai définis une strucutre pour les map seq (délimiteur) schema pas à cause d
 Les propriéts sont associé à un type, ce qui fait que leur propriété sont connu de la grammaire et l'on sait si il fait bien parti du type.
 Le point contraignant et que cela couple énormlment la grammaire g4 avec celle-Ci
 
-%TODO examples
 
-% TODO : quelle couleur par défaut (gérer les entres deux) ?
-% TODO : Essayer de garder une cohérence dans la couleur du texte saisi à un emplacement : exemple orange partout pour un string sauf cas particulier...
 Je n'ai pas trouvé de consensus sur la manière de procéder. Ce que j'ai vite remarqué et qu'il est préférable de rester cohérent pour ne pas
 trop involontairement l'utilisateur.
 
-%TODO : Reserved Symbols
+%TODO  : Reserved Symbols
 
-% TODO : Quand afficher des erreurs
+%Quand afficher des erreurs
 On affiche le texte en rouge quand un caractère non attendu est écrit.
 % [^\\s,!] donc généralement cette règle se trouve à la fin de toutes les autres.
 % Seul les espaces, virgule et ! peuvent encore être écrit sans "erreur"
@@ -1172,6 +1147,8 @@ La coloration syntaxique doit refléter au mieux cette grammaire. On pourrait pr
 % TODO example avec
 
 % TODO example sans
+
+% TODO example avec types custom
 
 \subsection{Capture}
 
@@ -1197,22 +1174,27 @@ Il n'est pas facile pour des expressions assez complexe de trouver ce nombre mai
 
 \section{Auto-completion}
 
+Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
+
 Le terme "auto-complétion" existe également sous d'autres appélations (ex : autocomplétion, complétion automatique, complétion, etc.).
 L'intérêt est de proposer des suggestions de saisie au fur est à mesure que l'on écrit.
 
-\textbf{TODO : Citation}
-Selon wikipédia, il s'agit d'une fonctionnalité informatique permettant à l'utilisateur de limiter la quantité d'informations qu'il saisit avec son clavier
+Il s'agit d'une fonctionnalité informatique permettant à l'utilisateur de limiter la quantité d'informations qu'il saisit avec son clavier
 en se voyant proposer un complément qui pourrait convenir à la chaîne de caractères qu'il a commencé à taper.
+% TODO : citation wikipedia
 
-Le terme "suggestions" étant relativement vague. C'est ici ou réside la subtilité.
+Le terme "suggestions" étant relativement vague. C'est ici ou réside la subtilité. Cela va dépendre principalement du langage traité.
 
 Il est donc nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
 
 Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment du à leur nature même de ces langages de sérialisation.
 Contrairement à des langages de programmation. Il n'y a pas de mots clés, on ne peut pas définir de nom de fonction, ni de classe. On ne peut également pas définir de variables.
 
+% Tout est une valeur avec un type et des propriétés associés. Ces propriétés sont parfois unique.
+
 On a donc rien de base à proposer. À la limite, seul les clé ou valeur précédement saisie peuvent éventuellement être reproposé mais cela est fait automatiquemnt sous VS Code
-avec le type de complétion nommé \textbf{TODO}.
+avec le type de complétion nommé "word based completion".
+% https://stackoverflow.com/questions/54827043/how-to-disable-abc-suggestion-on-vs-code
 
 Ce comportement peut-être amélioré en utilisant par exemple "JSON-schéma" qui nous permet de définir des mots clés existants et préciser aussi leur emplacement possible.
 Typiquement on peut étendre du yaml en lui spécifiant un schéma Docker est ainsi rajouter une source d'information externe.
@@ -1220,7 +1202,7 @@ Typiquement on peut étendre du yaml en lui spécifiant un schéma Docker est ai
 Donc pour commencer, lorsqu'on implémente une telle fonctionnalité, il faut pouvoir répondre à une série de question :
 Quelles sont les suggestions pertinentes à proposer, pourquoi et quand le faire ?
 
-La syntaxe UON peut être exprimée par l'image suivante :
+La syntaxe UON peut être exprimée par la figure \ref{syntax}.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -1235,36 +1217,12 @@ Tout est une valeur avec un type et des propriétés associés.
 
 Les suggestions de baseront donc sur les types et leur propriétés.
 
-%TODO : revoir c3, plus particulèrement rules et symbol tables
-%    Snippet ou possible d'avoir des bloc de complétion ?}
-
-%TODO : faire attention de bien gérer les erreurs dès que la complétions est appelé par un trigger sinon comportement aléatoire
-%    ex. trigger élément qui lançait la complétion et erreur car le text parsé était faux !
-
-%TODO : texte collé -> genre {comment:
-
-% TODO : Se baser sur les erreurs pour essayer d'ignorer manuellement la partie avant
-
-% Ne devrait pas afficher des proposition dans les commentaires ?
-
-%Impossible d'avoir des suggestions si le texte est eronner : Impossible de savoir combien de token à skip + syncronisation
-%"ANTL4's error strategy is to try re-synching the ATN walk to the actual input. However, that goes only so far to
-%find either a single additional token or a single missing token. This won't help in this scenario,
-%which would require to (theoretically) skip an unknown number of tokens and resynch."
-
-%le moteur n'utilise pas vraiment le parser mais le toknenStream généré par le parseur.
-
-%https://github.com/mike-lischke/antlr4-c3/issues/29
-
-
-Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
-
 
 \subsection{antlr4-c3}
 
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 
-% TODO : ERREUR avec le symbole #
+
 Mais en complément nous allons aussi exploiter \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
 Cet outil est écrit en Typescript mais existe aussi en version JAVA et C\#.
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
@@ -1272,7 +1230,6 @@ Nous utiliserons principalement ces candidats pour les suggestions proposé dans
 
 % citation ?
 %Le moteur ne va pas utiliser le résultat du parse tree pour la complétion. Mais l'exécution du parser est nécessaire pour remplir le token stream sur lequelle s'appuyera le moteur.
-% TODO : 
 
 % citation https://tomassetti.me/code-completion-with-antlr4-c3/
 % Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats, mais est il est quand même nécessaire de lancer l'exéction du parser (parser.uon()) pour remplir le stream de token (tokenStream).
@@ -1289,10 +1246,11 @@ Si nous utilisons le DefaultErrorStrategy nous obtiendrons un parse tree dans to
 Pourquoi un telle moteur ?
 
 Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
-Et cet outil apporte une solution pratique est élégante pour résoudre ce cas. %TODO source
+Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 
-%% todo : useless ?
-%%De plus nous ne voudrions pas proposer tout ce qui est possible
+
+
+
 
 Pour recevoir des candidats il suffit d'exécuter la commande suivantes.
 
@@ -1300,8 +1258,9 @@ Pour recevoir des candidats il suffit d'exécuter la commande suivantes.
     let candidates = core.collectCandidates(index);
 \end{lstlisting}
 
-
-Nous expliquerons plus tard comment est calculé l'indice.
+% TODO
+L'indice est calculé en se basant sur la taille totale du stream de token et en soustraiant cette valer de 3.
+Pour ne pas tenir compte du dernier token de fin et pour avoir un indice compris entre 0 et ...
 
 Nous recevorns alors un objet CandidatesCollection.
 
@@ -1347,8 +1306,6 @@ Car on pourrait imagine proposer de la complétion basé sur les clés (même si
 Garder en mémoire les règles pour une valeur à saisir pour une clé.
 Ou bien mêmes les propriétés pour un nouveau type définit dans le schéma.
 
-% Donc si on définit un nouveau
-% Actuellement seulement un schéma de document ?
 
 \textbf{Rule}
 
@@ -1356,27 +1313,7 @@ Ou bien mêmes les propriétés pour un nouveau type définit dans le schéma.
 
 \textbf{Sorting}
 
-%  fuzzy search algorithms to match identifiers
 Par défaut VS code implémente un algorithme de fuzzy search...
-% TODO
-
-%Filtering
-%Partial Matches ???? -> pas compris pourquoi il y a ce traitement si particulier ???
-%Adding Heuristics
-%Improving Performance
-
-
-% TODO
-% The ANTLR4 runtime even provides the LL1Analyzer class, which helps with retrieving follow sets for a given ATN state, but has a few shortcomings and is in general not easy to use.
-% With the Code Completion Core implementation things become a lot easier. In the simplest setup you only give it a parser instance and a caret position and it will return the candidates for it. Still, a full code completion implementation requires some support code that we need to discuss first before we can come to the actual usage of the c3 engine.
-
-% Symbol table ?
-
-% Preferred Rules ?
-
-% Debugging ?
-
-
 
 Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
 Elle a été conçu par Mike Lischke.
@@ -1423,7 +1360,6 @@ def collect_candidates(
 % previous parse information to do more advanced autocompletion of identifer names etc.
 
 Of course you have to locate the caret token index yourself and you seem to end up which lots of parser rule name aliases in your grammar so they can be filtered out specifically during completion.
-
 
 Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
 un mécanisme de machine à état ATN (Augmented Transition Network). C'est ce méchanisme qui est en coeur du fonctionnement du moteur.
@@ -1519,7 +1455,6 @@ Mais l'on pourrait s'en contenter car finalement, il est logique qu'une erreur p
 Si dans un langage de programmation un utilisateur saisit du code erroné, il fort possible que la complétion cesse de fonctionner.
 
 
-
 Cependant comme nous travaillons avec une syntaxe beacoup moins complexe l'on pourrait modifier le texte pour corriger voir supprimer le problème.
 Par exmple, dans le cas d'un mapping de clé valeur, une ligne pourrait être omis sans nuir à la compéhension du document.
 
@@ -1535,6 +1470,14 @@ Avec ce mécanisme personnalisé on arrive à rendre la completion un peu plus t
 car si on modifie la grammaire il faudra repércuté les changements dans l'application.
 
 %Malheursement des fois on n'a pas trop d'alternatives possibles
+
+%Impossible d'avoir des suggestions si le texte est eronner : Impossible de savoir combien de token à skip + syncronisation
+%"ANTL4's error strategy is to try re-synching the ATN walk to the actual input. However, that goes only so far to
+%find either a single additional token or a single missing token. This won't help in this scenario,
+%which would require to (theoretically) skip an unknown number of tokens and resynch."
+
+%le moteur n'utilise pas vraiment le parser mais le toknenStream généré par le parseur.
+%https://github.com/mike-lischke/antlr4-c3/issues/29
 
 \subsection{Snippets}
 Il est possible d'ajouter des snippets sous VS Code. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
@@ -1869,38 +1812,7 @@ propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l
 Il faut toutefois juste corriger la position de la ligne en lui soustraiant une valeur de 1 car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR % TODO
 
 
-%TODO :TODO : parler des 2 patterns listener et visitor
-%    pourquoi avoir choisi le pattern visiteurs ? https://stackoverflow.com/questions/20714492/antlr4-listeners-and-visitors-which-to-implement
-%    Mentionner la provenance de la base du code (github antlr4ts) + les fichiers utilsés par le module antlrts (TreeVisitor etc...)
 
-
-% https://github.com/tunnelvisionlabs/antlr4ts/issues/305
-% visiteur explications : https://www.youtube.com/watch?v=BD-I3f0aTbs
-
-%TODO : expliquer qu'on gènère finalement pas un AST pour l'utiliser mais qu'on crée l'arbe de symbole de manière récusrive lors du parcours (sorte d'ast directement utilisable)
-%    Pas de AST car antlr génère un parsed tree qui est un arbre qui contient tout.
-
-
-%TODO : ajouter figure (cst vs ast) -> Du coup quoi garder et pourquoi
-
-%TODO : expliquer la stratégie pour récupérer la position d'un terminal
-
-%TODO :TODO : mentionner qu'on peut avoir 5 structures (json map, json seq, yaml map, yaml seq et schema)
-
-%TODO :
-%    Quels sont les difficulté :
-%    - recursion
-%    - bien construire un noeud (gérer tous les cas particulier)
-%    - visiteur de type any -> expliquer pourquoi j'ai fait ça : pour traiter les terminaux + les strucures...
-
-
-%TODO : parler de ce qu'attend le provider (hierchical ou non, voir lsp spec)
-
-%TODO : expliquer quelle commande lancer et pourquoi (génération des TOUS les fichiers :
-%"scripts": {
-%// ...
-%"antlr4ts": "antlr4ts -visitor path/to/MyGrammar.g4"
-%}) sinon listener et visitor ne fonctionne pas (revoir la commande fausse précédement utilisé....)
 
 
 \section{Info on Hover}
