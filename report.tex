@@ -578,32 +578,85 @@ Nous utiliserons la grammaire qui a été adapté dans le format d'ANTLR pour il
 
 % TODO EBNF ICI ? Type 2 de grammaire ?
 
-La grammaire actuelle nous permet de définir des maps, séquences dans le format json et yaml.
-D'ajouter des propriétés à des types et également la possibilité de définir un schéma pour un type custom.
+\subsection{root value}
 
-\begin{lstlisting}
+Un fichier peut contenir trois strucutre différentes.
+
+\begin{lstlisting}[frame=single,caption={uon-root-value},label={uon-root-value}]
     uon: root_value;
 
     root_value: json_collection | schema;
 
     json_collection: json_map | json_seq;
+
+    yaml_collection: yaml_map | yaml_seq;
 \end{lstlisting}
 
-Une collection est soit une map ou soit une séquence en UON dans un format proche du JSON ou en YAML.
+\subsubsection{Collections}
+La grammaire actuelle nous permet de définir des collections. Ces collections sont des mapping et séquences soit dans un format proche de json ou de yaml.
 
-% TODO : exemple de séquence
+UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à certain niveau, mon précesseur avait jugé utile d'incorporer ce format
+dans le langage. Cette strucure a été repris mais expliquons à la section ? %TODO
+les modifications nécessaire qui ont été apporté.
+
+\textbf{Remarque :}Par simplicité nous dirons qu'il s'agit du format "json" ou "yaml" lorsqu'on les mentionnera.
+
+Ces collections peuvent être imbriqué par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
 % TODO : exemple de map
 
-% TODO : grammaire explained
+\begin{lstlisting}[frame=single,caption={json-map},label={json-map}]
+    {
+        "name" ( description : a12 ) :  !str( comment : ok , optional: False) ok, # error with outline with simply 12
+        age: !float !float128 !float32 +12.2 C,
+        hobbys ( description : "what i like the most",  optional : false ) : !seq [
+            "cinema", "sport", "etc..."],
+        license  :  !bool  true,
+        car:   !bool false,
+        sensor ( optional : false , description : ok ) : !map {
+            type: "temperature",
+            parameters1: !seq [ 1, 2,3,4,5]}
+    }
+\end{lstlisting}
 
-Un schéma est un document qui décrit la spécification d'un nouveau type.
+\begin{lstlisting}[frame=single,caption={yaml-map},label={yaml-map}]
+ok :
+    -  ok
+    - !float32 12
+    -
+         - ok
+ok2 : -23
+\end{lstlisting}
 
-% TODO : exemple de schéma
 
-% TODO : grammaire explained
+% TODO : exemple de seq
+
+\begin{lstlisting}[frame=single,caption={json-seq},label={json-seq}]
+\dots
+\end{lstlisting}
+
+
+\begin{lstlisting}[frame=single,caption={yaml-seq},label={yaml-seq}]
+\dots
+\end{lstlisting}
+
+
+\subsection{Schéma}
+% TODO : schéma de validation externe \ref{}
+On peut défnir également un schéma de validation. Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
 
 Cette séparation permet d'éviter des ambiguités. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
+Un schéma est un document qui décrit la spécification d'un nouveau type.
+
+\begin{lstlisting}[frame=single,caption={yaml-seq},label={yaml-seq}]
+    \dots
+\end{lstlisting}
+
+
+\subsection{Types}
+
+\subsection{Propriétés}
+
 
 \section{Modification}
 % TODO
