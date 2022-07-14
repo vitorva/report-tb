@@ -580,7 +580,7 @@ Nous utiliserons la grammaire qui a été adapté dans le format d'ANTLR pour il
 
 \subsection{root value}
 
-Un fichier peut contenir trois strucutre différentes.
+Un fichier UON peut contenir trois structures différentes.
 
 \begin{lstlisting}[frame=single,caption={uon-root-value},label={uon-root-value}]
     uon: root_value;
@@ -641,7 +641,7 @@ ok2 : -23
 \end{lstlisting}
 
 
-\subsection{Schéma}
+\subsubsection{Schéma}
 % TODO : schéma de validation externe \ref{}
 On peut défnir également un schéma de validation. Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
 
@@ -654,11 +654,19 @@ Un schéma est un document qui décrit la spécification d'un nouveau type.
 
 
 \subsection{Types}
+Les terminaux peuvent être des string, des booleans ou des nombres.
+
 
 \subsection{Propriétés}
+Les clés des mapping ainsi que les types peuvent avoir des propriétés
+Il s'agit de propriétés de présentation pour les collections et de validation pour le schéma.
+Certaine propriétés sont unique par type.
 
 
 \section{Modification}
+
+%Les valeur des clé-valeurs peuvent être null mnt
+
 % TODO
 Uon est un langage comprenant plusieurs composantes est particulatités qui ne peuvent pas tous être traiter dans un simple éditeur de texte. (ex : cohercien)
 %
@@ -758,9 +766,32 @@ Il est maintenant possible d'avoir par exemple la règle suivante :
     yaml_seq : INDENT (SEQUENCE_TYPE)? seq_item+ DEDENT;
 \end{lstlisting}
 
+\subsubsection{Minus}
+\begin{lstlisting}[frame=single,caption={uon-number},label={uon-number}]
+NUMBER:
+	(('+'|'-')? INT ('.' [0-9]*)? EXP?) // +1.e2, 1234, 1234.5
+	| '.' [0-9]+ EXP? // -.2e3
+	| (('+'|'-')? '0' [xX] HEX+) // 0x12345678
+	| (('+'|'-')? '0' [oO] HEX+) ; // 0o12345678
+
+NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
+\end{lstlisting}
+
+Le carcatère "-" étant utilisé pour définir un séquence en format yaml.
+Il a fallu forcer le caractère directement dans l'expression régulière définissant un nombre.
+
+
 \textbf{Remarque : } Mais cette solution n'est pas optimale car si on modifie la grammaire il faudra modifier ce code.
 
 \subsection{String}
+
+\begin{lstlisting}[frame=single,caption={uon-string},label={uon-string}]
+    string :
+	literal
+	| QUOTED_STRING
+	| UNQUOTED_STRING;
+\end{lstlisting}
+
 Une valeur textuelle peut soit être entre guillement ou non.
 
 C'est donc aussi le cas pour la clé d'une map.
@@ -770,7 +801,32 @@ Aussi cela permet d'avoir des clés qui peuvent contenir exactement ce que l'on 
 Car encapsuler entre des caractères spécifiques, il n'y pas d'ambiguités possible. Alors que sans on est contraint de limiter la forme de la clé.
 
 Par contre un cas spécial a du être traiter. Si l'on veut pouvoir utiliser directement un mot sans guillemet mais qu'il existe dans la grammaire.
-Il faut ajouter ce cas %TODO
+Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" pour pouvoir utiliser un de ces token comme string.
+
+\begin{lstlisting}[frame=single]
+    {
+        temperature : 10 C
+    }
+\end{lstlisting}
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=12cm]{assets/figures/literal-key-uon.PNG}}
+    \end{center}
+    \caption[literal-key-uon]{\label{literal-key-uon}literal-key-uon}
+\end{figure}
+
+Sur le schéma \ref*{literal-key-uon} On voit que la clé et bien un token de type literal.
+Ce token temperature exite comme token car c'est une valeur utilisé comme quantité mais si on ne précise pas explicitement que l'on souhaite avoir cette valeur
+comme possible  clé alors on aura une erreur si on ne le précise pas \dots % TODO
+
+\subsubsection{Unquoted}
+%% TODO
+
+\subsubsection{Quoted}
+
+%% TODO
+
 
 \subsection{Propriétés, unités et nombres}
 
@@ -779,6 +835,8 @@ ainsi que des unités ont été rajouté en se basant sur la spécification.
 
 Les règles concernant les nombres ont été modifiés pour ne gérer maintenant qu'un type number
 pour gérer à un plus de cas dans la notation scientifique
+
+
 
 \section{Debugging}
 
