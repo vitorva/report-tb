@@ -869,16 +869,29 @@ comme possible  clé alors on aura une erreur si on ne le précise pas \dots % T
 
 N'importe quelle caractère peut se trouver
 
-
-
+%% TODO : Multiline ? ne pas tolérer les espaces dans la clé mais dans le texte
 
 \subsection{Propriétés, unités et nombres}
 
-Des propriétés de présentation %TODO : voir ....
-ainsi que des unités ont été rajouté en se basant sur la spécification.
+Des popriétés de présentation on été rajouter en reprenant les constructions utilisés pour définir des propriétés pour les clés ainsi que de validation.
 
-Les règles concernant les nombres ont été modifiés pour ne gérer maintenant qu'un type number
-pour gérer à un plus de cas dans la notation scientifique
+% "_" dans le caption cause des erreurs !!!
+\begin{lstlisting}[frame=single,caption={types properties},label={types_properties}]
+    types_properties: OPEN_PAR (types_propertie (COMMA types_propertie)*)? CLOSE_PAR;
+    types_propertie: comment | description | optional;
+    comment: COMMENT COLON string;
+
+    \dots
+
+    string_scalar: (STR_TYPE (types_properties)?)? string;
+\end{lstlisting}
+
+number, bolean, null, string(literal, unquoted et quoted),
+literal : tous les token utilisé déja ailleur mais qu'on voudrait avoir dans les clé par exmeple...
+
+typs : string, nombre, boolean,
+
+quantité et unités
 
 
 
