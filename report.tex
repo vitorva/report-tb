@@ -840,7 +840,14 @@ comme possible  clé alors on aura une erreur si on ne le précise pas \dots % T
 %% TODO
 
 \begin{lstlisting}[frame=single,caption={unquoted},label={unquoted}]
+    UNQUOTED_STRING: IDENTIFIER+;
 
+    IDENTIFIER
+        : [\p{L}]    // matches a single code point in the category "letter"
+        | [\p{M}]    // a character intended to be combined with another character (e.g. accents, umlauts, enclosing boxes, etc.)
+        | [\p{N}]    // matches any kind of numeric character in any script.
+        | [\p{Pc}]   //  punctuation character such as an underscore that connects words.
+        | '!';
 \end{lstlisting}
 
 
@@ -848,7 +855,16 @@ comme possible  clé alors on aura une erreur si on ne le précise pas \dots % T
 
 %% TODO
 \begin{lstlisting}[frame=single,caption={quoted},label={quoted}]
+    QUOTED_STRING:
+    '"' DOUBLE_QUOTE_CHAR* '"'
+    | '"''"''"' DOUBLE_QUOTE_CHAR* '"''"''"'
+    | '\'' SINGLE_QUOTE_CHAR* '\'';
 
+    fragment DOUBLE_QUOTE_CHAR: ~["\\\r\n];
+
+    fragment MULTILINE_QUOTE_CHAR: ~[];
+
+    fragment SINGLE_QUOTE_CHAR: ~['\\\r\n];
 \end{lstlisting}
 
 N'importe quelle caractère peut se trouver
