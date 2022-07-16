@@ -1431,7 +1431,7 @@ Nous utiliserons principalement ces candidats pour les suggestions proposé dans
 % Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats, mais est il est quand même nécessaire de lancer l'exéction du parser (parser.uon()) pour remplir le stream de token (tokenStream).
 
 % citation MEGA TUTO
-Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream.
+Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream \ref{antlr-setup}.
 Car le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état (ATN) d'antlr disponible dans le parser.
 
 % citation
@@ -1441,7 +1441,7 @@ Pourquoi un telle moteur ?
 Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 
-Pour recevoir des candidats il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup} et de rajouter les lignes suivantes.
+Pour recevoir des candidats il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup} d'installer le module npm \emph{antrl4ts} de rajouter les lignes suivantes.
 
 \begin{lstlisting}[frame=single]
     let core = new c3.CodeCompletionCore(parser);
@@ -1459,29 +1459,33 @@ Nous recevorns alors un objet \emph{CandidatesCollection}.
     }
 \end{lstlisting}
 
+Cette collection contient deux map.
 
-On obeserve qu'en plus une liste des tokens en obtient également une liste de règles "rules".
+tokens : fait le lien entre le prochain token possible et une liste de tokens qui le suivent immédiatement, s'ils existent.
 
-%Tell the engine in which parser rules you are particularly interested. It will then return those to you instead of the lexer tokens they are made of.
+% TODO
+Nous allons uniquement utiliser les clés de cette map pour proposer nos suggestions.
+Concernant la liste il faut que les éléments qui le suivents soit obligatoire sans possiblité d'être omis.
+Ce qui n'est jamais le cas dans notre grammaire. Nous n'avons jamais deux tokens de lexer qui se suivent.
 
-On peut spécifier au moteur quelles règles de parseur nous intéresse. Cela nous retournera ? au lieu des tokens de lexers avec lesquels ils sont composé.
+rules : fait le lien entre la règle du parser actuelle et la liste de règles utilisé pour arriver à ce stade.
+Ce map nous permet de questionner la liste des symboles pour retourner des informations supplémentaires.
+Pour pouvoir exploiter ce mécanisme il est nécessaire d'implémenter une liste de symbole.
 
-Example :
-
-
-Comment aurions nous du procéder sans un tel outil ?
-Il évidemment possible de le faire sans ce moteur. Un excellent article mentionne une telle implémentation aussi avec ANTLR ici.
-
-Cela rend bien entendu le travail plus conséquent.
-
-% todo : useless ?
-%%On devrait comprendre quel type de token pourrait pourrait suivre le "caret".
-%%Pour trouver ces tokens, on peut s'aider du lexer pour garder dans une liste dans les tokens trouvés dans un inputs.
+% TODO https://github.com/lark-parser/lark/issues/684
 
 
-\textbf{Symbol tables}
+%Comment aurions nous du procéder sans un tel outil ?
+%Il évidemment possible de le faire sans ce moteur.
+%Un excellent article mentionne une telle implémentation aussi avec ANTLR ici.
 
-C'est un méchanisme puissant de c3 mais que nous n'allons pas exploiter car non spécifié dans le cahier des charges et par manque de temps.
+%Cela rend bien entendu le travail plus conséquent.
+
+
+\subsubsection{Symbol tables}
+
+C'est un méchanisme puissant de c3 mais que nous n'allons pas exploiter,
+car je n'ai pas trouvé d'usage dans le cadre du cahier des charges de ce projet et par manque de temps.
 
 Une table de symbole est une structure qui contient des informations complémentaires sur des symboles, cela peut s'agir de noms, leur scopes et d'autre caractèrisiques.
 Cependant, un langage de sérialisation est relativement moins complexe à gérer qu'un langage de programmation.
@@ -1494,43 +1498,14 @@ Car on pourrait imagine proposer de la complétion basé sur les clés (même si
 Garder en mémoire les règles pour une valeur à saisir pour une clé.
 Ou bien mêmes les propriétés pour un nouveau type définit dans le schéma.
 
-
-\textbf{Rule}
-
-%todo
-
+\subsection{Mécanisme VS Code}
 \textbf{Sorting}
-
-Par défaut VS code implémente un algorithme de fuzzy search
+Par défaut VS code implémente un algorithme de fuzzy search.
 
 Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
 Elle a été conçu par Mike Lischke.
 
-% TODO
 
-%%% TODO Explication
-En ce qui concerne l'API de complétion de antlr-c3, cela ressemble un peu à ceci :
-
-%TODO pas contractuel
-\begin{lstlisting}[frame=single]
-class CompletionCandidates:
-    # a map of the next possible token to a list of tokens which immediately follow it,
-    # if they exist (I haven't personally found any use for the following token list with my grammar)
-    tokens: Mapping[TokenId, List[TokenId]]
-    # a map of the current parser rule to the rule stack at that point
-    rules: Mapping[RuleId, List[RuleId]]
-
-def collect_candidates(
-    parse_tree,
-    ignored_tokens: List[TokenId],  # the token blacklist
-    preferred_rules: List[RuleId],   # the rule whitelist
-    caret_token_idx: int) -> CompletionCandidates: ...
-\end{lstlisting}
-
-% TODO https://github.com/lark-parser/lark/issues/684
-
-% The tokens give you keyword completion and you use the rules + their contexts +
-% previous parse information to do more advanced autocompletion of identifer names etc.
 
 Of course you have to locate the caret token index yourself and you seem to end up which lots of parser rule name aliases in your grammar so they can be filtered out specifically during completion.
 
