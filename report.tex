@@ -449,6 +449,22 @@ Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
 %    expliquer les fonctions / ErrorListener
 %    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
 
+%par défaut utilse defaultstartegy. -> essaye de supprimer un token et regarde si le suivant et celui attendu
+
+\begin{lstlisting}[frame=single,caption={getErrorRecoverySet},label={getErrorRecoverySet}]
+    protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
+        const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
+        if (recognizer.ruleContext.ruleIndex === UONParser.RULE_presentation_properties) {
+            const uonFollowSet = new IntervalSet();
+            uonFollowSet.add(UONParser.DESCRIPTION);
+            uonFollowSet.add(UONParser.OPTIONAL);
+            if (uonFollowSet.size > 0) { return uonFollowSet; };
+          }
+          return defaultRecoverySet;
+    }
+
+\end{lstlisting}
+
 
 %% UON se veut ête moins ambigue que ces alternatives pour l'utilisateur\dots
 \section{UON}
@@ -558,15 +574,15 @@ Et le dépôt du projet se trouve \href{https://github.com/uon-language/specific
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
 Il est donc important de préciser sur quels éléments du langage nous nous focaliserons.
 
-Une spécifiation d'UON existe, elle couvre énormément d'aspects. Cependant tout n'est pas détailler et donc des points sont sujet à intérprétation.
+Une spécifiation d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujet à intérprétation.
 C'est un langage complexe et qui pourrait encore, être ammener à évoluer. Les propositions et les suggestions sont les bienvenues.
 
 Heurseuement pour nous, une grammaire concrète avait déjà été écrit en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON".
 Son travail se trouve sur \href{https://github.com/uon-language/uon-parser}{ici}
 
-Nous nous appuyeront sur cette grammaire que nous la convertirons en format ANTLR et ferons les modifications jugés nécessaire.
+Nous nous appuyeront sur cette grammaire que nous convertirons en format ANTLR et ferons les modifications jugés nécessaire.
 
-Les fonctionnalités se baseront sur celle-ci. Ceci dans le but de rester cohérents entre eux.
+Les fonctionnalités se baseront sur celle-ci. Ceci dans le but de rester cohérents entre elles.
 Nous ferons attention à son extensibilité et expliquerons les choix d'implémentations.
 Elle sera complétée et améliorée après la mise en place des fonctionnalités attendues, si le temps le permet.
 
@@ -823,9 +839,21 @@ comme possible  clé alors on aura une erreur si on ne le précise pas \dots % T
 \subsubsection{Unquoted}
 %% TODO
 
+\begin{lstlisting}[frame=single,caption={unquoted},label={unquoted}]
+
+\end{lstlisting}
+
+
 \subsubsection{Quoted}
 
 %% TODO
+\begin{lstlisting}[frame=single,caption={quoted},label={quoted}]
+
+\end{lstlisting}
+
+N'importe quelle caractère peut se trouver
+
+
 
 
 \subsection{Propriétés, unités et nombres}
@@ -2025,7 +2053,6 @@ Nous utiliserons le "DefaultErrorStrategy". Il a la particularité d'ignorer un 
 
 % TODO : expliquer la classe qui nous permet de recevoir des informations en cas d'erreur
 Puis on peut être notifié de ces erreurs en liant notre parser à un listener "notifyErrorListener".
-
 
 % TODO
 %Proposition de correction à l'aide de antlr qui nous fourni la position dans le document
