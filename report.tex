@@ -445,25 +445,45 @@ Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
 
 
 \subsubsection{Gestion des erreurs}
-%TODO : gérer correctement les erreurs. On devrait pourvoir continuer le plus possible, actuellement ça bloque la suite ?
-%    expliquer les fonctions / ErrorListener
-%    A voir https://stackoverflow.com/questions/26675254/antlr-error-strategy-to-skip-tokens-until-rule-matches-again
 
-%par défaut utilse defaultstartegy. -> essaye de supprimer un token et regarde si le suivant et celui attendu
+ANTLR a un mécanisme pour signaler des erreurs et s'en rétablir lors du processus de parsing.
+ANTLR défnit l'interface \emph{ANTLRErrorStrategy} pour ce problème.
+Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliqué et qui consite à supprimer un token qui poserait problème ou en rajouter un s'il manquerait, avant de
+se resyncroniser à l'ATN et de continuer le parsing.
 
-\begin{lstlisting}[frame=single,caption={getErrorRecoverySet},label={getErrorRecoverySet}]
-    protected getErrorRecoverySet(recognizer: Parser): IntervalSet {
-        const defaultRecoverySet = super.getErrorRecoverySet(recognizer);
-        if (recognizer.ruleContext.ruleIndex === UONParser.RULE_presentation_properties) {
-            const uonFollowSet = new IntervalSet();
-            uonFollowSet.add(UONParser.DESCRIPTION);
-            uonFollowSet.add(UONParser.OPTIONAL);
-            if (uonFollowSet.size > 0) { return uonFollowSet; };
-          }
-          return defaultRecoverySet;
-    }
+À chaque changement d'état  il lance le processur de syncronisation et applique le \emph{defaultErrorStrategy} si besoin.
 
-\end{lstlisting}
+Comme mentionné ici \dots
+Le parser va appliquer des règles.
+Cette resyncronisation permet de continuer dans la règle courante.
+
+S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, on va consommer tout les tokens qui suit celui qui a posé problème. Le mécanimse s'arretera quand il réussira à trouver
+un token qui lui permettra de quitter la règle de parser courrant sans la valider mais permettant de continuer le processus de parsing.
+
+C'est donc grâce à ce procédé que l'on obtiendra un parse tree  même s'il contient des erreurs.
+
+Malheursement je n'ai pas pu explorer plus en profonceur le mécanisme complexe de resyncronisation.
+Cela pourrait se revélerr intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
+
+
+%https://medium.com/pragmatic-programmers/altering-antlrs-error-handling-strategy-80ce7d046730
+%* The default implementation resynchronizes the parser by consuming tokens
+%* until we find one in the resynchronization set--loosely the set of tokens
+%* that can follow the current rule
+
+%https://www.antlr.org/api/Java/org/antlr/v4/runtime/DefaultErrorStrategy.html
+%https://pub.dev/documentation/antlr4/latest/antlr4/DefaultErrorStrategy-class.html
+
+%https://stackoverflow.com/questions/18550031/how-to-control-error-handling-and-synchronization-in-antlr-4-c-sharp/18553706#18553706
+%https://github.com/antlr/antlr4/blob/master/runtime/Java/src/org/antlr/v4/runtime/DefaultErrorStrategy.java
+
+
+% https://stackoverflow.com/questions/25467627/how-to-continue-parsing-after-an-error-in-antlr-4-4  
+%Antlr 4's parser error strategy is to drop tokens from the input until it can detect a sane state and then
+% it continues parsing. Looking at your example, while trying to recover maybe it never reaches a sane state before EOF.
+
+%https://pub.dev/documentation/antlr4/latest/antlr4/DefaultErrorStrategy-class.html
+
 
 
 %% UON se veut ête moins ambigue que ces alternatives pour l'utilisateur\dots
