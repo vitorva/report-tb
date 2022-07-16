@@ -512,6 +512,18 @@ Cela pourrait se revélerr intéressant pour tolérer plus d'erreurs au lieu d'u
 
 %https://pub.dev/documentation/antlr4/latest/antlr4/DefaultErrorStrategy-class.html
 
+\subsubsection{ATN}
+
+Comme mentionné il s'agit de machine à état \dots
+
+Ci-dessous Un ATN d'une séquence :
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=12cm]{assets/figures/seq_ATN.png}
+    \end{center}
+    \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
+\end{figure}
 
 
 %% UON se veut ête moins ambigue que ces alternatives pour l'utilisateur\dots
@@ -1423,9 +1435,15 @@ Les suggestions de baseront donc sur les types et leur propriétés.
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 
 Mais en complément nous allons aussi utilisé \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
+
+Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
+Elle a été conçu par Mike Lischke.
+
 Cet outil est écrit en Typescript mais existe aussi en version JAVA et C\#.
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
 Nous utiliserons principalement ces candidats pour les suggestions proposé dans l'éditeur de code.
+
+c'est un outil relativement puissant, qui nous simplifie grandement la tâche
 
 % citation https://tomassetti.me/code-completion-with-antlr4-c3/
 % Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats, mais est il est quand même nécessaire de lancer l'exéction du parser (parser.uon()) pour remplir le stream de token (tokenStream).
@@ -1441,14 +1459,32 @@ Pourquoi un telle moteur ?
 Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 
-Pour recevoir des candidats il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup} d'installer le module npm \emph{antrl4ts} de rajouter les lignes suivantes.
+Pour notre scénario, on voudra proposer des suggestion à la position du curseur, ce qui fait le code après celui-ci ne nous intéresse pas (dans le cadre actuelle du langage).
+On utilisera la position du curseur caret. Pour uniquement traiter le code du début de l'éditeur jusqu'à la position du curseur.
+
+Une utilité de prendre en compte ce qui se trouve apès le curseur serait par exemple le cas de code SQL :
 
 \begin{lstlisting}[frame=single]
+SELECT | FROM USER // ("|" étant le curseur)
+\end{lstlisting}
+
+Dans ce scénario des suggestions liées à la table USER devrait être proposé et nécessiterait un traitement particulier.
+Pour nous, la seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
+
+
+Pour recevoir des candidats il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup}, d'installer le module npm \emph{antrl4ts} et
+de donner au moteur, une instance du parser et un indice.
+
+\begin{lstlisting}[frame=single] % TODO
     let core = new c3.CodeCompletionCore(parser);
     let candidates = core.collectCandidates(index);
 \end{lstlisting}
 
-\textbf{Remarque} : L'indice est calculé en se basant sur la taille totale du stream de token. (voir fichier completion.ts)
+L'explication pour trouver cette indice se trouve dans la séction \hyperref[candidates]{\textbf{Candidats}}.
+% \textbf{Remarque} : L'indice est calculé en se basant sur la taille totale du stream de token. (voir fichier completion.ts)
+
+Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct. Comme mentionné plus tard %TODO
+Ce qui se trouve à la suite peut être erroné, car on ne n'en tient pas compte, comme mentionner ci-dessus.
 
 Nous recevorns alors un objet \emph{CandidatesCollection}.
 
@@ -1470,6 +1506,7 @@ Ce qui n'est jamais le cas dans notre grammaire. Nous n'avons jamais deux tokens
 
 rules : fait le lien entre la règle du parser actuelle et la liste de règles utilisé pour arriver à ce stade.
 Ce map nous permet de questionner la liste des symboles pour retourner des informations supplémentaires.
+
 Pour pouvoir exploiter ce mécanisme il est nécessaire d'implémenter une liste de symbole.
 
 % TODO https://github.com/lark-parser/lark/issues/684
@@ -1481,11 +1518,15 @@ Pour pouvoir exploiter ce mécanisme il est nécessaire d'implémenter une liste
 
 %Cela rend bien entendu le travail plus conséquent.
 
-
 \subsubsection{Symbol tables}
 
 C'est un méchanisme puissant de c3 mais que nous n'allons pas exploiter,
 car je n'ai pas trouvé d'usage dans le cadre du cahier des charges de ce projet et par manque de temps.
+
+On pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST.
+Cependant ce n'est pas le cas pour la plupart des scénarios.
+Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent.
+Et c'est ce que la table de symbole tend à résoudre.
 
 Une table de symbole est une structure qui contient des informations complémentaires sur des symboles, cela peut s'agir de noms, leur scopes et d'autre caractèrisiques.
 Cependant, un langage de sérialisation est relativement moins complexe à gérer qu'un langage de programmation.
@@ -1497,47 +1538,6 @@ Car on pourrait imagine proposer de la complétion basé sur les clés (même si
 
 Garder en mémoire les règles pour une valeur à saisir pour une clé.
 Ou bien mêmes les propriétés pour un nouveau type définit dans le schéma.
-
-\subsection{Mécanisme VS Code}
-\textbf{Sorting}
-Par défaut VS code implémente un algorithme de fuzzy search.
-
-Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
-Elle a été conçu par Mike Lischke.
-
-
-
-Of course you have to locate the caret token index yourself and you seem to end up which lots of parser rule name aliases in your grammar so they can be filtered out specifically during completion.
-
-Dans la configuration la plus simple pour l'utiliser, il suffit de lui donner une instance du parser et une position de caret (notre curseur) pour qu'il renvoie les candidats correspondants.
-Cette position est l'indice du candidat. L'explication pour le trouver se trouve dans la séction \hyperref[candidates]{\textbf{Candidats}}
-
-On constate donc que c'est un outil relativement puissant et qui nous simplifie grandement la tâche.
-
-\textbf{Remarque}: On pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST. Cependant ce n'est pas le cas pour la plupart des scénarios.
-Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent. Par exemple des noms de classe, des objets de base de données, des membres de classes, des fonctions, etc. ne sont pas représentés dans la grammaire. 
-
-Ci-dessous Un ATN d'une séquence :
-
-\begin{figure}[!ht]
-    \begin{center}
-        \includegraphics[width=12cm]{assets/figures/seq_ATN.png}
-    \end{center}
-    \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
-\end{figure}
-
-La seule contrainte est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct. Mais ce qui se trouve à la suite peut être erroné.
-Ainsi, nous pouvons revenir n'importe où dans le code, car la partie se trouvant après le curseur n'est pas prise en compte et la rédaction du code précédente est normalement correcte.
-De plus, actuellement, nous n'avons pas de suggestions qui dépendraient de ce qui se trouve après le curseur.
-Car par exemple dans l'exemple suivant pour du code SQL :
-
-\begin{lstlisting}[frame=single]
-SELECT | FROM USER // ("|" étant le curseur)
-\end{lstlisting}
-
-Dans ce scénario des suggestions liées à la table USER devrait être proposé et nécessiterait un traitement particulier.
-
-Pour nous, la seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
 
 \subsection{Tokens ignorés}
 Nous pouvons indiquer au moteur les token qui ne nous intéressent pas, pour ne pas les récupérer dans la liste des candidats.
@@ -1614,15 +1614,8 @@ C'est ce qui a été fait de la manière suivante :
 Avec ce mécanisme personnalisé on arrive à rendre la completion un peu plus tolérant au erreur mais le problème et que l'on couple la logique du moteur avec l'application et que c'est pas du tout une bonne pratique.
 car si on modifie la grammaire il faudra repércuté les changements dans l'application.
 
-%Malheursement des fois on n'a pas trop d'alternatives possibles
 
-%Impossible d'avoir des suggestions si le texte est eronner : Impossible de savoir combien de token à skip + syncronisation
-%"ANTL4's error strategy is to try re-synching the ATN walk to the actual input. However, that goes only so far to
-%find either a single additional token or a single missing token. This won't help in this scenario,
-%which would require to (theoretically) skip an unknown number of tokens and resynch."
 
-%le moteur n'utilise pas vraiment le parser mais le toknenStream généré par le parseur.
-%https://github.com/mike-lischke/antlr4-c3/issues/29
 
 \subsection{Snippets}
 Il est possible d'ajouter des snippets sous VS Code. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
