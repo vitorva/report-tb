@@ -1390,7 +1390,6 @@ Les suggestions de baseront donc sur les types et leur propriétés.
 
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 
-
 Mais en complément nous allons aussi exploiter \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
 Cet outil est écrit en Typescript mais existe aussi en version JAVA et C\#.
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
@@ -1415,9 +1414,6 @@ Pourquoi un telle moteur ?
 
 Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
-
-
-
 
 
 Pour recevoir des candidats il suffit d'exécuter la commande suivantes.
@@ -1979,6 +1975,59 @@ Il suffit d'observer le token associé au symbole de ce noeud et plus particuli�
 propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait de "colonne")
 Il faut toutefois juste corriger la position de la ligne en lui soustraiant une valeur de 1 car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR % TODO
 
+
+\subsection{Résultat}
+L'aspect visuel de l'outline view à été conçu pour ressembler à celle de JSON et de YAML.
+Suivant cette exemple de code UON basique :
+
+\begin{lstlisting}
+    {
+        name : "paul",
+        age: 18,
+        hobbys: {
+            music: "rock"
+        },
+        parents : ["steve", "jeanne"]
+    }
+\end{lstlisting}
+
+Nous obtiendrons l'outline suivant :
+
+% captrue
+
+Mais UON prenons en compte également les propriétés, il a été jugé pertinents de les rajouter dans la outline.
+Pour ne pas changer la strucutre et ne pas surcharger l'arbre,
+nous rajoutons simplement les propriétés des clés et des types comment enfant de l'attribut parent du noeud de l'outline.
+
+Par exemple, si nous rajoutons des propriétés à la clé est un type :
+\begin{lstlisting}
+    {
+        name : "paul",
+        age(optional : false): !int( comment : "a comment") 18,
+        hobbys: {
+            music: "rock"
+        },
+        parents : ["steve", "jeanne"]
+    }
+\end{lstlisting}
+
+Nous obtiendrons l'outline suivant :
+
+%capture
+
+Les fichiers représentant un schéma de validation est légèrement différent :
+
+\begin{lstlisting}
+    !!mySensor: !schema ( description : "provide great infos", name : ok) {
+        name : !str,
+        power( optional : true) : !int( min : 5, max : 50)
+    }
+\end{lstlisting}
+
+% capture
+
+Dans un fichier de validation on ne peut avoir comme valeur uniquement des types et ces éléments qui nous intéresse le plus.
+Donc on a plus de proprités "value props" mais on liste ces propriétés directement comme enfant de l'objet. Cela pour gagner en visibilté.
 
 
 
