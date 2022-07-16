@@ -1935,20 +1935,6 @@ C'est un choix d'implémentation pour faciliter la construction d'un object Docu
 \subsection{Parcours}
 Le parcours est effectué selon un algorithme de parcours en profondeur (DFS).
 
-%"Both the listener and the visitor use depth-first search"
-
-%Je me suis inspiré de l'outline json et yaml pour obtenir un résultat visuel similaire.
-
-%Que devons nous visualiser dans l'outline ?
-
-% ----------------
-%DFS permet de garder l'odre donc manipulations facilités
-
-%Dans un premier temps ne tient pas compte des popriété
-%rajouter ça....
-
-%pierre angulaire
-
 Pour rappel un parcours DFS et effectué dans l'ordre affiché à la figure \ref*{Algorithme de parcours en profondeur (DFS)}
 
 \begin{figure}[!h]
@@ -1975,7 +1961,6 @@ Il suffit d'observer le token associé au symbole de ce noeud et plus particuli�
 propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait de "colonne")
 Il faut toutefois juste corriger la position de la ligne en lui soustraiant une valeur de 1 car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR % TODO
 
-
 \subsection{Résultat}
 L'aspect visuel de l'outline view à été conçu pour ressembler à celle de JSON et de YAML.
 Suivant cette exemple de code UON basique :
@@ -1993,7 +1978,13 @@ Suivant cette exemple de code UON basique :
 
 Nous obtiendrons l'outline suivant :
 
-% captrue
+% capture
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=10cm]{assets/figures/uon-payload-outline-without-properties.PNG}}
+    \end{center}
+    \caption[Outline UON sans proprités]{\label{uon-payload-outline-without-properties} Outline UON sans proprités}
+\end{figure}
 
 Mais UON prenons en compte également les propriétés, il a été jugé pertinents de les rajouter dans la outline.
 Pour ne pas changer la strucutre et ne pas surcharger l'arbre,
@@ -2011,9 +2002,15 @@ Par exemple, si nous rajoutons des propriétés à la clé est un type :
     }
 \end{lstlisting}
 
-Nous obtiendrons l'outline suivant :
+Nous obtiendrons l'outline suivante :
 
 %capture
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=10cm]{assets/figures/uon-payload-outline-with-properties.PNG}}
+    \end{center}
+    \caption[Outline UON avec proprité]{\label{uon-payload-outline-with-properties} Outline UON avec proprité}
+\end{figure}
 
 Les fichiers représentant un schéma de validation est légèrement différent :
 
@@ -2024,34 +2021,29 @@ Les fichiers représentant un schéma de validation est légèrement différent 
     }
 \end{lstlisting}
 
-% capture
-
-Dans un fichier de validation on ne peut avoir comme valeur uniquement des types et ces éléments qui nous intéresse le plus.
+Dans un fichier de validation on ne peut avoir comme valeur uniquement des types ayant ou non des propriétés. Ce sont ces éléments qui nous intéresse le plus.
 Donc on a plus de proprités "value props" mais on liste ces propriétés directement comme enfant de l'objet. Cela pour gagner en visibilté.
 
+Nous aurons donc l'outline suivante :
 
-
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=10cm]{assets/figures/uon-schema-outline.PNG}}
+    \end{center}
+    \caption[Outline d'un schéma]{\label{uon-schema-outline} Outline d'un schéma}
+\end{figure}
 
 \section{Info on Hover}
-% DONE : expliquer pourquoi on voulait que ça soit une feature de base / au début je pensais que ça allait être dans la grammaire ?
 
 C'est une fonctionnalité assez triviale qui consite à afficher une explication lorsque l'on passe le curseur sur un élément.
+Cela consite à aller chercher dans un dictionnaire si la valeur séléctionné est bien une clé du dictionnaire et de récupérer la valeur si c'est bien le cas.
 
-Il s'agit d'une dictionnaire clé-valeur.
+Ce dictionnaire est un fichier.json qui est importé dans le fichier \emph{extension.js}.
 
-Cependant, même si son implémentation est relativement simple, il n'en reste pas moins un élément fortement utile et pouvant être étendu par la suite.
-On pourrait le réutiliser dans la complétion pour pouvoir fournir une description d'un token dans la liste des suggestions.
-Cela n'a pas été fait à cause d'une question de temps.
+Il est nécessaire de rajouter la ligne \emph{"resolveJsonModule": true} dans le fichier tsconfig.json pour autoriser ce type d'import.
 
-
-% TODO
-%Fichier json clé-valeur....
-%Intégration d'un module avec require
-%utilité du dossier out / corriger bug sinon par défaut dans out/
-
-% placement "des erreurs"
-% suggestion token si possible ou expliquer qu'il faudrait redéfinir des fichiers pour récupérer le tableau ayant servi à créer le message d'erreur reçu
-
+Même si son implémentation est relativement simple, il n'en reste pas moins un élément fortement utile et pouvant être étendu par la suite.
+Le code est déjà réutilisé pour fournir la documentation des types lors des suggestions de complétions  % \ref{}
 
 \section{Lint}
 Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et les problèmes de syntaxe.
