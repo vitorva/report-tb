@@ -460,10 +460,18 @@ Cette resyncronisation permet de continuer dans la règle courante.
 S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, on va consommer tout les tokens qui suit celui qui a posé problème. Le mécanimse s'arretera quand il réussira à trouver
 un token qui lui permettra de quitter la règle de parser courrant sans la valider mais permettant de continuer le processus de parsing.
 
-C'est donc grâce à ce procédé que l'on obtiendra un parse tree  même s'il contient des erreurs.
+C'est donc grâce à ce procédé que l'on obtiendra un parse tree même s'il contient des erreurs.
 
 Malheursement je n'ai pas pu explorer plus en profonceur le mécanisme complexe de resyncronisation.
 Cela pourrait se revélerr intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
+
+%avec
+%tree.toStringTree (uon (root_value (json_collection (json_map !map { (json_pair (pair_key (string (literal name)) (presentation_properties ( oups (presentation_property (description description : (string firstname))) ))) : (json_value (scalar (string_scalar (string paul))))) }))))
+
+
+%sans, on constate que sans la suppression on sort de la règle...
+
+%tree.toStringTree (uon (root_value (json_collection (json_map !map { (json_pair (pair_key (string (literal name)) (presentation_properties ( oups description)) : (json_value (scalar (string_scalar (string firstname))))) ) : paul } \n))))
 
 
 %https://medium.com/pragmatic-programmers/altering-antlrs-error-handling-strategy-80ce7d046730
@@ -1164,12 +1172,11 @@ Il nous génère ces fichiers :
 \section{Syntax highlighting}
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
-Il y a deux composantes principales.
+Il y a deux composantes principales. % Citation vscode ?
 \begin{itemize}
     \item La tokenisation qui consiste à séparer le texte en une liste de token.
     \item La thémisation (Theming) qui permet d'attribuer à un token une couleur et un style.
 \end{itemize}
-% Citation vscode ?
 
 %TODO : à changer
 \begin{figure}[!h]
@@ -1185,7 +1192,6 @@ Cette grammaire a été inventée par l'éditeur TextMate est a été adopté pa
 Elle contient une liste structurée d'expressions régulières qui permet d'associer un scope
 à un ou plusieurs tokens qui déclencherait l'activation d'une de ces expression.
 
-
 Nous définissons notre grammaire TextMate dans le fichier "uon.tmLanguage.json" qui se trouve dans le dossier "syntaxes" à la racine du projet.
 Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
 
@@ -1196,15 +1202,54 @@ Ce fichier doit être référencé à travers du point de contribution "grammar"
 \subsection{Scope}
 Un scope défini le contexte d'un groupe de token et peut-être considéré comme son type.
 
-C'est grâce au scope d'un token, qu'un fichier de thème peut attribuer une couleur.
+Il s'agit d'un identifiant.
+
+C'est grâce au scope d'un token, qu'un fichier de thème peut attribuer une couleur avec une mécanisme de "clé-valeur".
+
 
 TextMate liste une liste de scope commun que de nombreux thèmes ciblent déjà et recommande de les utiliser.
 Ceci dans le but de permettre à notre langage d'être supporté le plus possible.
+%% https://macromates.com/manual/en/language_grammars
+
 
 Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut sur VS Code). Et de réutiliser les scopes.
 
 Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
-Mais peut être également généré depuis le contrôle panel à l'aide de la commande suivante : % TODO 
+Mais peut être également généré depuis le contrôle panel(CTRL + SHIFT + P).
+
+Avec ce procédé cela nous permet de profiter des thèmes de VS Code.
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/vscode-dark-theme.PNG}
+    \end{center}
+    \caption[vscode dark theme]{\label{vscode-dark-theme} vscode-dark-theme}
+\end{figure}
+
+
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/vscode-kimbi-dark-theme.PNG}
+    \end{center}
+    \caption[vscode kimbi dark theme]{\label{vscode-kimbi-dark-theme} vscode kimbi dark theme}
+\end{figure}
+
+\subsubsection{Example}
+Prenons comme exemple un exemple simple, le scope pour les nombres : "constant.numeric.uon"
+
+On voit qu'il s'agit d'une suite d'identifiant.
+
+La convention est d'avoir des mots clés séparé par un point à chaque pour spécifier un niveau de précision supplémentaire
+
+Il est aussi possible d'avoir plusieurs scope pour un élément :
+
+"string.uon support.type.property-name.uon"
+Les scopes sont séparé par un espace.
+C'est celui le plus à droite qui l'emporte. Cela peut-être utile si l'on souhaite maximiser les chances qu'un thème nous fournisse une coloration.
+
+
+% https://macromates.com/manual/en/scope_selectors
+
 
 %TODO : grâce à cette réflexion on a par défaut plusieurs thèmes (ceux présents dans vscode).
 % comparer 2 thèmes vs codes
@@ -1271,6 +1316,61 @@ mais format yaml + compliqué car sur plusieurs ligne / espaces (donc juste "une
 arbitraire, essayer de reste cohérenet + concis
 Stratégie nom... à améliorer
 
+\subsection{uon.tmLanguage}
+
+Parcourons ensemble certains éléments de ce fichier.
+
+Tous d'abord il suit globalement la même strcuture que la grammaire g4.
+
+Les mots-clé concernant les structures ont un scope pour bien les différencier
+Il s'agit ici juste d'un mot clé , ne fais pas parti
+
+les types ont un scope
+Les quoted et unquoted string ont un scope
+J'ai du aussi définir ces règles pour les key pour avoir un scope différent
+
+J'ai définis une strucutre pour les map seq (délimiteur) schema pas à cause de la syntaxe mais ne pose pas de problème dans ce cas parce que...
+
+Les propriéts sont associé à un type, ce qui fait que leur propriété sont connu de la grammaire et l'on sait si il fait bien parti du type.
+Le point contraignant et que cela couple énormlment la grammaire g4 avec celle-Ci
+
+Je n'ai pas trouvé de consensus sur la manière de procéder. Ce que j'ai vite remarqué et qu'il est préférable de rester cohérent pour ne pas
+trop involontairement l'utilisateur.
+
+%TODO  : Reserved Symbols
+
+%Quand afficher des erreurs
+On affiche le texte en rouge quand un caractère non attendu est écrit.
+% [^\\s,!] donc généralement cette règle se trouve à la fin de toutes les autres.
+% Seul les espaces, virgule et ! peuvent encore être écrit sans "erreur"
+
+\subsection{Propriétés}
+
+La coloration syntaxique doit refléter au mieux cette grammaire. Il y a donc une coloration spécifique les propriétés appartenant à un type.
+Cela rends la coloration syntaxique fortement liée à la grammaire mais on se rends compte d'un coup d'oeuil si la propriété et correcte.
+
+\subsection{Capture}
+
+Il y a globalement deux manières pour appliquer un scope.
+
+La première et de définir un caractère de départ et un autre de fin. Puis définir les patterns que l'on appliquera au élément se trouvant à l'intérieur.
+
+% exemple : !str(comment : "mon premier commentaire")
+
+Mais dans certains cas, il n'y a pas de délimiteur et on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
+a déclenché.
+
+%TODO PHOTO :Typiquement : 12 k
+
+Il s'agit d'un nombre mais l'option "Capture" nous permet d'appliquer un scope au groupe de selection.
+Il n'est pas facile pour des expressions assez complexe de trouver ce nombre mais on peut s'aider du site \href{https://regex101.com/}{suivant}
+
+%\subsection{Adaptation}
+%Une des difficultés observés lors de l'implémentation de la coloration et le couplage à faire avec la grammaire.
+%On a pas envie de copier exactement la grammaire car ce qui nous intéresse ici est la coloration
+%Et l'on a envie parfois d'avoir des comportements spécifiques.
+
+
 \subsection{Semantic Highlight}
 
 Un point important et qu'il ne faut pas confondre la coloration syntaxique avec ce que l'on nomme la coloration sémantique. Car il s'agit d'une couche que l'éditeur rajoute sur la précédente pour l'améliorer si nécessaire.
@@ -1298,67 +1398,6 @@ Par exemple avec du code Typescript :
 On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d'une fonction.
 Cela est donc intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas.
 Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
-
-\subsection{uon.tmLanguage}
-
-Parcourons ensemble certains éléments de ce fichier.
-
-Tous d'abord il suit globalement la même strcuture que la grammaire g4.
-
-Les mots-clé concernant les structures ont un scope pour bien les différencier
-Il s'agit ici juste d'un mot clé , ne fais pas parti
-
-les types ont un scope
-Les quoted et unquoted string ont un scope
-J'ai du aussi définir ces règles pour les key pour avoir un scope différent
-
-J'ai définis une strucutre pour les map seq (délimiteur) schema pas à cause de la syntaxe mais ne pose pas de problème dans ce cas parce que...
-
-Les propriéts sont associé à un type, ce qui fait que leur propriété sont connu de la grammaire et l'on sait si il fait bien parti du type.
-Le point contraignant et que cela couple énormlment la grammaire g4 avec celle-Ci
-
-
-Je n'ai pas trouvé de consensus sur la manière de procéder. Ce que j'ai vite remarqué et qu'il est préférable de rester cohérent pour ne pas
-trop involontairement l'utilisateur.
-
-%TODO  : Reserved Symbols
-
-%Quand afficher des erreurs
-On affiche le texte en rouge quand un caractère non attendu est écrit.
-% [^\\s,!] donc généralement cette règle se trouve à la fin de toutes les autres.
-% Seul les espaces, virgule et ! peuvent encore être écrit sans "erreur"
-
-\subsection{Propriétés}
-
-La coloration syntaxique doit refléter au mieux cette grammaire. On pourrait prévilégier une grammaire texmate relativement simple. Mais on manquerait certaines informations.
-
-% TODO example avec
-
-% TODO example sans
-
-% TODO example avec types custom
-
-\subsection{Capture}
-
-Il y a globalement deux manières pour appliquer un scope.
-
-La première et de définir un caractère de départ et un autre de fin. Puis définir les patterns que l'on appliquera au élément se trouvant à l'intérieur.
-
-% exemple : !str(comment : "mon premier commentaire")
-
-Mais dans certains cas, il n'y a pas de délimiteur et on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
-a déclenché.
-
-%TODO PHOTO :Typiquement : 12 k
-
-Il s'agit d'un nombre mais l'option "Capture" nous permet d'appliquer un scope au groupe de selection.
-Il n'est pas facile pour des expressions assez complexe de trouver ce nombre mais on peut s'aider du site \href{https://regex101.com/}{suivant}
-
-%\subsection{Adaptation}
-%Une des difficultés observés lors de l'implémentation de la coloration et le couplage à faire avec la grammaire.
-%On a pas envie de copier exactement la grammaire car ce qui nous intéresse ici est la coloration
-%Et l'on a envie parfois d'avoir des comportements spécifiques.
-
 
 \section{Auto-completion}
 
