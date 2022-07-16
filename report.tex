@@ -461,6 +461,9 @@ Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
 
 
 \subsubsection{Gestion des erreurs}
+
+% L'idée gérnéral et d'insérer de faux token ou de supprimer les tokens non valides jusqu'à ce qu'il en trouve un qui corresponde à set de tokens connu.
+
 %citation ?
 ANTLR4 est capable de signaler des erreurs et se rétablir d'erreurs plus grave qui pourrait faire échouer le processus de parsing.
 
@@ -1542,63 +1545,24 @@ Ou bien mêmes les propriétés pour un nouveau type définit dans le schéma.
 \subsection{Tokens ignorés}
 Nous pouvons indiquer au moteur les token qui ne nous intéressent pas, pour ne pas les récupérer dans la liste des candidats.
 
-\subsection{Tolérance}
-Il semble normal que la complétion n'ait pas lieu si le code saisie est gravement erroné.
-Cependant il devrait être tolérant à une certaine mesure sur des erreurs qui ne péjore pas la compréhension du code.
-Une possibilité et de traiter les erreurs lors de l'analyse syntaxique, ce sujet est abordé dans la section \hyperref[error handle]{Gestion des erreurs} ci-dessous.
-
-Mais on peut imaginer supprimer des cas potentiels d'erreurs lors de la conception de notre grammaire.
-Par exemple, les erreurs sur les valeurs attendues. Une stratégie serait d'avoir un type seul qui supporterait le plus de symboles possible.
-Imaginons que l'on donnerait en entrée un type incorrect à une propriété, selon la spécification officielle du langage UON.
-Par exemple (max : 12a), l'erreur pourrait tout simplement ne pas exister.
-Ainsi même si cela est faux syntaxiquement en UON, cela ne bloque pas le processus de l'auto-complétion.
-
-Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On peut s'aider en parallèle de la coloration syntaxique.
-
-\subsection{Mécanisme automatique}
-VS Code va automatiquement filtrer les suggestions pendant la saisie à l'aide d'un algorithme de fuzzing search.
-Pour rappel le fuzzy search (ou recherche approximative) permet de trouver une chaine de caractère en fournissant une chaine qui n'a besoin d'avoir une correspondance exacte
-avec le texte que l'on cherche.
-
-% TODO : exemple de fuzy search dans VS Code (comportement par défaut)
-
-% abc suggestion
-Par défaut la complétion proposé par VS Code porte sur les symboles déjà existants dans le code.
-
 \subsection{Gestion des erreurs }\label{error handle} % TODO : déplacer les explciation sur le parser error recovery
 
 ANTLR à un méchanisme avancé de récupération d'erreur (Parser Error Recovery Strategy).
-% TODO : centraliser les gestion d'erreur d'antlr avec celui dans le lint...
-% Source...
-L'idée gérnéral et d'insérer de faux token ou de supprimer les tokens non valides jusqu'à ce qu'il en trouve un qui corresponde à set de tokens connu.
-
-% TODO : Fonctionne réelement ou je dois changer l'index aussi
-
-On peut ajouter au parser un "ErrorListener".
-Par défaut c'est la stratégie de la classe se trouvant dans le fichier \href{https://github.com/tunnelvisionlabs/antlr4ts/blob/master/src/DefaultErrorStrategy.ts}{suivant} qui est appliquée.
-
-Mais on peut l'étendre pour redéfinir les fonctions.
-Car normalement en cas d'erreur, le parser va essayé de continuer l'analyse syntaxique jusqu'à trouver un token valide.
-Cependant il se peut qu'il n'y ait rien après. C'est presque tout le temps le cas lorsqu'on est en train d'écrire.
-On va donc juste s'arrêter.
-
-%%%%%
 
 On aurait donc pu penser naivement que le Parser Error Revory Strategy d'ANTLR nous permettrait également de rendre le mécanisme de la complétion aussi plus tolérant.
 Mais ce mécanisme n'est utilisé que pour générer un parse tree, cela est donc inutile pour ce cas. % car se base sur TODO
 
-Donc pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
+Donc comme déja mentionner, pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
 Car sinon on pourrait avoir dans notre stream de token des éléments qui ne seront pas compris par le moteur et l'on obtiendra pas de candidats.
 
-Une explication fourni par un internaute dans la rubrique "issues" du dépot du \href{ https://github.com/mike-lischke/antlr4-c3/issues/29}{projet}.
+Une explication fourni par le créateur du moteur dans la rubrique "issues" du dépot du \href{ https://github.com/mike-lischke/antlr4-c3/issues/29}{projet}.
 % https://github.com/mike-lischke/antlr4-c3/issues/29
 
-Et que du moment où le moteur est confronté à une erreur de syntax (token inattendu ou invalide), le moteur n'a plus moyen de trouver un chemin valide.
+est que dès le moment où le moteur est confronté à une erreur de syntax (token inattendu ou invalide), il n'a plus moyen de trouver un chemin valide.
 Et que parcourir toutes les possiblités jusqu'à trouver le token qui suit celui qui pose problème est trop long et peut mener à des erreurs d'ambiguités si le token suivant se trouve dans plusieurs règles de la grammaire.
 
 Mais l'on pourrait s'en contenter car finalement, il est logique qu'une erreur puisse entrainer un tel comportement.
 Si dans un langage de programmation un utilisateur saisit du code erroné, il fort possible que la complétion cesse de fonctionner.
-
 
 Cependant comme nous travaillons avec une syntaxe beacoup moins complexe l'on pourrait modifier le texte pour corriger voir supprimer le problème.
 Par exmple, dans le cas d'un mapping de clé valeur, une ligne pourrait être omis sans nuir à la compéhension du document.
@@ -1614,8 +1578,7 @@ C'est ce qui a été fait de la manière suivante :
 Avec ce mécanisme personnalisé on arrive à rendre la completion un peu plus tolérant au erreur mais le problème et que l'on couple la logique du moteur avec l'application et que c'est pas du tout une bonne pratique.
 car si on modifie la grammaire il faudra repércuté les changements dans l'application.
 
-
-
+Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On peut s'aider en parallèle de la coloration syntaxique.
 
 \subsection{Snippets}
 Il est possible d'ajouter des snippets sous VS Code. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
@@ -1633,17 +1596,11 @@ Ce qui n'est pas possible avec le moteur.
 
 %TODO : résultat
 
-
 Il est possible de passer à la case suivante à l'aide de la touche tab. %case..
 Cependant il est nécessaire de proposer ces suggestions au bon moment. La solution envisagé et de vérifier que le token du type possédant ces propriété ce trouve dans les candidats du moteur.
 
 C'est un mécanisme intéressant mais fortement lié à l'application
 %Couplage grammaire - app
-
-\subsection{Types des suggestion}
-abc
-nous
-snippet
 
 \subsection{Séquence de token}
 
@@ -1731,6 +1688,14 @@ L'indexation est gérée de 2 manières différentes. En fonction de la prise en
 
 Cela va dépendre si on décide d'ignorer ou non les espaces dans la grammaire g4.
 Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela permet de gérer plus de cas particuliers.
+
+\subsection{Mécanisme automatique}
+VS Code va automatiquement filtrer les suggestions pendant la saisie à l'aide d'un algorithme de fuzzing search.
+Pour rappel le fuzzy search (ou recherche approximative) permet de trouver une chaine de caractère en fournissant une chaine qui n'a besoin d'avoir une correspondance exacte
+avec le texte que l'on cherche.
+
+Par défaut la complétion proposé par VS Code porte sur les symboles déjà existants dans le code.
+Ce type de complétion est nommé "word based completion" dans VS Code.
 
 \section{Outline view}
 
