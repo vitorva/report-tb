@@ -422,6 +422,9 @@ ANTLR est composé de deux parties principales : l'outil en java qui permet de g
 %The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
 %Typical Workflow
 
+Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
+un mécanisme de machine à état ATN (Augmented Transition Network).
+
 \subsubsection{antlr4ts}
 Nous utiliserons antlr4ts, qui est un environement d'éxécution en typescript et donc parfaitement adapté pour VS Code.
 
@@ -438,6 +441,19 @@ L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citat
 
 C'est un outil populaire est très utilisé.
 
+L'initialisation de base est la suivante :
+
+\begin{lstlisting}[frame=single,caption={antlr-setup},label={antlr-setup}]
+    let inputStream = new ANTLRInputStream("var c = a + b()");
+    let lexer = new ExprLexer(inputStream);
+    let tokenStream = new CommonTokenStream(lexer);
+
+    let parser = new ExprParser(tokenStream);
+    let errorListener = new ErrorListener();
+    parser.addErrorListener(errorListener);
+    let tree = parser.expression();
+\end{lstlisting}
+
 \textbf{Remarque} :
 Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une spécifiation Lark.
 L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
@@ -445,11 +461,14 @@ Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
 
 
 \subsubsection{Gestion des erreurs}
+%citation ?
+ANTLR4 est capable de signaler des erreurs et se rétablir d'erreurs plus grave qui pourrait faire échouer le processus de parsing.
 
-ANTLR a un mécanisme pour signaler des erreurs et s'en rétablir lors du processus de parsing.
 ANTLR défnit l'interface \emph{ANTLRErrorStrategy} pour ce problème.
+
 Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliqué et qui consite à supprimer un token qui poserait problème ou en rajouter un s'il manquerait, avant de
 se resyncroniser à l'ATN et de continuer le parsing.
+
 
 À chaque changement d'état  il lance le processur de syncronisation et applique le \emph{defaultErrorStrategy} si besoin.
 
@@ -457,10 +476,11 @@ Comme mentionné ici \dots
 Le parser va appliquer des règles.
 Cette resyncronisation permet de continuer dans la règle courante.
 
-S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, on va consommer tout les tokens qui suit celui qui a posé problème. Le mécanimse s'arretera quand il réussira à trouver
-un token qui lui permettra de quitter la règle de parser courrant sans la valider mais permettant de continuer le processus de parsing.
+S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, on va consommer tout les tokens qui suit celui qui a posé problème. 
+Le mécanimse s'arretera quand il réussira à trouver un token qui lui permettra de quitter la règle de parser courrante sans la valider mais permettant de continuer le processus de parsing.
+Au pire des cas il s'agira d'un token EOF (retour à la ligne).
 
-C'est donc grâce à ce procédé que l'on obtiendra un parse tree même s'il contient des erreurs.
+C'est grâce à ce mécanisme qui fait que si nous utilisons le DefaultErrorStrategy nous obtiendrons un parse tree dans tous les cas.
 
 Malheursement je n'ai pas pu explorer plus en profonceur le mécanisme complexe de resyncronisation.
 Cela pourrait se revélerr intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
@@ -1196,28 +1216,26 @@ Nous définissons notre grammaire TextMate dans le fichier "uon.tmLanguage.json"
 Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
 
 % TODO : https://macromates.com/manual/en/language_grammars
+
 %Le but de ce fichier en plus de permettre la coloration syntaxique, et qu'il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le caret.
 %Cela permet d'avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
 
 \subsection{Scope}
 Un scope défini le contexte d'un groupe de token et peut-être considéré comme son type.
 
-Il s'agit d'un identifiant.
-
-C'est grâce au scope d'un token, qu'un fichier de thème peut attribuer une couleur avec une mécanisme de "clé-valeur".
-
+Il s'agit d'un identifiant, c'est grâce au scope d'un token, qu'un fichier de thème peut attribuer une couleur avec une mécanisme de "clé-valeur".
 
 TextMate liste une liste de scope commun que de nombreux thèmes ciblent déjà et recommande de les utiliser.
 Ceci dans le but de permettre à notre langage d'être supporté le plus possible.
 %% https://macromates.com/manual/en/language_grammars
 
-
-Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créer (Thème dark par défaut sur VS Code). Et de réutiliser les scopes.
+Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créé (Thème dark par défaut sur VS Code). 
+Et de réutiliser les scopes définis dans ce fichier.
 
 Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
-Mais peut être également généré depuis le contrôle panel(CTRL + SHIFT + P).
+Mais peut être également généré depuis le contrôle panel (CTRL + SHIFT + P).
 
-Avec ce procédé cela nous permet de profiter des thèmes de VS Code.
+Ce procédé nous permet de profiter des thèmes de VS Code implémenté par défaut dans l'éditeur, par exemple les deux suivants :
 
 \begin{figure}[!h]
     \begin{center}
@@ -1235,28 +1253,23 @@ Avec ce procédé cela nous permet de profiter des thèmes de VS Code.
 \end{figure}
 
 \subsubsection{Example}
-Prenons comme exemple un exemple simple, le scope pour les nombres : "constant.numeric.uon"
+Prenons un exemple simple, le scope pour les nombres : "constant.numeric.uon"
 
 On voit qu'il s'agit d'une suite d'identifiant.
 
-La convention est d'avoir des mots clés séparé par un point à chaque pour spécifier un niveau de précision supplémentaire
+La convention est d'avoir des mots clés séparé par un point pour spécifier chaque niveau de précision supplémentaire
 
-Il est aussi possible d'avoir plusieurs scope pour un élément :
+Il est aussi possible d'avoir plusieurs scope pour un élément : "string.uon support.type.property-name.uon"
 
-"string.uon support.type.property-name.uon"
 Les scopes sont séparé par un espace.
 C'est celui le plus à droite qui l'emporte. Cela peut-être utile si l'on souhaite maximiser les chances qu'un thème nous fournisse une coloration.
-
 
 % https://macromates.com/manual/en/scope_selectors
 
 
-%TODO : grâce à cette réflexion on a par défaut plusieurs thèmes (ceux présents dans vscode).
-% comparer 2 thèmes vs codes
-% Donc créer un thème pas forcément bien et contraignant...
-
 Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
-Il est possible d'analyser notre code à l'aide du "Scope Inspector" pour visualiser la hiérarchie des scopes pour un token.
+Il est possible d'analyser notre code à l'aide du "Scope Inspector", qui est un outil disponible dans l'éditeur depuis le control panel,
+pour visualiser la hiérarchie des scopes pour un token.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1273,7 +1286,6 @@ Une des raisons évoquées et que ce mécanisme doit être le plus rapide possib
 
 \subsection{Fonctionnement}
 
-% TODO
 Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le méchanisme général utilisé dans notre fichier "uon.tmLanguage.json" :
 \begin{lstlisting}[frame=single, caption={Textmate grammar},label={Textmate grammar}]
  1  {  scopeName = 'source.untitled';
@@ -1293,61 +1305,33 @@ Voici ci-dessous un exemple relativement simple, mais permettant de comprendre l
 14     );
 15  }
 \end{lstlisting}
-\textbf{"scopeName"} (ligne 1) : Identifiant unique du fichier
+\textbf{"scopeName"} (ligne 1) : Scope racine du fichier
 
 \textbf{"patterns"} (ligne 2) : C'est un tableau contenant les règles actuelles utilisées pour parser le document. Elles sont appliquées dans l'ordre.
 Ces règles peuvent être directement écrites à cet emplacement, mais il est aussi possible de les définir dans le "repository". Puis de les inclure.
 
 \textbf{"repository"} : Un dictionnaire (clé-valeur) de règles.
 
-\textbf{"name"} : Nom du scope
+\textbf{"name"} : Nom d'un scope
 
-Contrairement à la première règle qui ne faisait qu'un match, la deuxième définit un délimiteur de début et de fin.
+On constate deux constructions possibles.
+La première règle applique le scope à un élément qui déclenche le match.
+La deuxième définit un délimiteur de début et de fin .
 
-Les règles se trouvant dans le "patterns" suivant (à la ligne 12) seront appliqué au éléments se trouvant à l'intérieur de ces délimiteurs. On voit qu'il est donc possible d'imbriquer les règles.
-
-Capture : \textbf{TODO} : expliquer fonctionnement capture -> exemple "float 12 C"
-
-Expliquer que c'est bien quand limitation clair genre {} (format json)
-
-mais format yaml + compliqué car sur plusieurs ligne / espaces (donc juste "une ligne")
-+ avoir les scalaires à la racines
-
-arbitraire, essayer de reste cohérenet + concis
-Stratégie nom... à améliorer
+Les règles se trouvant dans le "patterns" suivant (à la ligne 12) seront appliqué au éléments se trouvant à l'intérieur de ces délimiteurs.
+On voit qu'il est donc possible d'imbriquer les règles.
 
 \subsection{uon.tmLanguage}
 
-Parcourons ensemble certains éléments de ce fichier.
+%TODO
 
-Tous d'abord il suit globalement la même strcuture que la grammaire g4.
 
-Les mots-clé concernant les structures ont un scope pour bien les différencier
-Il s'agit ici juste d'un mot clé , ne fais pas parti
+\subsubsection{Propriétés}
 
-les types ont un scope
-Les quoted et unquoted string ont un scope
-J'ai du aussi définir ces règles pour les key pour avoir un scope différent
+La coloration syntaxique doit refléter au mieux cette grammaire. Il y a donc une coloration spécifique pour les propriétés appartenant à un type.
+Cela rend la coloration syntaxique fortement lié à la grammaire mais on se rends compte d'un coup d'oeuil si la propriété et correcte.
 
-J'ai définis une strucutre pour les map seq (délimiteur) schema pas à cause de la syntaxe mais ne pose pas de problème dans ce cas parce que...
-
-Les propriéts sont associé à un type, ce qui fait que leur propriété sont connu de la grammaire et l'on sait si il fait bien parti du type.
-Le point contraignant et que cela couple énormlment la grammaire g4 avec celle-Ci
-
-Je n'ai pas trouvé de consensus sur la manière de procéder. Ce que j'ai vite remarqué et qu'il est préférable de rester cohérent pour ne pas
-trop involontairement l'utilisateur.
-
-%TODO  : Reserved Symbols
-
-%Quand afficher des erreurs
-On affiche le texte en rouge quand un caractère non attendu est écrit.
-% [^\\s,!] donc généralement cette règle se trouve à la fin de toutes les autres.
-% Seul les espaces, virgule et ! peuvent encore être écrit sans "erreur"
-
-\subsection{Propriétés}
-
-La coloration syntaxique doit refléter au mieux cette grammaire. Il y a donc une coloration spécifique les propriétés appartenant à un type.
-Cela rends la coloration syntaxique fortement liée à la grammaire mais on se rends compte d'un coup d'oeuil si la propriété et correcte.
+% TODO : propriétés pas définis
 
 \subsection{Capture}
 
@@ -1360,15 +1344,8 @@ La première et de définir un caractère de départ et un autre de fin. Puis d�
 Mais dans certains cas, il n'y a pas de délimiteur et on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
 a déclenché.
 
-%TODO PHOTO :Typiquement : 12 k
-
 Il s'agit d'un nombre mais l'option "Capture" nous permet d'appliquer un scope au groupe de selection.
 Il n'est pas facile pour des expressions assez complexe de trouver ce nombre mais on peut s'aider du site \href{https://regex101.com/}{suivant}
-
-%\subsection{Adaptation}
-%Une des difficultés observés lors de l'implémentation de la coloration et le couplage à faire avec la grammaire.
-%On a pas envie de copier exactement la grammaire car ce qui nous intéresse ici est la coloration
-%Et l'on a envie parfois d'avoir des comportements spécifiques.
 
 
 \subsection{Semantic Highlight}
@@ -1414,17 +1391,14 @@ Le terme "suggestions" étant relativement vague. C'est ici ou réside la subtil
 
 Il est donc nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
 
-Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment du à leur nature même de ces langages de sérialisation.
-Contrairement à des langages de programmation. Il n'y a pas de mots clés, on ne peut pas définir de nom de fonction, ni de classe. On ne peut également pas définir de variables.
+Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment dû à leur nature même de ces langages de sérialisation.
+Et contrairement à des langages de programmation. Il n'y a pas de mots clés, on ne peut pas définir de nom de fonction, ni de classe.
+On ne peut également pas définir de variables.
 
-% Tout est une valeur avec un type et des propriétés associés. Ces propriétés sont parfois unique.
-
-On a donc rien de base à proposer. À la limite, seul les clé ou valeur précédement saisie peuvent éventuellement être reproposé mais cela est fait automatiquemnt sous VS Code
+On aurait donc rien de base à proposer pour ces deux langages, sans utliser une souce d'infomation externe comme les "JSON-schéma".
+À la limite, seul les clé ou valeur précédement saisie peuvent éventuellement être reproposé mais cela est fait automatiquemnt sous VS Code
 avec le type de complétion nommé "word based completion".
 % https://stackoverflow.com/questions/54827043/how-to-disable-abc-suggestion-on-vs-code
-
-Ce comportement peut-être amélioré en utilisant par exemple "JSON-schéma" qui nous permet de définir des mots clés existants et préciser aussi leur emplacement possible.
-Typiquement on peut étendre du yaml en lui spécifiant un schéma Docker est ainsi rajouter une source d'information externe.
 
 Donc pour commencer, lorsqu'on implémente une telle fonctionnalité, il faut pouvoir répondre à une série de question :
 Quelles sont les suggestions pertinentes à proposer, pourquoi et quand le faire ?
@@ -1444,48 +1418,39 @@ Tout est une valeur avec un type et des propriétés associés.
 
 Les suggestions de baseront donc sur les types et leur propriétés.
 
-
 \subsection{antlr4-c3}
 
 Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 
-Mais en complément nous allons aussi exploiter \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
+Mais en complément nous allons aussi utilisé \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
 Cet outil est écrit en Typescript mais existe aussi en version JAVA et C\#.
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
 Nous utiliserons principalement ces candidats pour les suggestions proposé dans l'éditeur de code.
 
-% citation ?
-%Le moteur ne va pas utiliser le résultat du parse tree pour la complétion. Mais l'exécution du parser est nécessaire pour remplir le token stream sur lequelle s'appuyera le moteur.
-
 % citation https://tomassetti.me/code-completion-with-antlr4-c3/
 % Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats, mais est il est quand même nécessaire de lancer l'exéction du parser (parser.uon()) pour remplir le stream de token (tokenStream).
 
+% citation MEGA TUTO
 Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream.
 Car le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état (ATN) d'antlr disponible dans le parser.
 
-% citation ?
+% citation
 \textbf{Remarque} : Le résultat du parsing n'a pas besoin d'être correcte. Il est possible de travailler avec du code incomplet ou malformé, ce qui est relativement fréquent dans un éditeur.
 
-ANTLR4 est capable de se rétablir des erreurs plus grave qui pourrait faire échouer le processus de parsing.
-Si nous utilisons le DefaultErrorStrategy nous obtiendrons un parse tree dans tous les cas.
-
 Pourquoi un telle moteur ?
-
 Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 
-
-Pour recevoir des candidats il suffit d'exécuter la commande suivantes.
+Pour recevoir des candidats il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup} et de rajouter les lignes suivantes.
 
 \begin{lstlisting}[frame=single]
+    let core = new c3.CodeCompletionCore(parser);
     let candidates = core.collectCandidates(index);
 \end{lstlisting}
 
-% TODO
-L'indice est calculé en se basant sur la taille totale du stream de token et en soustraiant cette valer de 3.
-Pour ne pas tenir compte du dernier token de fin et pour avoir un indice compris entre 0 et ...
+\textbf{Remarque} : L'indice est calculé en se basant sur la taille totale du stream de token. (voir fichier completion.ts)
 
-Nous recevorns alors un objet CandidatesCollection.
+Nous recevorns alors un objet \emph{CandidatesCollection}.
 
 \begin{lstlisting}[frame=single]
     class CandidatesCollection {
@@ -1536,27 +1501,12 @@ Ou bien mêmes les propriétés pour un nouveau type définit dans le schéma.
 
 \textbf{Sorting}
 
-Par défaut VS code implémente un algorithme de fuzzy search...
+Par défaut VS code implémente un algorithme de fuzzy search
 
 Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
 Elle a été conçu par Mike Lischke.
 
 % TODO
-Setup basique :
-
-\begin{lstlisting}[frame=single,caption={antlr-setup},label={antlr-setup}]
-    let inputStream = new ANTLRInputStream("var c = a + b()");
-    let lexer = new ExprLexer(inputStream);
-    let tokenStream = new CommonTokenStream(lexer);
-
-    let parser = new ExprParser(tokenStream);
-    let errorListener = new ErrorListener();
-    parser.addErrorListener(errorListener);
-    let tree = parser.expression();
-
-    let core = new c3.CodeCompletionCore(parser);
-    let candidates = core.collectCandidates(0);
-\end{lstlisting}
 
 %%% TODO Explication
 En ce qui concerne l'API de complétion de antlr-c3, cela ressemble un peu à ceci :
@@ -1583,9 +1533,6 @@ def collect_candidates(
 % previous parse information to do more advanced autocompletion of identifer names etc.
 
 Of course you have to locate the caret token index yourself and you seem to end up which lots of parser rule name aliases in your grammar so they can be filtered out specifically during completion.
-
-Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
-un mécanisme de machine à état ATN (Augmented Transition Network). C'est ce méchanisme qui est en coeur du fonctionnement du moteur.
 
 Dans la configuration la plus simple pour l'utiliser, il suffit de lui donner une instance du parser et une position de caret (notre curseur) pour qu'il renvoie les candidats correspondants.
 Cette position est l'indice du candidat. L'explication pour le trouver se trouve dans la séction \hyperref[candidates]{\textbf{Candidats}}
