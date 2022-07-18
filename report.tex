@@ -1404,8 +1404,6 @@ en se voyant proposer un complément qui pourrait convenir à la chaîne de cara
 
 Le terme "suggestions" étant relativement vague. C'est ici ou réside la subtilité. Cela va dépendre principalement du langage traité.
 
-Il est donc nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
-
 Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment dû à leur nature même de ces langages de sérialisation.
 Et contrairement à des langages de programmation. Il n'y a pas de mots clés, on ne peut pas définir de nom de fonction, ni de classe.
 On ne peut également pas définir de variables.
@@ -1418,6 +1416,8 @@ avec le type de complétion nommé "word based completion".
 Donc pour commencer, lorsqu'on implémente une telle fonctionnalité, il faut pouvoir répondre à une série de question :
 Quelles sont les suggestions pertinentes à proposer, pourquoi et quand le faire ?
 
+Il est donc nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
+
 La syntaxe UON peut être exprimée par la figure \ref{syntax}.
 
 \begin{figure}[!ht]
@@ -1427,9 +1427,9 @@ La syntaxe UON peut être exprimée par la figure \ref{syntax}.
     \caption[syntax]{\label{syntax} UON syntax}
 \end{figure}
 
-On n'y remarque un point extrement intéressant.
+On n'y remarque des points extrêmement intéressant.
 
-Tout est une valeur avec un type et des propriétés associés.
+Toute valeur est un type, et un type peut avoir des propriétés associés.
 
 Les suggestions de baseront donc sur les types et leur propriétés.
 
@@ -1439,10 +1439,13 @@ Comme mentionné au début de ce document, une approche typique pour implémente
 
 Mais en complément nous allons aussi utilisé \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
 
-Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune. Il est disponible comme node module et est écrit en Typescript.
-Elle a été conçu par Mike Lischke.
+Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune.
+Elle est disponible comme node module et est écrit en Typescript.
 
-Cet outil est écrit en Typescript mais existe aussi en version JAVA et C\#.
+Elle a été conçu par \href{https://github.com/mike-lischke}{Mike Lischke}.
+
+Cet outil est écrit en Typescript mais existe aussi en version \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/java}{JAVA} et \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/c%23}{C\#}.
+
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
 Nous utiliserons principalement ces candidats pour les suggestions proposé dans l'éditeur de code.
 
@@ -1463,7 +1466,7 @@ Car connaitre tout les types de tokens qu'un utilisateur serait amené à saisir
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 
 Pour notre scénario, on voudra proposer des suggestion à la position du curseur, ce qui fait le code après celui-ci ne nous intéresse pas (dans le cadre actuelle du langage).
-On utilisera la position du curseur caret. Pour uniquement traiter le code du début de l'éditeur jusqu'à la position du curseur.
+On utilisera la position du curseur (caret). Pour uniquement traiter le code du début de l'éditeur jusqu'à la position du curseur.
 
 Une utilité de prendre en compte ce qui se trouve apès le curseur serait par exemple le cas de code SQL :
 
@@ -1472,8 +1475,6 @@ SELECT | FROM USER // ("|" étant le curseur)
 \end{lstlisting}
 
 Dans ce scénario des suggestions liées à la table USER devrait être proposé et nécessiterait un traitement particulier.
-Pour nous, la seule chose qui doit donc être correcte est la structure du code. C'est-à-dire que l'ordre des éléments attendus est respecté.
-
 
 Pour recevoir des candidats il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup}, d'installer le module npm \emph{antrl4ts} et
 de donner au moteur, une instance du parser et un indice.
@@ -1486,10 +1487,12 @@ de donner au moteur, une instance du parser et un indice.
 L'explication pour trouver cette indice se trouve dans la séction \hyperref[candidates]{\textbf{Candidats}}.
 % \textbf{Remarque} : L'indice est calculé en se basant sur la taille totale du stream de token. (voir fichier completion.ts)
 
-Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct. Comme mentionné plus tard %TODO
+Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
+Comme mentionné plus tard %TODO
+
 Ce qui se trouve à la suite peut être erroné, car on ne n'en tient pas compte, comme mentionner ci-dessus.
 
-Nous recevorns alors un objet \emph{CandidatesCollection}.
+Nous recevrons alors un objet de type \emph{CandidatesCollection}.
 
 \begin{lstlisting}[frame=single]
     class CandidatesCollection {
@@ -1500,20 +1503,18 @@ Nous recevorns alors un objet \emph{CandidatesCollection}.
 
 Cette collection contient deux map.
 
-tokens : fait le lien entre le prochain token possible et une liste de tokens qui le suivent immédiatement, s'ils existent.
+\textbf{tokens} : fait le lien entre le prochain token possible et une liste de tokens qui le suivent immédiatement, s'ils existent.
 
 % TODO
 Nous allons uniquement utiliser les clés de cette map pour proposer nos suggestions.
 Concernant la liste il faut que les éléments qui le suivents soit obligatoire sans possiblité d'être omis.
 Ce qui n'est jamais le cas dans notre grammaire. Nous n'avons jamais deux tokens de lexer qui se suivent.
 
-rules : fait le lien entre la règle du parser actuelle et la liste de règles utilisé pour arriver à ce stade.
-Ce map nous permet de questionner la liste des symboles pour retourner des informations supplémentaires.
+\textbf{rules} : fait le lien entre la règle du parser actuelle et la liste de règles utilisé pour arriver à ce stade.
 
-Pour pouvoir exploiter ce mécanisme il est nécessaire d'implémenter une liste de symbole.
+Cette map nous permet de questionner la liste des symboles pour retourner des informations supplémentaires.
 
 % TODO https://github.com/lark-parser/lark/issues/684
-
 
 %Comment aurions nous du procéder sans un tel outil ?
 %Il évidemment possible de le faire sans ce moteur.
@@ -1525,8 +1526,9 @@ Pour pouvoir exploiter ce mécanisme il est nécessaire d'implémenter une liste
 
 C'est un méchanisme puissant de c3 mais que nous n'allons pas exploiter,
 car je n'ai pas trouvé d'usage dans le cadre du cahier des charges de ce projet et par manque de temps.
+Cependant il reste intéressant de détailler briévement son utilité pour d'éventuelles améliorations.
 
-On pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST.
+On pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST. % TODO AST abbréviation
 Cependant ce n'est pas le cas pour la plupart des scénarios.
 Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent.
 Et c'est ce que la table de symbole tend à résoudre.
@@ -1537,10 +1539,9 @@ Nous n'avons par exemple pas à mémoriser des variables et leur visibilité au 
 
 Mais il est mentionné dans la spécification qu'un schéma pourrait être définit au même niveau que le payload.
 Avec ce scénario en tête, une table de symbole pourrait se revélé utile.
-Car on pourrait imagine proposer de la complétion basé sur les clés (même si vscode le ferait grâce au mécanisme par défaut). % TODO : à  moins d'avoir des schéma linked aussi ?
 
-Garder en mémoire les règles pour une valeur à saisir pour une clé.
-Ou bien mêmes les propriétés pour un nouveau type définit dans le schéma.
+Car on pourrait se servir de ce schéma de validation qui spécifierait un nouveau type pour proposer de la complétion appropriée
+lorsque l'on saisira ce type dans le payload. Typiquement des propriétés.
 
 \subsection{Tokens ignorés}
 Nous pouvons indiquer au moteur les token qui ne nous intéressent pas, pour ne pas les récupérer dans la liste des candidats.
