@@ -464,6 +464,28 @@ Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
 
 % L'idée gérnéral et d'insérer de faux token ou de supprimer les tokens non valides jusqu'à ce qu'il en trouve un qui corresponde à set de tokens connu.
 
+% https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorStrategy.html
+Antlr définit une interace pour définir une startégie concernant les erreurs recontrés durant une analyse syntaxique nommé "ANTLRErrorStrategy".
+On peut distinguer trois types d'erreurs :
+\begin{itemize}
+    \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans le ATN (aucune des alternatives disponibles ne pouvait correspondre).
+    \item L'input actuel ne correspond pas ce que nous attendons.
+    \item Un prédicat évalué comme faux
+\end{itemize}
+
+% TODO
+Nous utiliserons le "DefaultErrorStrategy". Il a la particularité d'ignorer un token invalide pour passer au suivant.
+
+% TODO : expliquer la classe qui nous permet de recevoir des informations en cas d'erreur
+Puis on peut être notifié de ces erreurs en liant notre parser à un listener "notifyErrorListener".
+
+% TODO
+%Proposition de correction à l'aide de antlr qui nous fourni la position dans le document
+%Regarder pourquoi ici on la ligne + colonne et pourquoi on pouvait pas l'avoir dans la outline view
+%On utilise également une fonction et non pas un provider pour afficher les erreurs
+
+
+
 %citation ?
 ANTLR4 est capable de signaler des erreurs et se rétablir d'erreurs plus grave qui pourrait faire échouer le processus de parsing.
 
@@ -1994,7 +2016,9 @@ Même si ANTLR propose des solutions pour se récupérer d'un processus de parsi
 Elle contient des paramètres intéressant à exploiter pour informer l'utilisateur.
 
 Sa définition est la suivante :
-syntaxError?: <T extends TSymbol>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number, charPositionInLine: number, msg: string, e: RecognitionException | undefined) => void;
+\begin{lstlisting}
+    syntaxError?: <T extends TSymbol>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number, charPositionInLine: number, msg: string, e: RecognitionException | undefined) => void;
+\end{lstlisting}
 
 %Upon syntax error, notify any interested parties.
 %This is not how to recover from errors or compute error messages.
@@ -2002,14 +2026,14 @@ syntaxError?: <T extends TSymbol>(recognizer: Recognizer<T, any>, offendingSymbo
 %This listener's job is simply to emit a computed message, though it has enough information to create its own message in many cases.
 
 Comme pour la outline %\ref*{} ,
-Il est possible de récupéer de la position du token. Il suffit de récupérer les valeurs des propriétés \emph{line} et \emph{charPositionInLine}.
+Il est possible de récupér la position du token. Il suffit de récupérer les valeurs des propriétés \emph{line} et \emph{charPositionInLine}.
 Il s'agira ici d'un token qui a posé problème et l'on voudra afficher à son emplacement l'indication visuelle (soulignement ondulé rouge) ainsi que le message d'erreur associé, lorsque l'utilisateur passe
 sa souris dessus.
 
 Le message d'erreur peut-être récupéré à partir de la propriété \emph{msg}. Même s'il est davantage destiné au debuggage.
 Les messages restent relativement simple. Ils indiquent à l'utilisateur quel token pose problème et quels sont les caractères qui pourrait y être subtituer.
 
-Pour afficher ces informations sur l'éditeur, il faut utiliser un objet de type \emph{DiagnosticCollection}.
+Pour afficher ces informations sur l'éditeur, il faut utiliser un objet VS Code de type \emph{DiagnosticCollection}.
 
 Elle peut afficher une liste d'erreur.
 
@@ -2018,6 +2042,16 @@ Et on actualisera à chaque fois l'objet \emph{DiagnosticCollection} avec cette 
 
 Cependant le parser ne pas se rendre compte si ce n'est pas plutôt le token précédent qui pourrait ammener à une erreur.
 Cela ne prends non plus pas en compte ce qu'il vient après et donc remplacer un token par un de ceux proposé peut se revélé contre productif.
+
+\subsection{Suggestion}
+Certains messages d'erreurs nous informes parfois des tokens qui devrait se situer à la place de celui qui a causl l'erreur.
+Une idée serait donc de pouvoir remplacer ce token erronées par ceux suggérés.
+Le problème et que cette information ne se trouve sous forme textuelle.
+Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifiers pour en récuper la liste des tokens....
+
+% TODO surcharger des méthodes pour pouvoir être notifié des tokens manquant
+
+\subsection{Quick fick}
 
 Pour l'instant, juste à titre de découverte sur comment implémenter un quickfix. %todo expliquer
 
@@ -2036,38 +2070,6 @@ Et l'idéal serait de prendre en compe le texte venant après le curseur.
 %On affiche les erreurs trouvé avec antlr -> avantages positions
 %Les erreurs sont liés au placement des tokens (manque un éléments du langages, mauvais token ou leur "ortographe").
 %Message trop technique mais ok pour voir d'ou viens la faute.
-
-% https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorStrategy.html
-Antlr définit une interace pour définir une startégie concernant les erreurs recontrés durant une analyse syntaxique nommé "ANTLRErrorStrategy".
-On peut distinguer trois types d'erreurs :
-\begin{itemize}
-    \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans le ATN (aucune des alternatives disponibles ne pouvait correspondre).
-    \item L'input actuel ne correspond pas ce que nous attendons.
-    \item Un prédicat évalué comme faux
-\end{itemize}
-
-% TODO
-Nous utiliserons le "DefaultErrorStrategy". Il a la particularité d'ignorer un token invalide pour passer au suivant.
-
-% TODO : expliquer la classe qui nous permet de recevoir des informations en cas d'erreur
-Puis on peut être notifié de ces erreurs en liant notre parser à un listener "notifyErrorListener".
-
-% TODO
-%Proposition de correction à l'aide de antlr qui nous fourni la position dans le document
-%Regarder pourquoi ici on la ligne + colonne et pourquoi on pouvait pas l'avoir dans la outline view
-%On utilise également une fonction et non pas un provider pour afficher les erreurs
-
-
-\subsection{Suggestion}
-Certains messages d'erreurs nous informes parfois des tokens qui devrait se situer à la place de celui qui a causl l'erreur.
-Une idée serait donc de pouvoir remplacer ce token erronées par ceux suggérés.
-Le problème et que cette information ne se trouve sous forme textuelle.
-Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifiers pour en récuper la liste des tokens....
-
-% TODO surcharger des méthodes pour pouvoir être notifié des tokens manquant
-
-\subsection{Quick fick}
-% TODO
 
 \section{Fonctionnalités triviales}
 Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
