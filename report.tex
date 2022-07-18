@@ -199,33 +199,25 @@ Il a été choisi car il fait partie des éditeurs les plus populaires. C'est é
 D'autres alternatives existes comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fourni également de quoi implémenter une extension.
 C'est donc un choix personnel.
 
-Comme il est pensé pour être étendu, il fourni et détaille très clairement les étapes pour la création d'une extension, son déployement continue ainsi que le support de langage en lui-même.
+Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit.
 
-Le code source de VS Code de Microsoft est open source (sous licence MIT) mais... % TODO
-
-Il a été écrit en Typscript et Javascript.
-
-Une extension peut être écrite en Typescript ou en Javascript.
-Nous choisirons le Typescript car VS Code recommande ce langage.
-
-Mais certaines composantes externes (langage server) peuvent être écrit dans n'importe quel langage. Tant qu'elle fournisse l'API adéquate pour communiquer.
-
-Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit qui est pensé pour être extensible (de L'UI à l'expérience utilisateur).
-Presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
-
-Un éditeur de code est décris selon wikipédia comme un logiciel destiné à la création et l'édition de fichiers textes.
-Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debuggage de programme plus complexe.
-
-Nous manipulerons des fichiers statiques par la nature même de UON qui est un langage de sérialisation.
-
-L'Extension API nous permet donc de gérér un certain nombre de choses.
+Il est pensé pour être extensible (de L'UI à l'expérience utilisateur), presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
 On se focalisera sur le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
 
-VS Code fournit des documentations détaillées sur plein de sujets, des guides, ainsi que des exemples de codes.
+VS Code fournit des documentations détaillées sur plein de sujets :  étapes pour la création d'une extension, son déployement continue ainsi que le support de langage en lui-même.
+Il est aussi possible facilement de trouver des guides, ainsi que des exemples de codes.
 Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cette éditeur.
 % TODO : code sample https://github.com/microsoft/VS Code-extension-samples
+La communauté est aussi très active (stack overlow, gitter, issue github, etc.).
 
-La communauté est aussi très active.
+Le code source de VS Code de Microsoft est open source (sous licence MIT permissive).
+Il a été écrit en Typscript et Javascript. Une extension peut être également écrite dans ces deux langages.
+Nous choisirons le Typescript car VS Code recommande ce langage. Mais certaines composantes externes (langage server) peuvent être écrit dans n'importe quel langage. Tant qu'elle fournisse l'API adéquate pour communiquer.
+
+% est décris selon wikipédia
+Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes.
+Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debuggage de programme plus complexe.
+Nous manipulerons des fichiers statiques par la nature même de UON qui est un langage de sérialisation.
 
 \subsection{Extension Anatomy}
 Il y a tois concepts cruciaux à comprendre pour réaliser une extension.
@@ -753,20 +745,20 @@ Un schéma est un document qui décrit la spécification d'un nouveau type.
     \dots
 \end{lstlisting}
 
+\subsection{Valeurs}
 
-\subsection{Types}
+\subsubsection{Types}
 Les terminaux peuvent être des string, des booleans ou des nombres.
 
-
-\subsection{Propriétés}
-Les clés des mapping ainsi que les types peuvent avoir des propriétés
-Il s'agit de propriétés de présentation pour les collections et de validation pour le schéma.
-Certaine propriétés sont unique par type.
-
+\subsubsection{Propriétés}
+Les clés des mapping des propriétés peut posséder des propriétés de présentation.
+Les types dans un schéma de validation peut posséder des propriétés de valdation.
 
 \section{Modification}
 
 %Les valeur des clé-valeurs peuvent être null mnt
+%les types peuvent avoir des propriétés dans le payload
+%quelques unités ont été rajouté
 
 % TODO
 Uon est un langage comprenant plusieurs composantes est particulatités qui ne peuvent pas tous être traiter dans un simple éditeur de texte. (ex : cohercien)
@@ -881,8 +873,7 @@ NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
 Le carcatère "-" étant utilisé pour définir un séquence en format yaml.
 Il a fallu forcer le caractère directement dans l'expression régulière définissant un nombre.
 
-
-\textbf{Remarque : } Mais cette solution n'est pas optimale car si on modifie la grammaire il faudra modifier ce code.
+\textbf{Remarque} : cette solution n'est pas optimale car si on modifie la grammaire il faudra modifier ce code.
 
 \subsection{String}
 
