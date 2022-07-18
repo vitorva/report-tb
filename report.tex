@@ -1968,6 +1968,11 @@ Même si son implémentation est relativement simple, il n'en reste pas moins un
 Le code est déjà réutilisé pour fournir la documentation des types lors des suggestions de complétions  % \ref{}
 
 \section{Lint}
+%On affiche les erreurs trouvé avec antlr -> avantages positions
+%Les erreurs sont liés au placement des tokens (manque un éléments du langages, mauvais token ou leur "ortographe").
+%Message trop technique mais ok pour voir d'ou viens la faute.
+
+
 Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et les problèmes de syntaxe.
 
 Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
@@ -2025,23 +2030,14 @@ Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifiers po
 
 \subsection{Quick fick}
 
-Pour l'instant, juste à titre de découverte sur comment implémenter un quickfix. %todo expliquer
+Actuellement il y a un seul quick fix qui a été implémenter et cela à titre de découverte.
 
-Il y a un quickfix pour supprimer le token qui pose problème en se basant sur les ranges fourni lors de la création d'un objet Diagnostic dans le listener %TODO
+Ce quickfix permet de supprimer le token qui pose problème en se basant sur les ranges fourni lors de la création d'un objet Diagnostic depuis le listener.
 
 A l'heure actuelle , il n'y a pas encore de suggestions à proprement parlé.
 
 L'idée serait de pouvoir remplacer le token par un ou plusieurs qui aurait du sens.
 Et l'idéal serait de prendre en compe le texte venant après le curseur.
-
-
-%problème je n'arrive pas à afficher plusieurs erreurs
-% avant un message en rouge dans la outline mais plus mnt :(
-
-
-%On affiche les erreurs trouvé avec antlr -> avantages positions
-%Les erreurs sont liés au placement des tokens (manque un éléments du langages, mauvais token ou leur "ortographe").
-%Message trop technique mais ok pour voir d'ou viens la faute.
 
 \section{Fonctionnalités triviales}
 Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
