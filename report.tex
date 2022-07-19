@@ -748,8 +748,8 @@ Un schéma est un document qui décrit la spécification d'un nouveau type.
 Les terminaux peuvent être des string, des booleans ou des nombres.
 
 \subsubsection{Propriétés}
-Les clés des mapping des propriétés peut posséder des propriétés de présentation.
-Les types dans un schéma de validation peut posséder des propriétés de valdation.
+Les clés des mapping des propriétés peuvent posséder des propriétés de présentation.
+Les types dans un schéma de validation peuvent posséder des propriétés de validation.
 
 \section{Modification}
 
@@ -758,23 +758,23 @@ Les types dans un schéma de validation peut posséder des propriétés de valda
 %quelques unités ont été rajouté
 
 % TODO
-Uon est un langage comprenant plusieurs composantes est particulatités qui ne peuvent pas tous être traiter dans un simple éditeur de texte. (ex : cohercien)
+Uon est un langage comprenant plusieurs composantes est particularités qui ne peuvent pas toutes être traité dans un simple éditeur de texte. (ex : cohercien)
 %
 
-Nous allons garder presque la même structure car cette grammaire regroupe déjà des éléments importants du langage UON.
-Cependant quelques points concernant la strucutre général ont été modifiés.
+Nous allons garder presque la même structure, car cette grammaire regroupe déjà des éléments importants du langage UON.
+Cependant quelques points concernant la structure générale ont été modifiés.
 
-Pour commencer il a fallu convertir la grammaire dans à la main car aucun convertisseur existe. Heursement ANTLR et Lark se base sur une notation EBNF.
-Ce qui fait que la strucure reste relativement semblable.
+Pour commencer il a fallu convertir la grammaire dans à la main car aucun convertisseur n’existe. Heursement ANTLR et Lark se basent sur une notation EBNF.
+Ce qui fait que la structure de la grammaire reste relativement semblable.
 
-Le seul point de divergence, à été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci varie légèrement. Et sur la gestion de l'indentation expliqué % ici todo
+Le seul point de divergence a été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci varie légèrement. Et sur la gestion de l'indentation expliquée % ici todo
 
 Concernant la structure d'un fichier de grammaire ANTLR .g4 il y a quelques subtilités à connaitre :
 
 Le fichier doit comporter le même nom que la règle de départ. %UON.g4 -> uon
 
-Les règles de lexer définisse comment une chaine de texte doit être tokenifier. Elle doivent être écrit en majuscule !
-Les règles de parser définisse comment une suite de token sera intérpréter. Elle doivent être écrit en miniscule !
+Les règles de lexer définissent comment une chaine de texte doit être tokenifier. Elles doivent être écrites en majuscule !
+Les règles de parser définissent comment une suite de tokens sera intérprétée. Elles doivent être écrites en miniscule !
 
 % \textbf{Attention} : Utiliser des majuscules pour une règle, correspond à définir un "Lexer rule" et utiliser des minuscules à un  "Parser rule".
 
@@ -796,10 +796,10 @@ La grammaire permettait deux notations différentes pour les collections : une p
 %La spécification indique bien que UON doit être compatible avec yaml 1.2 sans toutefois mention explicitement tous les points
 % TODO
 
-% Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cette aspect cette phase réalisé.
+% Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cet aspect cette phase réalisé.
 Il a été décidé au milieu du projet, de se focaliser d'abord sur le format proche de JSON, et de revenir sur cet aspect si le temps le permet.
 Car la notation en YAML pose quelques difficultés. % posait
-En JSON les retours à la lignes et indentations ne sont pas nécessaire à la compréhension du langage, contrairement à YAML.
+En JSON les retours à la ligne et indentations ne sont pas nécessaires à la compréhension du langage, contrairement à YAML.
 Nous expliquons dans le chapitre suivant il faudrait faire pour cohabiter ces deux formats avec ANTLR. % nous avons fait
 
 \subsubsection{L'indentation}
@@ -808,41 +808,41 @@ Nous expliquons dans le chapitre suivant il faudrait faire pour cohabiter ces de
 % TODO : stratégie switch
 % TODO : changement minus
 
-Contrairement au parser lark, la gestion des indentations n'est pas géré automatiquement à l'aide d'une librairie externe.
-Ce méchanisme doit malheurseuement être traité par nos soins.
+Contrairement au parser lark, la gestion des indentations n'est pas gérée automatiquement à l'aide d'une librairie externe.
+Ce mécanisme doit malheureusement être traité par nos soins.
 
-La grande modularité d'ANTLR est un avantage mais peu se revéler très contraignant pour ce genres de tâches.
+La grande modularité d'ANTLR est un avantage, mais peut se révéler très contraignante pour ce genre de tâches.
 
 Mais avant de résoudre ce problème, il est nécessaire de rappeler que notre grammaire n'est pas uniforme concernant la gestion des retours à la ligne. 
 
-Et c'est là où se trouve la vrai probématique.
+Et c'est là où se trouve la vraie problématique.
 
-En effet, UON peut-être écrit sous une forme proche de JSON ou de YAML. Le premier ne tient pas compte des indentations contrairement à la seconde.
+En effet, UON peut être écrit sous une forme proche de JSON ou de YAML. Le premier ne tient pas compte des indentations contrairement à la seconde.
 
-Et la gestion des indentations nécessite de prendre en compte les retour à la ligne. % TODO newline regex
+Et la gestion des indentations nécessite de prendre en compte les retours à la ligne. % TODO newline regex
 
 Il y a donc trois solutions qui ont été envisagées.
 
-La première est de rajouter des token de retour ou il serait jugé bon de les avoir, et de les rendres optionnel.
+La première est de rajouter des tokens de retour ou il serait jugé bon de les avoir dans la grammaire, et de les rendres optionnels.
 Mais ce n'est pas très propre et on risque d'en placer énormément.
 
-Le deuxième serait d'ignorer tout simplement les erreurs. C'est à dire que si on à un token de retour à la ligne qui ne devrait pas être là, alors l'ignorer tout simplement.
-On pourrait penser ce mécanisme simple se révelerait efficace. Cependant je n'ai malheurseuement pas réussi à faire que le moteur de complétion c3
+Le deuxième serait d'ignorer tout simplement les erreurs.  C'est-à-dire que si on à un token de retour à la ligne qui ne devrait pas être là, alors l'ignorer tout simplement.
+On pourrait penser ce mécanisme simple se révélerait efficace. Cependant je n'ai malheureusement pas réussi à faire que le moteur de complétion c3
 puisse ignorer ces erreurs.
 
-La troisième solution trouvée et celle actuellement utilisée. Elle consite à prendre en compte uniquement les retours à la ligne si le lexer à détecter les tokens initiaux
+La troisième solution trouvée et celle actuellement utilisée. Elle consiste à prendre en compte uniquement les retours à la ligne si le lexer à détecter les tokens initiaux
 nous permettant de savoir nous avons à faire à une construction proche du JSON ou du YAML et donc savoir si les retours à la ligne doivent être pris en compte ou non.
 
 Par exemple, tester si le premier token est un token de type MINUS ("-"). Si c'est le cas, on peut déduire qu'il s'agira d'une séquence en format YAML.
 
-Dès lors que les retours à la ligne existe, nous pouvons maintenant placer les tokens INDENT et DEDENT depuis le lexer
+Dès lors que les retours à la ligne existent, nous pouvons maintenant placer les tokens INDENT et DEDENT depuis le lexer
 pour pouvoir gérer les imbrications correctement.
 
-Pour ce faire, à chaque fois qu'un espace qu'un retour à la ligne est detécté par le lexer, nous prenons compte de la taille de l'espacemment qu'il contient ("\\r\\n    ")
+Pour ce faire, à chaque fois qu'un espace qu'un retour à la ligne est détecté par le lexer, nous prenons compte de la taille de l'espacement qu'il contient ("\\r\\n    ")
 Cet espacement nous permettra de savoir si l'on doit rajouter des INDENT ou DEDENT.
 
-Le code permettant ce mécanisme peut être placé dans le fichier grammaire, en le placant dans le block \emph{lexer:@member{}}.
-Lors de la génération le code est placé dans le lexer.
+Le code permettant ce mécanisme peut être placé dans le fichier grammaire, en le plaçant dans le block \emph{lexer:@member{}}.
+Lors de la génération, le code est placé dans le lexer.
 
 Cependant lors de la génération les imports seront manquants, il est nécessaire d'aller les rajouter manuellement.
 
@@ -867,10 +867,10 @@ NUMBER:
 NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
 \end{lstlisting}
 
-Le carcatère "-" étant utilisé pour définir un séquence en format yaml.
+Le caractère "-" étant utilisé pour définir une séquence en format yaml.
 Il a fallu forcer le caractère directement dans l'expression régulière définissant un nombre.
 
-\textbf{Remarque} : cette solution n'est pas optimale car si on modifie la grammaire il faudra modifier ce code.
+\textbf{Remarque} : cette solution n'est pas optimale, car si on modifie la grammaire il faudra modifier ce code.
 
 \subsection{String}
 
@@ -881,16 +881,16 @@ Il a fallu forcer le caractère directement dans l'expression régulière défin
 	| UNQUOTED_STRING;
 \end{lstlisting}
 
-Une valeur textuelle peut soit être entre guillement ou non.
+Une valeur textuelle peut soit être entre guillemets ou non.
 
 C'est donc aussi le cas pour la clé d'une map.
 
 Cela se rapproche par exemple, un peu plus de ce que fait JSON5 par exemple. % TODO lien
 Aussi cela permet d'avoir des clés qui peuvent contenir exactement ce que l'on veut.
-Car encapsuler entre des caractères spécifiques, il n'y pas d'ambiguités possible. Alors que sans on est contraint de limiter la forme de la clé.
+Car encapsuler entre des caractères spécifiques, il n'y a pas d'ambiguïtés possibles. Alors que sans on est contraint de limiter la forme de la clé.
 
-Par contre un cas spécial a du être traiter. Si l'on veut pouvoir utiliser directement un mot sans guillemet mais qu'il existe dans la grammaire.
-Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" pour pouvoir utiliser un de ces token comme string.
+Par contre un cas spécial a dû être traité. Si l'on veut pouvoir utiliser directement un mot sans guillemet, mais qu'il existe dans la grammaire.
+Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" pour pouvoir utiliser un de ces tokens comme string.
 
 \begin{lstlisting}[frame=single]
     {
@@ -905,8 +905,8 @@ Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" 
     \caption[literal-key-uon]{\label{literal-key-uon}literal-key-uon}
 \end{figure}
 
-Sur le schéma \ref*{literal-key-uon} On voit que la clé et bien un token de type literal.
-Ce token temperature exite comme token car c'est une valeur utilisé comme quantité mais si on ne précise pas explicitement que l'on souhaite avoir cette valeur
+Sur le schéma \ref*{literal-key-uon} On voit que la clé et bien un token de type \emph{literal}.
+Ce token \emph{temperature} existe comme token car c'est une valeur utilisée comme quantité, mais si on ne précise pas explicitement que l'on souhaite avoir cette valeur
 comme possible  clé alors on aura une erreur si on ne le précise pas \dots % TODO
 
 \subsubsection{Unquoted}
