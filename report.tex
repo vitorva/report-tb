@@ -1634,15 +1634,15 @@ Ce qui n'est pas possible avec le moteur.
 %TODO : résultat
 
 Il est possible de passer à la case suivante à l'aide de la touche tab. %case..
-Cependant il est nécessaire de proposer ces suggestions au bon moment. La solution envisagé et de vérifier que le token du type possédant
-ces propriété ce trouve dans les candidats du moteur et qu'il ne s'agit pas de schéma % TODO
+Cependant il est nécessaire de proposer ces suggestions au bon moment. La solution envisagée et de vérifier que le token du type possédant
+ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas de schéma % TODO
 
-C'est un mécanisme intéressant mais fortement lié à l'application
+C'est un mécanisme intéressant, mais fortement lié à l'application
 
 
 \subsection{Triggers}
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
-On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été défini comme triggers, car cela semble assez naturel dans ce langage.
+On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
 Cependant il ne s'agit que d'une appréciation personnelle.
 
 %TODO :
@@ -1660,22 +1660,22 @@ avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre 
 
 Il est nécessaire d'implémenter une fonction pour trouver l'indice du prochain candidat.
 
-Actuellement ce qu'on veut c'est le prochain token possible après donc il s'agira
+Actuellement ce qu'on veut c'est le prochain token possible après donc il s'agira % TODO
 
-La documenation du projet indique bien que ce n'est pas un problème trivial à résoudre.
+La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
 Un point important est de savoir si l'on tient compte ou non des espaces vides dans la grammaire.
 
-Sans les espaces, il est difficle de gérer certains cas particuliers % TODO montrer des exemples
+Sans les espaces, il est difficile de gérer certains cas particuliers % TODO montrer des exemples
 
 Actuellement pour connaitre l'indice du ou des prochains candidats, on récupère le flux des tokens (tokenStream) trouvé lors du parsing.
 Puis, on récupère dans un tableau chaque token individuellement (y compris les espaces).
 
-Cependant lorsque l'utilisateur écrit et que cela trigger l'autocomplétion, le texte parsé est souvent incorect, car le dernier élément saisi n'est pas encore complet.
+Cependant lorsque l'utilisateur écrit et que cela trigger l'autocomplétion, le texte parsé est souvent incorrect, car le dernier élément saisi n'est pas encore complet.
 
-Grâce à la taille du tableau et en se basant sur les erreurs qui ont été générées, on peut déduire l'indice du ou des prochains tokens que l'on peut afficher.
+Grâce à la taille du tableau et en se basant sur les erreurs qui ont été générées, on peut déduire l'indice d'un ou des prochains tokens que l'on peut afficher.
 
 \subsubsection{Index du candidat}
-L'indexation est gérée de 2 manières différentes. En fonction de la prise en compte de l'espace ou non.
+L'indexation est gérée de deux manières différentes. En fonction de la prise en compte de l'espace ou non.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1692,7 +1692,7 @@ VS Code va automatiquement filtrer les suggestions pendant la saisie à l'aide d
 Pour rappel le fuzzy search (ou recherche approximative) permet de trouver une chaine de caractère en fournissant une chaine qui n'a besoin d'avoir une correspondance exacte
 avec le texte que l'on cherche.
 
-Par défaut la complétion proposé par VS Code porte sur les symboles déjà existants dans le code.
+Par défaut la complétion proposée par VS Code porte sur les symboles déjà existants dans le code.
 Ce type de complétion est nommé "word based completion" dans VS Code.
 
 \section{Outline view}
