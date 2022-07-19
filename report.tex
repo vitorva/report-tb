@@ -386,10 +386,10 @@ ANTLR (ANother Tool for Language Recognition) est un générateur de parser, il 
 
 Il a été créé par Terence Parr à l'Université de San Francisco.
 
-Il est très utilisé, autant dans le monde académique que profesionnel.
+Il est très utilisé, autant dans le monde académique que professionnel.
 
 L'algorithme de parsing utilisé dans sa version la plus récente est le "Adaptive LL(*)" qui est décrit comme amélioration de l'algorithme
-"LL(*)" utilisé dans ssa version précédente.
+"LL(*)" utilisé dans sa version précédente.
 
 % https://en.wikipedia.org/wiki/LL_parser
 % https://www.antlr.org/papers/allstar-techreport.pdf
@@ -402,12 +402,12 @@ La grammaire est décrite en utilisant la notation EBNF (Extended Backus–Naur 
 
 Il n'y a seulement qu'un seul outil qui permet de générer le code des lexer et parsers pour tous les langages cibles, et il est écrit en Java.
 
-Pour pouvoir utiliser cet outil dans un environnement autre que java, il est nécessaire de l'utiliser dans un runtime (environnement d'éxécution) propre au langage shouhaité.
+Pour pouvoir utiliser cet outil dans un environnement autre que Java, il est nécessaire de l'utiliser dans un runtime (environnement d'exécution) propre au langage souhaité.
 %TODO : citer target.md de antlr et repo antlr4ts + mega thread
 
-Lorsque que la grammaire a été défini, on peut demander à antlr de générer des parsers dans différents langages.
+Lorsque la grammaire a été définie, on peut demander à ANTLR de générer des parsers dans différents langages.
 
-ANTLR est composé de deux parties principales : l'outil en java qui permet de générer le lexer et le parseur, aisni que l'environnement d'éxecution (runtime) qui permet leur exécution
+ANTLR est composé de deux parties principales : l'outil en java qui permet de générer le lexer et le parseur, ainsi que l'environnement d'exécution (runtime) qui permet leur exécution
 
 %The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
 %Typical Workflow
@@ -416,7 +416,7 @@ Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne ver
 un mécanisme de machine à état ATN (Augmented Transition Network).
 
 \subsubsection{antlr4ts}
-Nous utiliserons antlr4ts, qui est un environement d'éxécution en typescript et donc parfaitement adapté pour VS Code.
+Nous utiliserons antlr4ts, qui est un environnement d'exécution en typescript et donc parfaitement adapté pour VS Code.
 
 Il a été conçu par Sam Harwell indépendamment de l'organisation ANTLR.
 L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citation
@@ -445,8 +445,8 @@ L'initialisation de base est la suivante :
 \end{lstlisting}
 
 \textbf{Remarque} :
-Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une spécifiation Lark.
-L'implémentation de son parser n'a pas été privilégié car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
+Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une grammaire Lark.
+L'implémentation de son parser n'a pas été privilégiée, car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
 Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
 
 
@@ -455,7 +455,7 @@ Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
 % L'idée gérnéral et d'insérer de faux token ou de supprimer les tokens non valides jusqu'à ce qu'il en trouve un qui corresponde à set de tokens connu.
 
 % https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorStrategy.html
-Antlr définit une interace pour définir une startégie concernant les erreurs recontrés durant une analyse syntaxique nommé "ANTLRErrorStrategy".
+Antlr définit une interface pour définir une stratégie concernant les erreurs rencontrées durant une analyse syntaxique nommée "ANTLRErrorStrategy".
 On peut distinguer trois types d'erreurs :
 \begin{itemize}
     \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans le ATN (aucune des alternatives disponibles ne pouvait correspondre).
@@ -477,28 +477,27 @@ Puis on peut être notifié de ces erreurs en liant notre parser à un listener 
 
 
 %citation ?
-ANTLR4 est capable de signaler des erreurs et se rétablir d'erreurs plus grave qui pourrait faire échouer le processus de parsing.
+ANTLR4 est capable de signaler des erreurs et se rétablir d'erreurs plus graves qui pourraient faire échouer le processus de parsing.
 
-ANTLR défnit l'interface \emph{ANTLRErrorStrategy} pour ce problème.
+ANTLR définit l'interface \emph{ANTLRErrorStrategy} pour ce problème.
 
-Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliqué et qui consite à supprimer un token qui poserait problème ou en rajouter un s'il manquerait, avant de
-se resyncroniser à l'ATN et de continuer le parsing.
+Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliquée et qui consiste à supprimer un token qui poserait problème ou en rajouter un s'il manquerait, avant de
+se resynchronisation à l'ATN et de continuer le parsing.
 
-
-À chaque changement d'état  il lance le processur de syncronisation et applique le \emph{defaultErrorStrategy} si besoin.
+ue changement d'état  il lance le processus de synchronisation et applique le \emph{defaultErrorStrategy} si besoin.
 
 Comme mentionné ici \dots
 Le parser va appliquer des règles.
-Cette resyncronisation permet de continuer dans la règle courante.
+Cette resynchronisation permet de continuer dans la règle courante.
 
 S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, on va consommer tout les tokens qui suit celui qui a posé problème. 
-Le mécanimse s'arretera quand il réussira à trouver un token qui lui permettra de quitter la règle de parser courrante sans la valider mais permettant de continuer le processus de parsing.
+Le mécanisme s'arrêtera quand il réussira à trouver un token qui lui permettra de quitter la règle de parser courante sans la valider, mais permettant de continuer le processus de parsing.
 Au pire des cas il s'agira d'un token EOF (retour à la ligne).
 
 C'est grâce à ce mécanisme qui fait que si nous utilisons le DefaultErrorStrategy nous obtiendrons un parse tree dans tous les cas.
 
-Malheursement je n'ai pas pu explorer plus en profonceur le mécanisme complexe de resyncronisation.
-Cela pourrait se revélerr intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
+Malheursement, je n'ai pas pu explorer plus en profondeur le mécanisme complexe de resynchronisation.
+Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
 
 %avec
 %tree.toStringTree (uon (root_value (json_collection (json_map !map { (json_pair (pair_key (string (literal name)) (presentation_properties ( oups (presentation_property (description description : (string firstname))) ))) : (json_value (scalar (string_scalar (string paul))))) }))))
@@ -529,9 +528,9 @@ Cela pourrait se revélerr intéressant pour tolérer plus d'erreurs au lieu d'u
 
 \subsubsection{ATN}
 
-Comme mentionné il s'agit de machine à état \dots
+Il s'agit d'une machine à état \dots
 
-Ci-dessous Un ATN d'une séquence :
+Ci-dessous est illustré l'ATN d'une séquence en UON :
 
 \begin{figure}[!ht]
     \begin{center}
@@ -551,12 +550,12 @@ Nous allons voir ci-dessous un aperçu général de ce langage.
 
 \subsection{Format de sérialisation}
 
-Lorsqu'on sérialise des données, elles se retouvent soit sous forme binaire ou soit textuelle.
-Ce projet se focalisera naturellement uniquement sur le format textuelle car c'est le seul format, humainement interprétable, que l'on manipulera dans un éditeur.
-Le rôle d'un format de sérialisation et de pouvoir représenter des données sous une autre forme pour être ensuite manipuler.
+Lorsqu'on sérialise des données, elles se retrouvent soit sous forme binaire ou soit textuelle.
+Ce projet se focalisera naturellement uniquement sur le format textuel, car c'est le seul format, humainement interprétable, que l'on manipulera dans un éditeur.
+Le rôle d'un format de sérialisation et de pouvoir représenter des données sous une autre forme pour être ensuite manipulé.
 
 Un éditeur ne manipulant qu'un fichier statique, les étapes de sérialisation et désérialisation ne se feront pas à notre niveau.
-Pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un environement de programmation (ex : Python).
+Pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un environnement de programmation (ex : Python).
 
 % TODO : Sérialisation
 % TODO : Desérialisation
@@ -569,7 +568,7 @@ Pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un enviro
 \subsection{Pourquoi ?}
 Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l'IoT (Internet of Things).
 Ces communications nécessitent souvent de communiquer entre de petits appareils dont la puissance de calcul est très limitée.
-La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adapté aux échanges à faible puissance est très appréciable.
+La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adaptée aux échanges à faible puissance est très appréciable.
 Parce que % TODO
 
 \subsection{Communication}
@@ -609,16 +608,16 @@ Il peut être décomposé au travers de 4 niveaux de complexités :
 Chaque élément est composé d'un type. Et chacun de ces types peut avoir des propriétés.
 3 types de propriétés existent :
 \begin{itemize}
-    \item \textbf{Presentation properties} : Elles influencent la présentation d'une valeur.
-    \item \textbf{Validation propeties} : Elles sont utilisés pour valider, contraindre et décrire un fichier UON.
-    \item \textbf{Application properties} : Elles ne peuvent être lues que depuis UON en utilisant le type !prop. Elles sont accessibles depuis l'application (Python, JavaScript, ...). Elles sont utilisées pour générer un fichier sérialisé (binaire, ou UON), mais elles ne sont jamais explicitement transmises.
+    \item \textbf{Presentation properties} : elles influencent la présentation d'une valeur.
+    \item \textbf{Validation propeties} : elles sont utilisées pour valider, contraindre et décrire un fichier UON.
+    \item \textbf{Application properties} : elles ne peuvent être lues que depuis UON en utilisant le type !prop. Elles sont accessibles depuis l'application (Python, JavaScript, etc.). Elles sont utilisées pour générer un fichier sérialisé (binaire, ou UON), mais elles ne sont jamais explicitement transmises.
 \end{itemize}
 
 \subsection{Validation}
 Dans de telles communications, la validation des données transmises entre des machines dont la puissance de calcul est très limitée est un atout majeur.
 Une des propriétés uniques de UON est l'usage de schéma directement intégré dans le langage.
 
-% TODO : Lister les différents forme de shcéma de validation
+% TODO : Lister les différentes formes de schéma de validation
 
 \subsection{Liens}
 Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
@@ -649,13 +648,13 @@ Et le dépôt du projet se trouve \href{https://github.com/uon-language/specific
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
 Il est donc important de préciser sur quels éléments du langage nous nous focaliserons.
 
-Une spécifiation d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujet à intérprétation.
+Une spécification d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujetx à interprétation.
 C'est un langage complexe et qui pourrait encore, être ammener à évoluer. Les propositions et les suggestions sont les bienvenues.
 
-Heurseuement pour nous, une grammaire concrète avait déjà été écrit en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON".
+Heurseuement pour nous, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON".
 Son travail se trouve sur \href{https://github.com/uon-language/uon-parser}{ici}
 
-Nous nous appuyeront sur cette grammaire que nous convertirons en format ANTLR et ferons les modifications jugés nécessaire.
+Nous nous appuierons sur cette grammaire que nous convertirons en format ANTLR et ferons les modifications jugées nécessaires.
 
 Les fonctionnalités se baseront sur celle-ci. Ceci dans le but de rester cohérents entre elles.
 Nous ferons attention à son extensibilité et expliquerons les choix d'implémentations.
@@ -665,7 +664,7 @@ Cette grammaire se trouve décrite dans le fichier UON.g4 du projet.
 
 \section{Résumé}
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
-Nous utiliserons la grammaire qui a été adapté dans le format d'ANTLR pour illustrer nos exemples.
+Nous utiliserons la grammaire qui a été adaptée dans le format d'ANTLR pour illustrer nos exemples.
 
 % TODO EBNF ICI ? Type 2 de grammaire ?
 
