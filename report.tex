@@ -685,11 +685,11 @@ Un fichier UON peut contenir trois structures différentes.
 \subsubsection{Collections}
 La grammaire actuelle nous permet de définir des collections. Ces collections sont des mapping et séquences soit dans un format proche de json ou de yaml.
 
-UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à certain niveau, mon précesseur avait jugé utile d'incorporer ce format
-dans le langage. Cette strucure a été repris mais expliquons à la section ? %TODO
-les modifications nécessaire qui ont été apporté.
+UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à certain degré, mon prédécesseur avait jugé utile d'incorporer ce format
+dans le langage. Cette structure a été reprise, mais expliquons à la section ? %TODO
+les modifications nécessaires qui ont été apportées.
 
-\textbf{Remarque :}Par simplicité nous dirons qu'il s'agit du format "json" ou "yaml" lorsqu'on les mentionnera.
+\textbf{Remarque} : par simplicité nous dirons qu'il s'agit du format "json" ou "yaml" lorsqu'on les mentionnera.
 
 Ces collections peuvent être imbriqué par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
@@ -733,9 +733,9 @@ ok2 : -23
 
 \subsubsection{Schéma}
 % TODO : schéma de validation externe \ref{}
-On peut défnir également un schéma de validation. Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
+On peut définir également un schéma de validation. Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
 
-Cette séparation permet d'éviter des ambiguités. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
+Cette séparation permet d'éviter des ambiguïtés. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
 Un schéma est un document qui décrit la spécification d'un nouveau type.
 
 \begin{lstlisting}[frame=single,caption={yaml-seq},label={yaml-seq}]
