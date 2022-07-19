@@ -193,8 +193,8 @@ Le flow d'exécution standard est représenté par la figure \ref{interpreter-fl
 % est-ce qu'une extension peut être complètement indépendante de la base de code ?
 % Pour le rapport final j'attends plus de détails
 
-Il a été choisi car il fait partie des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déja familier de son environement.
-D'autres alternatives existes comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fourni également de quoi implémenter une extension.
+Il a été choisi, car il fait partie des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déjà familier de son environnement.
+D'autres alternatives existent comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fournit également de quoi implémenter une extension.
 C'est donc un choix personnel.
 
 Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit.
@@ -202,15 +202,15 @@ Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open s
 Il est pensé pour être extensible (de L'UI à l'expérience utilisateur), presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
 On se focalisera sur le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
 
-VS Code fournit des documentations détaillées sur plein de sujets :  étapes pour la création d'une extension, son déployement continue ainsi que le support de langage en lui-même.
+VS Code fournit des documentations détaillées sur plein de sujets :  étapes pour la création d'une extension, son déploiement continue ainsi que le support de langage en lui-même.
 Il est aussi possible facilement de trouver des guides, ainsi que des exemples de codes.
-Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cette éditeur.
+Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cet éditeur.
 % TODO : code sample https://github.com/microsoft/VS Code-extension-samples
 La communauté est aussi très active (stack overlow, gitter, issue github, etc.).
 
 Le code source de VS Code de Microsoft est open source (sous licence MIT permissive).
-Il a été écrit en Typscript et Javascript. Une extension peut être également écrite dans ces deux langages.
-Nous choisirons le Typescript car VS Code recommande ce langage. Mais certaines composantes externes (langage server) peuvent être écrit dans n'importe quel langage. Tant qu'elle fournisse l'API adéquate pour communiquer.
+Il a été écrit en TypeScript et JavaScript. Une extension peut être également écrite dans ces deux langages.
+Nous choisirons le TypeScript car VS Code recommande ce langage. Mais certaines composantes externes (langage server) peuvent être écrites dans n'importe quel langage. Tant qu'elles fournissent l'API adéquate pour communiquer.
 
 % est décris selon wikipédia
 Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes.
@@ -218,19 +218,19 @@ Contrairement à un IDE (Environnement de développement) qui permet en plus la 
 Nous manipulerons des fichiers statiques par la nature même de UON qui est un langage de sérialisation.
 
 \subsection{Extension Anatomy}
-Il y a tois concepts cruciaux à comprendre pour réaliser une extension.
+Il y a trois concepts cruciaux à comprendre pour réaliser une extension.
 
 \begin{itemize}
-    \item \textbf{Activation Events}: Des événements à partir desquels l'extension devient active \cite{activation-events}.
-    \item \textbf{Contribution Points}: Des déclarations statiques qui sont faites dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes" \cite{contribution-points}.
-    \item \textbf{VS Code API}: Un ensemble d'API JavaScript que nous pouvons invoquer dans le code \cite{vs-code-api}.
+    \item \textbf{Activation Events}: des événements à partir desquels l'extension devient active \cite{activation-events}.
+    \item \textbf{Contribution Points}: des déclarations statiques qui sont faites dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes" \cite{contribution-points}.
+    \item \textbf{VS Code API}: un ensemble d'API JavaScript que nous pouvons invoquer dans le code \cite{vs-code-api}.
 \end{itemize}
 
-En général, l'extension est une combinaison de plusieurs \emph{Conntribution Point} et l'utilisation de l'API pour étendre les fonctionnalités de VS Code.
+En général, l'extension est une combinaison de plusieurs \emph{Contribution Point} et l'utilisation de l'API pour étendre les fonctionnalités de VS Code.
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 
-La structure de base d'une extension est illustré par la figure \ref{basic VS Code extension structure}.
+La structure de base d'une extension est illustrée par la figure \ref{basic VS Code extension structure}.
 
 % https://tex.stackexchange.com/questions/98703/framebox-and-subfigure-with-dirtree-package
 \begin{figure}[H] % \begin{figure}[!h]
