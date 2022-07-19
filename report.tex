@@ -107,7 +107,7 @@ C'est un nouveau langage complexe et une spécification détaillée, mais non te
 Un parser en Python a déjà été implémenté par Stéphane Selim.
 Le travail précédent s'était concentré sur trois aspects : la sérialisation/déserialisation binaire et textuelle d'objet en Python, la coercition et la validation.
 
-Cepedendant ce travail de bachelor n'en est pas la suite directe. 
+Cepedendant ce travail de bachelor n'en est pas la suite directe.
 Il consiste à fournir une autre composante qui est de permettre l'utilisation du langage UON dans un éditeur pour qu'il soit utilisé par un plus grand nombre.
 Il consiste également à étudier les différentes approches et les mettre en oeuvre. Nous spécifierons également les alternatives et améliorations possibles quand cela est pertinent.
 Il se veut aussi être expérimental et aussi ouvert à la discussion.
@@ -120,10 +120,10 @@ Dans les chapitres suivants, nous allons :
 \begin{itemize}
     \item Se renseigner concernant ce qui est fourni par VS Code pour élaborer et déployer une extension.
     \item Se renseigner sur les éléments à prendre en compte pour pouvoir fournir du support pour un langage.
-    \item Chosir les aspects du langage UON à traiter dans le cadre de ce projet.
+    \item Choisir les aspects du langage UON à traiter dans le cadre de ce projet.
     \item Documenter et réaliser l'implémentation d'une extension, son intégration continue ainsi que ses fonctionnalités.
     \item Documenter et mettre en place les tests effectués pour les différents composants du projet.
-    \item Documenter également des pistes de réflexions, les alternatives,et améliorations possible.
+    \item Documenter également des pistes de réflexion, les alternatives,et améliorations possibles.
 \end{itemize}
 
 \let\cleardoublepage\clearpage
@@ -149,30 +149,30 @@ Voici ci-dessous un résumé du cahier des charges :
 \textbf{Si le temps le permet}
 \begin{itemize}
     \item Lint
-    \item Formattage : Outil permettant de formatter le code
-    \item Converter : Outil permettant de convetir du code
+    \item Formattage : outil permettant de formater le code
+    \item Converter : outil permettant de convetir du code
 \end{itemize}
 
 \vspace{\parskip}
 
 Concernant les fonctionnalités à implémenter. Il n'y avait pas de contraintes de choix.
-Les fonctionnalités choisis ont donc été ceux paraissant être les plus utiles à avoir dans un premier temps, en prenant en considération la contrainte de temps.
+Les fonctionnalités choisies ont donc été celles paraissant être les plus utiles à avoir dans un premier temps, en prenant en considération la contrainte de temps.
 
 \chapter{Pré-étude}
 
 \section{Parsing}
-Le travail ne portant pas sur cette élément en particulier, nous n'allons pas rentrer en détail concernant ce sujet.
-Mais il est important de rappeler les concepts prinicipaux, car ces éléments présentés ci-dessous nous seront très utile et il est important de bien en comprendre le fonctionnement.
+Le travail ne portant pas sur cet élément en particulier, nous n'allons pas rentrer en détail concernant ce sujet.
+Mais il est important de rappeler les concepts principaux, car ces éléments présentés ci-dessous nous seront très utiles et il est important de bien en comprendre le fonctionnement.
 
-Afin de pouvoir intérpréter du code, on passe par plusieurs étapes.
+Afin de pouvoir interpréter du code, on passe par plusieurs étapes.
 
-La première consite à une analyse lexical à l'aide d'un Lexer. On va décomposer un input (notre code ou texte) en une liste de token.
+La première consiste à une analyse lexicale à l'aide d'un Lexer. On va décomposer un input (notre code ou texte) en une liste de token.
 Ces tokens seront ensuite utilisés lors de l'analyse syntaxique. L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire.
 
 Le résultat de cette analyse est un "Parse Tree" qui représente toutes les dérivations de notre input en fonction de la grammaire.
-Elle est représenté sous forme hiérarchique.
+Elle est représentée sous forme hiérarchique.
 
-C'est cette strucutre final qui sera intérpté ou compilé.
+C'est cette structure finale qui sera intérptée ou compilée.
 
 Le flow d'exécution standard est représenté par la figure \ref{interpreter-flow}.
 
