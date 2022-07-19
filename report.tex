@@ -258,8 +258,8 @@ chaque extension doit contenir un fichier \emph{package.json}. En plus des champ
 
 \textbf{Extension Entry File} :
 il s'agit du fichier prinicipal de l'extension (Extension.js).
-De base il contient 2 fonctions : \emph{activate} et \emph{deactivate}.
-La fonction activate est executée à l'activation de notre extension par un \emph{Activation Event}. On initialisera ici notre extension.
+De base, il contient deux fonctions : \emph{activate} et \emph{deactivate}.
+La fonction activate est exécutée à l'activation de notre extension par un \emph{Activation Event}. On initialisera ici notre extension.
 La fonction \emph{deactivate} est exécutée lorsque l'application devient inactive et sert principalement à nettoyer le code avant la désactivation de l'extension
 
 \textbf{Remarque} : le niveau de customisation est assez élevé. La seule limitation indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
@@ -267,7 +267,7 @@ La fonction \emph{deactivate} est exécutée lorsque l'application devient inact
 Nous avons donc vu les briques de bases pour la conception d'une extension. Mais cette base est suffisante pour commencer à travailler.
 
 Si vous souhaitez vous renseigner d'avantages sur l'élaboration d'une extension vous pouvez consulter la page \href{https://code.visualstudio.com/api}{suivante}.
-Concernant les fonctionnalitls générales de l'éditeur VS Code vous pouvez consulter consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
+Concernant les fonctionnalités générales de l'éditeur VS Code vous pouvez consulter consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \section{Support de langage}
 VS Code fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en deux catégories détaillées
@@ -2079,26 +2079,26 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 % Make the context of your argument clear.
 
 
-Travailler sur ce projet s'est revélé être très intéressant.
+Travailler sur ce projet s'est révélé être très intéressant.
 
 %L'objectif de ce travail de bachelor est de pouvoir avoir à disposition dans l'éditeur, les éléments de base pour
 %Sans devoir consulter la documentation
 
 Il a fallu découvrir et analyser un nouveau langage.
-Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouvant s'avérer utiles comme support pour ce langage.
+Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouvant s'avérer utile comme support pour ce langage.
 
-Découvrir les technologies permettant leur implémentation et ensuite pouvoir les utiliser en sein de notre application. % fonctionnalité cohereent entre elles
+Découvrir les technologies permettant leur implémentation et ensuite pouvoir les utiliser en sein de notre application. % fonctionnalité cohérente entre elles
 
 
 %TODO : déplacer
-%Il a été mentionner à plusieurs reprise qu'un parser est un élément pouvant nous faire aboutir à notre but.
+%Il a été mentionner à plusieurs reprises qu'un parser est un élément pouvant nous faire aboutir à notre but.
 %Heursement pour nous, des outils existent pour en générer un depuis une grammaire, nous faisant gagner un temps de développement énorme.
-% De plus avec cette approche cela nous permet de travailler sur la grammaire en même temps que les fonctionnalités à implémenter.
+% De plus avec cette approche, cela nous permet de travailler sur la grammaire en même temps que les fonctionnalités à implémenter.
 
-Nous avons vu qu'il est possible de s'aider d'outils déja existant et que cela peut, si bien utiliser, accelérer grandement la mise en place d'un support de langage.
+Nous avons vu qu'il est possible de s'aider d'outils déjà existants et que cela peut, si bien utiliser, accelérer grandement la mise en place d'un support de langage.
 
-ANTLR s'est avérer être une composante dominante du projet. De plus sa gestion des erreurs permet d'avoir une meilleur tolérance concernant les erreurs
-qui sont fréquent dans un éditeur.
+ANTLR s'est avérer être une composante dominante du projet. De plus sa gestion des erreurs permet d'avoir une meilleure tolérance concernant les erreurs
+qui sont fréquentes dans un éditeur.
 
 L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte\dots
 
@@ -2115,47 +2115,41 @@ L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi
 
 %Implémenter du support nous oblige à analyser un langage en profondeur\dots
 
-%Le support d'un langage est un sujet vaste et nous n'avons vu qu'une infime parti de ce qui est possible de faire.
+%Le support d'un langage est un sujet vaste et nous n'avons vu qu'une partie de ce qui est possible de faire.
 
 %C'est aussi un sujet qui est très libre
 
 
-Pour pouvoir fournir du support pour un lanagage, on est obliger de connaitre la grammaire sur laquelle ces fonctionnalités porteront.
-Heursement pour nous nous avons pu reprendre une implémentation existante que nous avons adapté pour couvrir nos besoins.
+Pour pouvoir fournir du support pour un langage, on est obligé de connaitre la grammaire sur laquelle ces fonctionnalités porteront.
+Heursement pour nous nous avons pu reprendre une implémentation existante que nous avons adaptée pour couvrir nos besoins.
 
+Les éléments qui ont requis le plus de travail ont été la complétion.
+Car même si le moteur est extrêmement puissant et qu'il convient très bien pour notre utilisation. Il reste toutefois important de comprendre son fonctionnement et que c'est un outil pouvant s'avérer complexe.
 
-Les éléments qui on recquis le plus de travail ont été la complétion.
-Car même si le moteur est extrêment puissant et qu'il convient très bien pour notre utilisation. Il reste toutefois important de comprendre son fonctionnement et que c'est un outil pouvant s'avérer complexe.
+Adapter la grammaire a été un challenge ANTLR et différent de Lark, la complétion nécessite aussi d'adapter la grammaire.
 
-Adapter la grammaire a été un challenge ANTLR et différent de lark, la complétion nécessite aussi d'adapter la grammaire.
+%La outline ?
+%La subtilité concernant les captures regex dans la grammaires
 
-La outline ?
-La subtiliter concernant les capture regex dans la grammaires
+Nous avons fait le choix de travailler uniquement dans un environnement VS Code mais fournissant toutes les clés pour des extensibilités futurs
 
-Nous avons fais le choix de travailler uniquement dans un environnement mais fournissant toutes les clés pour une extensibilités futurs
-
-VS Code est un environnement riche et complexe mais qui est extrêmement bien documenter et agréable à utiliser.
+VS Code est un environnement riche et complexe, mais qui est extrêmement bien documenter et agréable à utiliser.
 Il est toutefois parfois même difficile de savoir ce que peut faire cet éditeur par défaut ou non.
 
-
-
-
-De plus chaque langage ayant ses spécifités, les besoins peuvent variées les uns des autres.
-
-De même, les même fonctionnalités entre deux langage peuvent avoir des comportements relativement différent.
+De plus chaque langage ayant ses spécifiés, les besoins peuvent variées les uns des autres.
+Les même fonctionnalités entre deux langages peuvent avoir des comportements relativement différents.
 
 L'avantage d'avoir travaillé sur un langage de sérialisation comme UON est que cela est relativement moins complexe à gérer qu'un langage de programmation.
 C'est une bonne porte d'entrée ...
-Cela nous oublige à découvrir et prendre conscience ce qu'il est possible de faire plus généralement.
+Cela nous oblige à découvrir et prendre conscience ce qu'il est possible de faire plus généralement.
 
-Mais UON est aussi plus complexe que ces concurents sur pleins de points.
+Mais UON est aussi plus complexe que ces concurrents sur plein de points.
 Ce qu'il fait qu'il reste encore des améliorations possibles
 
-Lors de la réalisation de ce Travail de bachelor, nous avons mis on place des méchanismes
+Lors de la réalisation de ce Travail de bachelor, nous avons mis on place des mécanismes
 
-
-Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liés à certaines fonctionnalités.
-Un changement peu avoir des repercussions sur l'ensemble de celles-ci\dots
+Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
+Un changement peut avoir des répercussions sur l'ensemble de celles-ci\dots
 
 
 %% \vfil
