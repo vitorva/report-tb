@@ -907,7 +907,7 @@ Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" 
 
 Sur le schéma \ref*{literal-key-uon} On voit que la clé et bien un token de type \emph{literal}.
 Ce token \emph{temperature} existe comme token car c'est une valeur utilisée comme quantité, mais si on ne précise pas explicitement que l'on souhaite avoir cette valeur
-comme possible  clé alors on aura une erreur si on ne le précise pas \dots % TODO
+comme possible clé alors on aura une erreur si on ne le précise pas \dots % TODO
 
 \subsubsection{Unquoted}
 %% TODO
@@ -946,7 +946,7 @@ N'importe quelle caractère peut se trouver
 
 \subsection{Propriétés, unités et nombres}
 
-Des popriétés de présentation on été rajouter en reprenant les constructions utilisés pour définir des propriétés pour les clés ainsi que de validation.
+Des propriétés de présentation ont été rajoutées en reprenant les constructions utilisées pour définir des propriétés pour les clés ainsi que de validation.
 
 % "_" dans le caption cause des erreurs !!!
 \begin{lstlisting}[frame=single,caption={types properties},label={types_properties}]
@@ -960,7 +960,7 @@ Des popriétés de présentation on été rajouter en reprenant les construction
 \end{lstlisting}
 
 number, bolean, null, string(literal, unquoted et quoted),
-literal : tous les token utilisé déja ailleur mais qu'on voudrait avoir dans les clé par exmeple...
+literal : tous les token utilisé déjà ailleurs mais qu'on voudrait avoir dans les clé par exmeple...
 
 typs : string, nombre, boolean,
 
@@ -970,8 +970,8 @@ quantité et unités
 
 \section{Debugging}
 
-Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l'aide d'un terminal, cela peut même se revéler extremement difficile.
-Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visulaiser en temps réel, le parse tree du texte que l'on est en train de saisir.
+Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l'aide d'un terminal, cela peut même se révéler extrêmement difficile.
+Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visualiser en temps réel, le parse tree du texte que l'on est en train de saisir.
 
 % TODO : Figure d'intelj en action
 
