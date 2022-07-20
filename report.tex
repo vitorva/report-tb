@@ -583,7 +583,7 @@ Lorsque deux appareils veulent échanger des informations, ils disposent de deux
 À la figure \ref*{data-exchange}, on a à gauche deux dispositifs : un capteur de température à faible consommation
 et une puissante passerelle domotique. Pour réduire la taille du payload, les deux dispositifs peuvent convenir d'un schéma qui décrit le format des données.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \begin{center}
         \frame{\includegraphics[width=15cm]{assets/figures/data-exchange.png}}
     \end{center}
@@ -900,7 +900,7 @@ Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" 
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=12cm]{assets/figures/literal-key-uon.PNG}}
+        \frame{\includegraphics[width=8cm]{assets/figures/literal-key-uon.PNG}}
     \end{center}
     \caption[literal-key-uon]{\label{literal-key-uon}literal-key-uon}
 \end{figure}
@@ -1100,6 +1100,13 @@ Pour cela, il faut modifier \emph{l'activation events} dans le fichier package.j
 % https://marketplace.visualstudio.com/manage/publishers/test2publish?noPrompt=true
 % https://dev.azure.com/Stev03/_usersSettings/tokens
 
+% delete publisher : https://stackoverflow.com/questions/54179509/how-do-you-delete-a-visual-studio-marketplace-publisher
+
+% https://github.com/Microsoft/vscode-vsce/issues/249
+% https://docs.npmjs.com/downloading-and-installing-packages-globally
+% https://github.com/clangd/clangd/issues/159
+% https://github.com/microsoft/vscode-vsce/issues/238
+
 \textbf{Prérequis} : Posséder un compte Azure.
 
 Il faut d'abord récupérer un Personal Access Token. Pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
@@ -1127,7 +1134,7 @@ Puis finalement, il suffit dans un terminal de saisir les commandes suivantes :
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/manage-publisher.png}}
+        \frame{\includegraphics[width=12cm]{assets/figures/manage-publisher.png}}
     \end{center}
     \caption[Interface web pour manager l'extension]{\label{manage-publisher} Interface web pour manager l'extension}
 \end{figure}
@@ -1163,6 +1170,8 @@ créer un fichier .uon
 faire un -snap
 modifier le fichier snap et rajouter l'entête qui nous permet de définir que c'est un fichier tests
 on peut maintenant le tester avec la commande : -test
+
+% https://www.npmjs.com/package/vscode-tmgrammar-test?activeTab
 
 
 \subsubsection{Outline view}
@@ -1436,7 +1445,7 @@ La syntaxe UON peut être exprimée par la figure \ref{syntax}.
 
 \begin{figure}[!ht]
     \begin{center}
-        \frame{\includegraphics[width=8cm]{assets/figures/syntax.png}}
+        \frame{\includegraphics[width=12cm]{assets/figures/syntax.png}}
     \end{center}
     \caption[syntax]{\label{syntax} UON syntax}
 \end{figure}
@@ -1890,7 +1899,7 @@ Nous obtiendrons l'outline suivant :
 % capture
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/uon-payload-outline-without-properties.PNG}}
+        \frame{\includegraphics[width=6cm]{assets/figures/uon-payload-outline-without-properties.PNG}}
     \end{center}
     \caption[Outline UON sans propriétés]{\label{uon-payload-outline-without-properties} Outline UON sans propriétés}
 \end{figure}
@@ -1916,7 +1925,7 @@ Nous obtiendrons l'outline suivante :
 %capture
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/uon-payload-outline-with-properties.PNG}}
+        \frame{\includegraphics[width=6cm]{assets/figures/uon-payload-outline-with-properties.PNG}}
     \end{center}
     \caption[Outline UON avec propriétés]{\label{uon-payload-outline-with-properties} Outline UON avec propriétés}
 \end{figure}
@@ -1937,7 +1946,7 @@ Nous aurons donc l'outline suivante :
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/uon-schema-outline.PNG}}
+        \frame{\includegraphics[width=6cm]{assets/figures/uon-schema-outline.PNG}}
     \end{center}
     \caption[Outline d'un schéma]{\label{uon-schema-outline} Outline d'un schéma}
 \end{figure}
@@ -2069,7 +2078,14 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 
 \includepdf[page=1]{assets/planning/gantt.pdf}
 
+
 \chapter{Conclusion}
+
+\section{Difficultés rencontrés}
+
+\section{Amélioration possible}
+
+
 % TODO
 
 % what should be included in a conclusion ?
