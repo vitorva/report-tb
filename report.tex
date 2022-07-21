@@ -448,10 +448,8 @@ Et antlr4ts semble être un choix plus naturel dans un environnement VS Code.
 
 \subsubsection{ATN}
 
-Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
-un mécanisme de machine à état ATN (Augmented Transition Network).
-
-Il s'agit d'une machine à état \dots
+La version 4 de ANTLR a comme avantage sur son ancienne version (ANTLR3) d'avoir la structure de la grammaire directement disponible dans le parser via
+un mécanisme de machine à état \Gls{atn}.
 
 Ci-dessous est illustré l'ATN d'une séquence en UON :
 
@@ -464,7 +462,11 @@ Ci-dessous est illustré l'ATN d'une séquence en UON :
 
 \subsubsection{Gestion des erreurs}
 
-Antlr définit une interface pour définir une stratégie concernant les erreurs rencontrées durant une analyse syntaxique nommée "ANTLRErrorStrategy".
+%citation ?
+ANTLR est capable de signaler des erreurs et se rétablir d'erreurs plus graves qui pourraient faire échouer le processus de parsing.
+ANTLR définit l'interface \emph{ANTLRErrorStrategy} pour résoudre ce problème.
+Elle sert à définir une stratégie concernant les erreurs rencontrées.
+
 On peut distinguer trois types d'erreurs \cite{ANTLRErrorStrategy} :
 \begin{itemize}
     \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans l' ATN (aucune des alternatives disponibles ne pouvait correspondre).
@@ -473,48 +475,19 @@ On peut distinguer trois types d'erreurs \cite{ANTLRErrorStrategy} :
 \end{itemize}
 
 
-Nous utiliserons le "DefaultErrorStrategy". Il a la particularité d'ignorer un token invalide pour passer au suivant.
-
-% TODO : expliquer la classe qui nous permet de recevoir des informations en cas d'erreur
-Puis on peut être notifié de ces erreurs en liant notre parser à un listener "notifyErrorListener".
-
-% TODO
-%Proposition de correction à l'aide de antlr qui nous fourni la position dans le document
-%Regarder pourquoi ici on la ligne + colonne et pourquoi on pouvait pas l'avoir dans la outline view
-%On utilise également une fonction et non pas un provider pour afficher les erreurs
-
-
-
-%citation ?
-ANTLR4 est capable de signaler des erreurs et se rétablir d'erreurs plus graves qui pourraient faire échouer le processus de parsing.
-
-ANTLR définit l'interface \emph{ANTLRErrorStrategy} pour ce problème.
-
 Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliquée et qui consiste à supprimer un token qui poserait problème ou en rajouter un s'il manquerait, avant de
 se resynchronisation à l'ATN et de continuer le parsing.
 
-ue changement d'état  il lance le processus de synchronisation et applique le \emph{defaultErrorStrategy} si besoin.
+Cette resynchronisation permet de continuer dans la règle courante que traverse le parser.
 
-Comme mentionné ici \dots
-Le parser va appliquer des règles.
-Cette resynchronisation permet de continuer dans la règle courante.
+S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, il va consommer tout les tokens qui suit celui qui a posé problème.
+Puis, ce mécanisme s'arrêtera quand il réussira à trouver un token qui lui permettra de quitter la règle de parser courante sans la valider, mais permettant de continuer le processus de parsing.
+Au pire des cas il s'agira d'un token de retour à la ligne \Gls{eof}.
 
-S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, on va consommer tout les tokens qui suit celui qui a posé problème. 
-Le mécanisme s'arrêtera quand il réussira à trouver un token qui lui permettra de quitter la règle de parser courante sans la valider, mais permettant de continuer le processus de parsing.
-Au pire des cas il s'agira d'un token EOF (retour à la ligne).
+C'est grâce à ce mécanisme qui fait que si nous utilisons le \emph{DefaultErrorStrategy} nous obtiendrons un parse tree dans tous les cas.
 
-C'est grâce à ce mécanisme qui fait que si nous utilisons le DefaultErrorStrategy nous obtiendrons un parse tree dans tous les cas.
-
-Malheursement, je n'ai pas pu explorer plus en profondeur le mécanisme complexe de resynchronisation.
+Malheursement, je n'ai pas pu explorer plus en profondeur ce mécanisme complexe de resynchronisation.
 Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
-
-%avec
-%tree.toStringTree (uon (root_value (json_collection (json_map !map { (json_pair (pair_key (string (literal name)) (presentation_properties ( oups (presentation_property (description description : (string firstname))) ))) : (json_value (scalar (string_scalar (string paul))))) }))))
-
-
-%sans, on constate que sans la suppression on sort de la règle...
-
-%tree.toStringTree (uon (root_value (json_collection (json_map !map { (json_pair (pair_key (string (literal name)) (presentation_properties ( oups description)) : (json_value (scalar (string_scalar (string firstname))))) ) : paul } \n))))
 
 
 %https://medium.com/pragmatic-programmers/altering-antlrs-error-handling-strategy-80ce7d046730
@@ -534,8 +507,6 @@ Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'u
 % it continues parsing. Looking at your example, while trying to recover maybe it never reaches a sane state before EOF.
 
 %https://pub.dev/documentation/antlr4/latest/antlr4/DefaultErrorStrategy-class.html
-
-
 
 
 %% UON se veut ête moins ambigue que ces alternatives pour l'utilisateur\dots
