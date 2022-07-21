@@ -219,14 +219,6 @@ Ce processus peut être représenté par la figure \ref{Analayse du code source}
 Dans notre cas, nous utiliserons seulement l'arbre et uniquement lorsque cela sera nécessaire.
 
 \section{VS Code}
-% TODO :
-% Peut être élaborer un peu plus :
-% c'est quoi VS Code, pourquoi a-t-il été choisi ?
-% Est-il populaire ?
-% En quel langage a-t-il été écrit. Est-il entièrement open-source ?
-% est-ce qu'une extension peut être complètement indépendante de la base de code ?
-% Pour le rapport final j'attends plus de détails
-
 Il a été choisi, car il fait partie des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déjà familier de son environnement.
 D'autres alternatives existent comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fournit également de quoi implémenter une extension.
 C'est donc un choix personnel.
@@ -239,14 +231,12 @@ On se focalisera sur le theming, les fonctionnalités de langages, la publicatio
 VS Code fournit des documentations détaillées sur plein de sujets : étapes pour la création d'une extension, son déploiement continue ainsi que le support de langage en lui-même.
 Il est aussi possible facilement de trouver des guides, ainsi que \href{https://github.com/microsoft/vscode-extension-samples}{des exemples de codes} concernant les extensions.
 Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cet éditeur.
-% TODO : code sample https://github.com/microsoft/VS Code-extension-samples
 La communauté est aussi très active (stack overlow, gitter, issue github, etc.).
 
-Le code source de VS Code de Microsoft est open source (sous licence MIT permissive).
+Le code source de VS Code de Microsoft est open source, sous licence MIT permissive.
 Il a été écrit en TypeScript et JavaScript. Une extension peut être également écrite dans ces deux langages.
 Nous choisirons le TypeScript car VS Code recommande ce langage. Mais certaines composantes externes (langage server) peuvent être écrites dans n'importe quel langage. Tant qu'elles fournissent l'API adéquate pour communiquer.
 
-% est décris selon wikipédia
 Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes.
 Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debuggage de programme plus complexe.
 Nous manipulerons des fichiers statiques par la nature même de UON qui est un langage de sérialisation.
@@ -375,12 +365,11 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux s
     \caption[API vs LSP]{\label{api vs lsp} VS Code API vs LSP method}
 \end{figure}
 
-\subsection{Parser}
-% TODO : bcp de fonctionnalités, pas clair...
-
+\subsection{Fault tolerant Parser}
 Pour fournir des fonctionnalités de langue, un point souvent mentionnée est l'utilisation d'un parser.
 Car l'arbre généré par celui-ci contient des informations concernant la structure du document utiles pour certaines fonctionnalités.
-% TODO arbre / parse tree / ast ?
+
+Des outils permettant la génération d'un parser existent à partir d'une grammaire et seront prévilégiés.
 
 Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant".
 Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect.
@@ -389,50 +378,40 @@ Mais l'on s'attend tout de même que certaines fonctionnalités continuent à fo
 Le parseur doit donc pouvoir générer au mieux un parse tree qui à du sens depuis du code erroné.
 
 On pourrait également se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expression régulières.
-Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrèment difficle à traiter.
+Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrèment difficle à traiter. \cite{antlr-mega-tutorial}
 
-"you cannot find a (regular) expression inside another one, unless you code it by hand for each level. Something that quickly became unmaintainable."
-
-Example : % TODO
-
-\subsubsection{Génration de parser}
-Des outils permettant la génération d'un parser existent à partir d'une grammaire.
-
-% TODO
+%"you cannot find a (regular) expression inside another one, unless you code it by hand for each level. Something that quickly became unmaintainable."
+%Example : % TODO
 
 \section{Choix technologiques}
 Nous allons maintenant mentionner les technologies et approches choisies et expliquer les raisons.
 
 \subsection{Direct implementation}
-L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, la solution de contacter directement l'API de VS Code sera choisi.
+L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, la solution de contacter directement l'API de VS Code a été privilégiée.
 Si le temps le permet, toute la logique du code concernant les fonctionnalités riches\ref{Programmatic language features} pourrait être déplacée dans un langage server.
 
-%%Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, mais nous utiliserons uniquement les providers suivants :
-%%\begin{itemize}
-%%    \item \textbf{registerCompletionItemProvider} : pour afficher des suggestions de complétions.
-%%    \item \textbf{registerHoverProvider} : pour gérer le hover.
-%%    \item \textbf{registerDocumentSymbolProvider} : pour afficher les éléments dans la Outline View.
-%%\end{itemize}
+Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, les providers utilisés sont les suivants :
+\begin{itemize}
+    \item \textbf{registerCompletionItemProvider} : pour afficher des suggestions de complétions.
+    \item \textbf{registerHoverProvider} : pour gérer le hover.
+    \item \textbf{registerDocumentSymbolProvider} : pour afficher les éléments dans la Outline View.
+\end{itemize}
 
 \subsection{ANTLR}
 
-ANTLR (ANother Tool for Language Recognition) est un générateur de parser, il est actuellement dans sa quatrième version.
+\Gls{antlr} est un générateur de parser, il est actuellement dans sa quatrième version.
 
-Il a été créé par Terence Parr à l'Université de San Francisco.
+Il a été créé par Terence Parr à l'Université de San Francisco et est très utilisé, autant dans le monde académique que professionnel \cite{antlr}.
 
-Il est très utilisé, autant dans le monde académique que professionnel.
+L'algorithme de parsing utilisé dans sa version la plus récente est le "Adaptive LL(*)" qui est décrit comme une amélioration de l'algorithme
+"LL(*)" utilisé dans sa version précédente \cite{adaptive-ll}.
 
-L'algorithme de parsing utilisé dans sa version la plus récente est le "Adaptive LL(*)" qui est décrit comme amélioration de l'algorithme
-"LL(*)" utilisé dans sa version précédente.
+L'algorithme "LL" est  consiste à une analyse de gauche à droite (Left to right en anglais) et en construit une dérivation à gauche (Leftmost derivation en anglais) \cite{ll}.
 
-% https://en.wikipedia.org/wiki/LL_parser
-% https://www.antlr.org/papers/allstar-techreport.pdf
+Un générateur est genérer depuis une grammaire, qui est un fichier décrivant formellement le langage.
+ANTLR génère donc le code permettant de reconnaitre ce langage, c'est à dire en pratique un lexer et un parser. % TODO ref ?
 
-Depuis une grammaire, qui est un fichier décrivant formellement le langage, ANTLR génère le code permettant de reconnaitre ce langage.
-C'est à dire en pratique un lexer et un parser. % TODO ref ?
-
-La grammaire est décrite en utilisant la notation EBNF (Extended Backus–Naur Form).
-% lien, citation ?
+La grammaire est décrite en utilisant la notation \Gls{ebnf}.
 
 Il n'y a seulement qu'un seul outil qui permet de générer le code des lexer et parsers pour tous les langages cibles, et il est écrit en Java.
 
