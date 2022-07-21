@@ -135,7 +135,7 @@ Cela consistera dans un premier temps, à implémenter un certain nombre de fonc
 
 Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
 
-\section{VSCode Extension}
+\subsection*{VSCode Extension}
 \begin{itemize}
     \item Réaliser une extension dans le code source se trouve sur Github.
     \item Publier l’extension sur \href{https://marketplace.visualstudio.com/}{le marketplace} de Visual Studio.
@@ -143,48 +143,48 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
     \item Le système doit disposer d’une intégration continue.
 \end{itemize}
 
-\section{Grammaire}
+\subsection*{Grammaire}
 \begin{itemize}
     \item Indiquer le « scope » de la grammaire UON utilisée.
 \end{itemize}
 \textbf{Remarque} : toutes les fonctionnalités se baseront sur cette grammaire.
 
-\section{Fonctionnalités à implémenter}
-\subsubsection{Syntax highligting}
+\subsection*{Fonctionnalités à implémenter}
+\subsubsection*{Syntax highligting}
 \begin{itemize}
     \item Chaque élément du texte doit être affiché dans l’éditeur avec une coloration et un style en fonction de son type.
 \end{itemize}
 
-\subsubsection{Auto-complétion}
+\subsubsection*{Auto-complétion}
 \begin{itemize}
     \item Des propositions de complétions doivent apparaitre pendant la saisie d’une chaine de texte si des complétions possibles existent pour une telle chaine.
 \end{itemize}
 
-\subsubsection{Document Outlining}
+\subsubsection*{Document Outlining}
 \begin{itemize}
     \item Fournir le "Symbol tree" du document.
 \end{itemize}
 
-\subsubsection{Syntax highligting}
+\subsubsection*{Syntax highligting}
 \begin{itemize}
     \item Lorsque l’on passe le curseur sur un élément du texte, des informations le concernant doivent apparaitre s’ils existent pour celui-ci.
 \end{itemize}
 
-\section{Si le temps le permet}
+\subsection*{Si le temps le permet}
 
-\subsubsection{Lint}
+\subsubsection*{Lint}
 \begin{itemize}
     \item Détecter les erreurs de syntaxe pendant la saisie et les afficher.
     \item Proposer des solutions de corrections.
 \end{itemize}
 
-\subsubsection{Formatter (outil permettant de formater le code)}
+\subsubsection*{Formatter (outil permettant de formater le code)}
 \begin{itemize}
     \item Il est possible de formater le code au format minimal.
     \item Il est possible de formater le code au format canonique.
 \end{itemize}
 
-\subsubsection{Converter (outil permettant de convetir du code)}
+\subsubsection*{Converter (outil permettant de convetir du code)}
 \begin{itemize}
     \item Du code JSON est capable d’être converti en UON et inversement.
     \item Du code YAML est capable d’être converti en UON et inversement.
@@ -194,18 +194,18 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
 
 \section{Parsing}
 
-Le \Gls{parsing} n'est pas l'élément centrale du travail de Bachelor, nous n'allons pas rentrer en détail concernant ce sujet.
-Mais il est important de rappeler les concepts principaux, car ces éléments présentés ci-dessous nous seront très utiles et il est important de bien en comprendre le fonctionnement.
+Le résultat de l'analyse syntaxique (parsing) nous permet d'obtenir une représentation de la strucutre d'un texte. Ce qui est très utile dans le cadre d'un support de langage.
 
-Afin de pouvoir interpréter du code, on passe par plusieurs étapes.
+Il est donc important de rappeler le mécanisme générale. Car avant la phase de l'analyse syntaxique, il y a habituellement une analyse lexicale.
+À cette étape, un input (du code ou texte) est décomposé en une liste de token à l'aide d'un lexer.
 
-La première consiste à une analyse lexicale à l'aide d'un Lexer. On va décomposer un input (notre code ou texte) en une liste de token.
-Ces tokens seront ensuite utilisés lors de l'analyse syntaxique. L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire.
+Ce sont ces tokens qui seront ensuite utilisés lors de l'analyse syntaxique.
+L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire.
 
 Le résultat de cette analyse est un "Parse Tree" qui représente toutes les dérivations de notre input en fonction de la grammaire.
-Elle est généralement représentée sous forme d'un arbre hiérarchique.
+Elle est souvent représentée sous forme d'un arbre hiérarchique.
 
-C'est cette structure finale qui sera intérptée ou compilée.
+Généralement c'est cette structure finale qui sera interprété ou compilée.
 
 Ce processus peut être représenté par la figure \ref{Analayse du code source}.
 
@@ -216,6 +216,7 @@ Ce processus peut être représenté par la figure \ref{Analayse du code source}
     \caption[Analayse du code source]{\label{Analayse du code source} Analayse du code source}
 \end{figure}
 
+Dans notre cas, nous utiliserons seulement l'arbre et uniquement lorsque cela sera nécessaire.
 
 \section{VS Code}
 % TODO :
@@ -235,8 +236,8 @@ Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open s
 Il est pensé pour être extensible (de L'UI à l'expérience utilisateur), presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
 On se focalisera sur le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
 
-VS Code fournit des documentations détaillées sur plein de sujets :  étapes pour la création d'une extension, son déploiement continue ainsi que le support de langage en lui-même.
-Il est aussi possible facilement de trouver des guides, ainsi que des exemples de codes.
+VS Code fournit des documentations détaillées sur plein de sujets : étapes pour la création d'une extension, son déploiement continue ainsi que le support de langage en lui-même.
+Il est aussi possible facilement de trouver des guides, ainsi que \href{https://github.com/microsoft/vscode-extension-samples}{des exemples de codes} concernant les extensions.
 Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cet éditeur.
 % TODO : code sample https://github.com/microsoft/VS Code-extension-samples
 La communauté est aussi très active (stack overlow, gitter, issue github, etc.).
