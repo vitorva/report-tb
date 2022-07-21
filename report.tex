@@ -38,7 +38,7 @@
 \input{glossary}
 \input{meta}
 
-\surroundwithmdframed{minted}
+%\surroundwithmdframed{minted}
 
 %% Début du document
 \begin{document}
@@ -433,16 +433,21 @@ C'est un outil populaire est très utilisé.
 
 L'initialisation de base est la suivante :
 
-\begin{lstlisting}[frame=single,caption={antlr-setup},label={antlr-setup}]
-    let inputStream = new ANTLRInputStream("var c = a + b()");
-    let lexer = new ExprLexer(inputStream);
-    let tokenStream = new CommonTokenStream(lexer);
+\begin{listing}[!ht]
+    \begin{minted}{typescript}
+        let inputStream = new ANTLRInputStream("var c = a + b()");
+        let lexer = new ExprLexer(inputStream);
+        let tokenStream = new CommonTokenStream(lexer);
 
-    let parser = new ExprParser(tokenStream);
-    let errorListener = new ErrorListener();
-    parser.addErrorListener(errorListener);
-    let tree = parser.expression();
-\end{lstlisting}
+        let parser = new ExprParser(tokenStream);
+        let errorListener = new ErrorListener();
+        parser.addErrorListener(errorListener);
+        let tree = parser.expression();
+    \end{minted}
+    \caption{antlr-setup}
+    \label{antlr-setup}
+\end{listing}
+
 
 \textbf{Remarque} :
 Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une grammaire Lark.
