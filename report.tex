@@ -192,7 +192,7 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
 
 \chapter{Pré-étude}
 
-\section{Parsing}
+\section{Parsing}\label{parsing}
 
 Le résultat de l'analyse syntaxique (parsing) nous permet d'obtenir une représentation de la strucutre d'un texte. Ce qui est très utile dans le cadre d'un support de langage.
 
@@ -400,49 +400,29 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 \subsection{ANTLR}
 
 \Gls{antlr} est un générateur de parser, il est actuellement dans sa quatrième version.
-
 Il a été créé par Terence Parr à l'Université de San Francisco et est très utilisé, autant dans le monde académique que professionnel \cite{antlr}.
 
+Le générateur prend en entré une grammaire, qui est un fichier décrivant formellement un langage. La grammaire d'ANTLR est décrite en utilisant la notation \Gls{ebnf}.
 L'algorithme de parsing utilisé dans sa version la plus récente est le "Adaptive LL(*)" qui est décrit comme une amélioration de l'algorithme
-"LL(*)" utilisé dans sa version précédente \cite{adaptive-ll}.
+"LL(*)" utilisé dans sa version précédente \cite{adaptive-ll}. L'algorithme "LL" est consiste à une analyse de l'input de gauche à droite et en construit une "Leftmost derivation" \cite{ll}.
 
-L'algorithme "LL" est  consiste à une analyse de gauche à droite (Left to right en anglais) et en construit une dérivation à gauche (Leftmost derivation en anglais) \cite{ll}.
+ANTLR est composé de deux parties principales. Il y a l'outil en java qui permet de générer le lexer et le parseur, donc le code permettant de reconnaitre un langage comme mentionné à la section \ref{parsing}.
+Ainsi que l'environnement d'exécution (runtime) qui permet leur exécution.
 
-Un générateur est genérer depuis une grammaire, qui est un fichier décrivant formellement le langage.
-ANTLR génère donc le code permettant de reconnaitre ce langage, c'est à dire en pratique un lexer et un parser. % TODO ref ?
-
-La grammaire est décrite en utilisant la notation \Gls{ebnf}.
-
-Il n'y a seulement qu'un seul outil qui permet de générer le code des lexer et parsers pour tous les langages cibles, et il est écrit en Java.
+Il n'y a donc, seulement qu'un seul outil qui permet de générer le code dans les langages cibles. Et il est écrit en Java.
 
 Pour pouvoir utiliser cet outil dans un environnement autre que Java, il est nécessaire de l'utiliser dans un runtime (environnement d'exécution) propre au langage souhaité.
-%TODO : citer target.md de antlr et repo antlr4ts + mega thread
 
-Lorsque la grammaire a été définie, on peut demander à ANTLR de générer des parsers dans différents langages.
-
-ANTLR est composé de deux parties principales : l'outil en java qui permet de générer le lexer et le parseur, ainsi que l'environnement d'exécution (runtime) qui permet leur exécution
-
-%The tool will be needed just by you, the language engineer, while the runtime will be included in the final software created by you.
-%Typical Workflow
-
-Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
-un mécanisme de machine à état ATN (Augmented Transition Network).
+Le runtime ainsi que les fichiers générés sont dans le même langage. La liste se trouve \href{https://github.com/antlr/antlr4/blob/master/doc/targets.md}{ici}.
+Malheursement, le typscript n'en fait pas parti.
 
 \subsubsection{antlr4ts}
-Nous utiliserons antlr4ts, qui est un environnement d'exécution en typescript et donc parfaitement adapté pour VS Code.
-
+Nous utiliserons donc antlr4ts, qui est un environnement d'exécution en typescript et donc parfaitement adapté pour VS Code.
 Il a été conçu par Sam Harwell indépendamment de l'organisation ANTLR.
-L'organisation ANTLR ne proposant pas de runtime en typescript. %lien ? ou citation
-% https://github.com/antlr/antlr4/blob/master/doc/targets.md
+
 % https://github.com/tunnelvisionlabs/antlr4/blob/master/doc/targets.md
 
-% https://github.com/sharwell
-% https://github.com/tunnelvisionlabs
-
-% lecture
-%https://stackoverflow.com/questions/41427905/how-many-ways-are-there-to-build-a-parser
-
-C'est un outil populaire est très utilisé.
+C'est un outil qui semble populaire est très utilisé.
 
 L'initialisation de base est la suivante :
 
@@ -460,7 +440,6 @@ L'initialisation de base est la suivante :
     \caption{antlr-setup}
     \label{antlr-setup}
 \end{listing}
-
 
 \textbf{Remarque} :
 Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une grammaire Lark.
@@ -545,6 +524,9 @@ Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'u
 %https://pub.dev/documentation/antlr4/latest/antlr4/DefaultErrorStrategy-class.html
 
 \subsubsection{ATN}
+
+Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
+un mécanisme de machine à état ATN (Augmented Transition Network).
 
 Il s'agit d'une machine à état \dots
 
