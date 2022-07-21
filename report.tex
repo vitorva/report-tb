@@ -444,23 +444,35 @@ L'initialisation de base est la suivante :
 \textbf{Remarque} :
 Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une grammaire Lark.
 L'implémentation de son parser n'a pas été privilégiée, car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
-Et antlr4ts semble être un choix plus naturel dans notre environnement VS Code.
+Et antlr4ts semble être un choix plus naturel dans un environnement VS Code.
 
+\subsubsection{ATN}
+
+Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
+un mécanisme de machine à état ATN (Augmented Transition Network).
+
+Il s'agit d'une machine à état \dots
+
+Ci-dessous est illustré l'ATN d'une séquence en UON :
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=12cm]{assets/figures/seq_ATN.png}
+    \end{center}
+    \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
+\end{figure}
 
 \subsubsection{Gestion des erreurs}
 
-% L'idée gérnéral et d'insérer de faux token ou de supprimer les tokens non valides jusqu'à ce qu'il en trouve un qui corresponde à set de tokens connu.
-
-% https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorStrategy.html
 Antlr définit une interface pour définir une stratégie concernant les erreurs rencontrées durant une analyse syntaxique nommée "ANTLRErrorStrategy".
-On peut distinguer trois types d'erreurs :
+On peut distinguer trois types d'erreurs \cite{ANTLRErrorStrategy} :
 \begin{itemize}
-    \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans le ATN (aucune des alternatives disponibles ne pouvait correspondre).
+    \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans l' ATN (aucune des alternatives disponibles ne pouvait correspondre).
     \item L'input actuel ne correspond pas ce que nous attendons.
     \item Un prédicat évalué comme faux
 \end{itemize}
 
-% TODO
+
 Nous utiliserons le "DefaultErrorStrategy". Il a la particularité d'ignorer un token invalide pour passer au suivant.
 
 % TODO : expliquer la classe qui nous permet de recevoir des informations en cas d'erreur
@@ -517,27 +529,13 @@ Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'u
 %https://github.com/antlr/antlr4/blob/master/runtime/Java/src/org/antlr/v4/runtime/DefaultErrorStrategy.java
 
 
-% https://stackoverflow.com/questions/25467627/how-to-continue-parsing-after-an-error-in-antlr-4-4  
+% https://stackoverflow.com/questions/25467627/how-to-continue-parsing-after-an-error-in-antlr-4-4
 %Antlr 4's parser error strategy is to drop tokens from the input until it can detect a sane state and then
 % it continues parsing. Looking at your example, while trying to recover maybe it never reaches a sane state before EOF.
 
 %https://pub.dev/documentation/antlr4/latest/antlr4/DefaultErrorStrategy-class.html
 
-\subsubsection{ATN}
 
-Nous utilisons la version 4 de ANTLR. Elle a comme avantage sur son ancienne version (ANTL3) d'avoir la structure de la grammaire directement disponible dans le parser via
-un mécanisme de machine à état ATN (Augmented Transition Network).
-
-Il s'agit d'une machine à état \dots
-
-Ci-dessous est illustré l'ATN d'une séquence en UON :
-
-\begin{figure}[!ht]
-    \begin{center}
-        \includegraphics[width=12cm]{assets/figures/seq_ATN.png}
-    \end{center}
-    \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
-\end{figure}
 
 
 %% UON se veut ête moins ambigue que ces alternatives pour l'utilisateur\dots
