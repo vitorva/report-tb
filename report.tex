@@ -474,11 +474,8 @@ On peut distinguer trois types d'erreurs \cite{ANTLRErrorStrategy} :
     \item Un prédicat évalué comme faux
 \end{itemize}
 
-
 Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliquée et qui consiste à supprimer un token qui poserait problème ou en rajouter un s'il manquerait, avant de
-se resynchronisation à l'ATN et de continuer le parsing.
-
-Cette resynchronisation permet de continuer dans la règle courante que traverse le parser.
+se resynchronisation à l'ATN et de continuer le parsing. Cette resynchronisation permet de continuer dans la règle courante que traverse le parser. \cite{antlrs-error-handling-strategy}
 
 S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, il va consommer tout les tokens qui suit celui qui a posé problème.
 Puis, ce mécanisme s'arrêtera quand il réussira à trouver un token qui lui permettra de quitter la règle de parser courante sans la valider, mais permettant de continuer le processus de parsing.
@@ -488,7 +485,6 @@ C'est grâce à ce mécanisme qui fait que si nous utilisons le \emph{DefaultErr
 
 Malheursement, je n'ai pas pu explorer plus en profondeur ce mécanisme complexe de resynchronisation.
 Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
-
 
 %https://medium.com/pragmatic-programmers/altering-antlrs-error-handling-strategy-80ce7d046730
 %* The default implementation resynchronizes the parser by consuming tokens
