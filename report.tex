@@ -247,12 +247,12 @@ est le point d'accès à toutes les fonctonnalités de VS Code.
 Pour l'ouvir il faut exécuter la combinaison suivante : "CTRL + SHIFT + p".
 
 \subsection{Extension Anatomy}
-Il y a trois concepts cruciaux à comprendre pour réaliser une extension.
+Il y a trois concepts cruciaux à comprendre pour réaliser une extension \cite{extension-anatomy} .
 
 \begin{itemize}
-    \item \textbf{Activation Events}: des événements à partir desquels l'extension devient active \cite{activation-events}.
-    \item \textbf{Contribution Points}: des déclarations statiques qui sont faites dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes" \cite{contribution-points}.
-    \item \textbf{VS Code API}: un ensemble d'API JavaScript que nous pouvons invoquer dans le code \cite{vs-code-api}.
+    \item \href{https://code.visualstudio.com/api/references/activation-events}{\textbf{Activation Events}}: des événements à partir desquels l'extension devient active.
+    \item \href{https://code.visualstudio.com/api/references/contribution-points}{\textbf{Contribution Points}}: des déclarations statiques qui sont faites dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes".
+    \item \href{https://code.visualstudio.com/api/references/vscode-api}{\textbf{VS Code API}}: un ensemble d'API JavaScript que nous pouvons invoquer dans le code.
 \end{itemize}
 
 En général, l'extension est une combinaison de plusieurs \emph{Contribution Point} et l'utilisation de l'API pour étendre les fonctionnalités de VS Code.
@@ -1211,7 +1211,7 @@ Et de réutiliser les scopes définis dans ce fichier.
 Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
 Mais peut être également généré depuis le command palette.
 
-Ce procédé nous permet de profiter des thèmes de VS Code implémenté par défaut dans l'éditeur, par exemple dans les exemples illustrés par les figures \ref{vscode-dark-theme} et \ref{vscode-kimbi-dark-theme}.
+Ce procédé nous permet de profiter des thèmes de VS Code implémenté par défaut dans l'éditeur. Par exemple, illustrée par les figures \ref{vscode-dark-theme} et \ref{vscode-kimbi-dark-theme}.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1289,20 +1289,19 @@ La deuxième définit un délimiteur de début et de fin .
 Les règles se trouvant dans la clé "patterns" suivante (à la ligne 12) seront appliquées aux éléments se trouvant à l'intérieur de ces délimiteurs.
 On voit qu'il est donc possible d'imbriquer les règles.
 
-
 \subsubsection{Propriétés}
 
 La coloration syntaxique doit refléter au mieux cette grammaire. Il y a donc une coloration spécifique pour les propriétés appartenant à un type.
 Cela rend la coloration syntaxique fortement liée à la grammaire, mais on se rend compte d'un coup d'oeil si la propriété et correcte.
 
-
 \subsection{Capture}
+
+% exemple : !str(comment : "mon premier commentaire")
 
 Il y a globalement deux manières pour appliquer un scope.
 
 La première et de définir un caractère de départ et un autre de fin. Puis définir les patterns que l'on appliquera aux éléments se trouvant à l'intérieur.
 
-% exemple : !str(comment : "mon premier commentaire")
 
 Mais dans certains cas, il n'y a pas de délimiteur et on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
 a déclenché.
@@ -1340,29 +1339,20 @@ Car se baser sur la structure du document nous donne déjà toutes les informati
 
 \section{Auto-completion}
 
-Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
-
+Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" qui un terme général désignant diverses fonctions d'édition de code \cite{intelliSense}.
 Le terme "auto-complétion" existe également sous d'autres appellations (ex : autocomplétion, complétion automatique, complétion, etc.).
-L'intérêt est de proposer des suggestions de saisie au fur est à mesure que l'on écrit.
 
-Il s'agit d'une fonctionnalité informatique permettant à l'utilisateur de limiter la quantité d'informations qu'il saisit avec son clavier
-en se voyant proposer un complément qui pourrait convenir à la chaîne de caractères qu'il a commencé à taper.
-% TODO : citation wikipedia
+L'intérêt est de proposer des suggestions de saisie au fur est à mesure qu'un utilisateur écrit une chaine de caractères.
+Ces suggestions sont des compléments qui pourraient convenir à la chaine de caractère saisit. Cela va donc dépendre principalement du langage traité.
 
-Le terme "suggestions" étant relativement vague. C'est ici où réside la subtilité. Cela va dépendre principalement du langage traité.
+En JSON ou en YAML, l'auto complétion n'existe pas vraiment dû à la syntaxe même de ces langages de sérialisation.
+Il n'y a pas de mots clés comme on pourrait en trouver dans un langage de programmation.
+Il n'aurait donc rien de base à proposer pour ces deux langages, sans utiliser une source d'infomation externe comme les "JSON-schéma".
 
-Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment dû à leur nature même de ces langages de sérialisation.
-Et contrairement à des langages de programmation. Il n'y a pas de mots clés, on ne peut pas définir de nom de fonction ni de classe.
-On ne peut également pas définir de variables.
+À la limite, seules les clé ou valeur précédemment saisies peuvent éventuellement être reproposé mais cela est fait par défaut sous VS Code pour n'importe quel type de langage
+avec le type de complétion nommé "word based completion" \cite{word-based-completions}.
 
-On n'aurait donc rien de base à proposer pour ces deux langages, sans utiliser une source d'infomation externe comme les "JSON-schéma".
-À la limite, seules les clé ou valeur précédemment saisies peuvent éventuellement être reproposé mais cela est fait automatiquement sous VS Code
-avec le type de complétion nommé "word based completion".
-% https://stackoverflow.com/questions/54827043/how-to-disable-abc-suggestion-on-vs-code
-
-Donc pour commencer, lorsqu'on implémente une telle fonctionnalité, il faut pouvoir répondre à quelques questions aux préalables.
-Quelles sont les suggestions pertinentes à proposer ? Quand faudrait-il les proposer ?
-
+Donc pour commencer, lorsqu'on implémente une telle fonctionnalité, il faut savoir quoi proposer et quand le faire.
 Il est donc nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
 
 La syntaxe UON peut être exprimée par la figure \ref{syntax}.
@@ -1377,7 +1367,6 @@ La syntaxe UON peut être exprimée par la figure \ref{syntax}.
 On y remarque des points extrêmement intéressants.
 
 Toute valeur est un type, et un type peut avoir des propriétés associées.
-
 Les suggestions de baseront donc sur les types et leurs propriétés.
 
 \subsection{antlr4-c3}
