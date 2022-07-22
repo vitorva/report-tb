@@ -223,10 +223,12 @@ Il a été choisi, car il fait partie des éditeurs les plus populaires. C'est �
 D'autres alternatives existent comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fournit également de quoi implémenter une extension.
 C'est donc un choix personnel.
 
+Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes. Plus généralement des fichiers statiques, comme un langage de sérialisation. Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debuggage de programme plus complexe.
+
 Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit.
 
 Il est pensé pour être extensible (de L'UI à l'expérience utilisateur), presque tout peut être customisé et amélioré à travers de L'Extension API \cite{extension-api}.
-On se focalisera sur le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
+On peut mentionner le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
 
 VS Code fournit des documentations détaillées sur plein de sujets : étapes pour la création d'une extension, son déploiement continue ainsi que le support de langage en lui-même.
 Il est aussi possible facilement de trouver des guides, ainsi que \href{https://github.com/microsoft/vscode-extension-samples}{des exemples de codes} concernant les extensions.
@@ -237,9 +239,12 @@ Le code source de VS Code de Microsoft est open source, sous licence MIT permiss
 Il a été écrit en TypeScript et JavaScript. Une extension peut être également écrite dans ces deux langages.
 Nous choisirons le TypeScript car VS Code recommande ce langage. Mais certaines composantes externes (langage server) peuvent être écrites dans n'importe quel langage. Tant qu'elles fournissent l'API adéquate pour communiquer.
 
-Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes.
-Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debuggage de programme plus complexe.
-Nous manipulerons des fichiers statiques par la nature même de UON qui est un langage de sérialisation.
+\subsection{Command palette}\label{command-palette}
+
+La \href{https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette}{command palette}
+est le point d'accès à toutes les fonctonnalités de VS Code.
+
+Pour l'ouvir il faut exécuter la combinaison suivante : "CTRL + SHIFT + p".
 
 \subsection{Extension Anatomy}
 Il y a trois concepts cruciaux à comprendre pour réaliser une extension.
@@ -323,11 +328,11 @@ Il y a deux approches pour les implémenter que nous allons voir ci-dessous.
 
 \subsubsection{VS Code API (Direct implementation)}
 La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'API de VS Code} pour les fonctionnalités de langage.
-Cette API permet d'implémenter directement les fonctionnalités du langage.
+Cette API permet d'implémenter directement les fonctionnalités du langage sans devoir implémenté l'infrastructure les supportant.
 % TODO : s'assurer que l'api vscode une implementation de LSP ?
 % Comment faire la transition entre mon implémentationa avec celle d'un langage server
 
-Beacoup de fonctionnalités se font en s'inscrivant à des providers depuis notre application.
+Beaucoup de fonctionnalités se font en s'inscrivant à des providers depuis notre application.
 L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
 
 \subsection{Language server}
@@ -588,27 +593,6 @@ Une des propriétés uniques de UON est l'usage de schéma directement intégré
 Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
 Et le dépôt du projet se trouve \href{https://github.com/uon-language/specification}{ici}.
 
-% TODO : Datatypes ?
-
-%% Résumé rapide de la grammaire initiale + dire qu'elle est relativement bonne et qu'on a pas modifier grand chose
-
-%  Adaptation (passé de lark à antlr) (regex, espace différents, pas de librairie pour les indentations, ...)
-%   YAML
-%       Retirer dans un premiers temps le yaml
-%   Indentation
-%   Propriétés dans les types + de units
-
-% On va pas tout spécifier mais relever certains point de la grammaire qui est pertinent
-% Apercu de la grammaire plus en détail et exmple avec arbre + Examples
-% Collection
-% map
-% seq
-% clé-valeur
-% clé IDENTIFIER
-% nombbre
-
-% Faire attention de faire le découpage pour la completion
-
 \chapter{Scope de la grammaire}\label{grammar scope}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
 Il est donc important de préciser sur quels éléments du langage nous nous focaliserons.
@@ -616,22 +600,19 @@ Il est donc important de préciser sur quels éléments du langage nous nous foc
 Une spécification d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujetx à interprétation.
 C'est un langage complexe et qui pourrait encore, être ammener à évoluer. Les propositions et les suggestions sont les bienvenues.
 
-Heurseuement pour nous, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim pour son travail de bachelor "Parser for a serialization language UON".
-Son travail se trouve sur \href{https://github.com/uon-language/uon-parser}{ici}
+Heurseuement pour nous, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim.
+Cette grammaire se trouve sur \href{https://github.com/uon-language/uon-parser/tree/master/grammar}{ici}
 
 Nous nous appuierons sur cette grammaire que nous convertirons en format ANTLR et ferons les modifications jugées nécessaires.
 
 Les fonctionnalités se baseront sur celle-ci. Ceci dans le but de rester cohérents entre elles.
 Nous ferons attention à son extensibilité et expliquerons les choix d'implémentations.
-Elle sera complétée et améliorée après la mise en place des fonctionnalités attendues, si le temps le permet.
 
 Cette grammaire se trouve décrite dans le fichier UON.g4 du projet.
 
 \section{Résumé}
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
 Nous utiliserons la grammaire qui a été adaptée dans le format d'ANTLR pour illustrer nos exemples.
-
-% TODO EBNF ICI ? Type 2 de grammaire ?
 
 \subsection{root value}
 
@@ -1049,7 +1030,7 @@ Cela nous créera l'arborescence mentionnée précédemment au point \hyperref[E
 \subsection{Lancement de l'extension}
 On peut lancer notre application en mode debug avec la touche F5. Cela va ouvrir une nouvelle fenêtre VS Code qui va contenir notre extension.
 
-Par défaut, l'application générée vient avec du code permettant d'afficher un message de bienvenu. On l'affiche au travers du command pannel (CTRL + SHIFT + P). On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
+Par défaut, l'application générée vient avec du code permettant d'afficher un message de bienvenu. On l'affiche au travers du command palette. On peut s'assurer comme cela que l'implémentation de base fonctionne correctement.
 On constate donc que par défaut, l'application doit être lancée au travers d'une commande, mais pour notre cas il sera plus intéressant que VS Code nous propose les fonctionnalités à l'ouverture d'un fichier UON.
 Pour cela, il faut modifier \emph{l'activation events} dans le fichier package.json par :
 \begin{lstlisting}[frame=single]
@@ -1192,52 +1173,45 @@ Il nous génère ces fichiers :
 \section{Syntax highlighting}
 
 % Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On peut s'aider en parallèle de la coloration syntaxique.
+% TODO : https://macromates.com/manual/en/language_grammars
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
-Il y a deux composantes principales. % Citation vscode ?
+Il y a deux composantes principales.
 \begin{itemize}
     \item La tokenisation qui consiste à séparer le texte en une liste de token.
     \item La thémisation (Theming) qui permet d'attribuer à un token une couleur et un style.
 \end{itemize}
 
-%TODO : à changer
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/basic-uon.png}
+        \includegraphics[width=10cm]{assets/figures/example-uon-coloration.png}
     \end{center}
-    \caption[code UON]{\label{basic-uon} Exemple basique en UON}
+    \caption[Exemple de coloration d'un code UON]{\label{example-uon-coloration} Exemple de coloration d'un code UON}
 \end{figure}
 
-
-VS code utilise Textmate grammars \cite{textmate-grammars} comme le moteur de tokénisation de la syntaxe.
+VS code utilise Textmate grammars comme le moteur de tokénisation de la syntaxe.
 Cette grammaire a été inventée par l'éditeur TextMate est a été adopté par de nombreux éditeurs et IDE.
 Elle contient une liste structurée d'expressions régulières qui permet d'associer un scope
-à un ou plusieurs tokens qui déclencherait l'activation d'une de ces expressions.
+à un ou plusieurs tokens qui déclencherait l'activation d'une de ces expressions. \cite{syntax-highlight-guide}
 
-Nous définissons notre grammaire TextMate dans le fichier "uon.tmLanguage.json" qui se trouve dans le dossier "syntaxes" à la racine du projet.
+La grammaire TextMate du langage UON se trouve dans le fichier "uon.tmLanguage.json" dans le dossier "syntaxes" à la racine du projet.
 Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
-
-% TODO : https://macromates.com/manual/en/language_grammars
-
-%Le but de ce fichier en plus de permettre la coloration syntaxique, et qu'il permet également de rendre l'éditeur de texte "intelligent" quant au contexte dans lequel se trouve le caret.
-%Cela permet d'avoir des comportements différents selon la situation (ex : Pas de bracket closing dans les commentaires).
 
 \subsection{Scope}
 Un scope défini le contexte d'un groupe de token et peut-être considéré comme son type.
 
 Il s'agit d'un identifiant, c'est grâce au scope d'un token, qu'un fichier de thème peut attribuer une couleur avec un mécanisme de "clé-valeur".
 
-TextMate liste une liste de scope commun que de nombreux thèmes ciblent déjà et recommande de les utiliser.
-Ceci dans le but de permettre à notre langage d'être supporté le plus possible.
-%% https://macromates.com/manual/en/language_grammars
+TextMate défnit des convention de nommage que de nombreux thèmes ciblent déjà et recommande de les utiliser.
+Ceci dans le but de permettre à notre langage d'être supporté le plus possible. \cite{textmate-grammars}
 
 Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créé (Thème dark par défaut sur VS Code). 
 Et de réutiliser les scopes définis dans ce fichier.
 
 Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
-Mais peut être également généré depuis le contrôle panel (CTRL + SHIFT + P).
+Mais peut être également généré depuis le command palette.
 
-Ce procédé nous permet de profiter des thèmes de VS Code implémenté par défaut dans l'éditeur, par exemple les deux suivants :
+Ce procédé nous permet de profiter des thèmes de VS Code implémenté par défaut dans l'éditeur, par exemple dans les exemples illustrés par les figures \ref{vscode-dark-theme} et \ref{vscode-kimbi-dark-theme}.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1245,7 +1219,6 @@ Ce procédé nous permet de profiter des thèmes de VS Code implémenté par dé
     \end{center}
     \caption[vscode dark theme]{\label{vscode-dark-theme} vscode-dark-theme}
 \end{figure}
-
 
 \begin{figure}[!h]
     \begin{center}
@@ -1255,21 +1228,15 @@ Ce procédé nous permet de profiter des thèmes de VS Code implémenté par dé
 \end{figure}
 
 \subsubsection{Example}
-Prenons un exemple simple, le scope pour les nombres : "constant.numeric.uon"
-
-On voit qu'il s'agit d'une suite d'identifiant.
+Prenons un exemple simple du fichier "uon.tmLanguage.json", le scope pour les nombres : "constant.numeric.uon"
 
 La convention est d'avoir des mots clés séparés par un point pour spécifier chaque niveau de précision supplémentaire
+Il est aussi possible d'avoir plusieurs scope pour un élément : "string.uon support.type.property-name.uon". Ces scopes sont séparés par un espace.
+C'est celui le plus à droite est prioritaire. Cela peut-être utile si l'on souhaite maximiser les chances qu'un thème nous fournisse une coloration.
+\cite{scopes-selectors}
 
-Il est aussi possible d'avoir plusieurs scope pour un élément : "string.uon support.type.property-name.uon"
-
-Les scopes sont séparés par un espace.
-C'est celui le plus à droite qui l'emporte. Cela peut-être utile si l'on souhaite maximiser les chances qu'un thème nous fournisse une coloration.
-
-% https://macromates.com/manual/en/scope_selectors
-
-Les scopes sont souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
-Il est possible d'analyser notre code à l'aide du "Scope Inspector", qui est un outil disponible dans l'éditeur depuis le control panel,
+Les scopes sont donc souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
+Il est possible d'analyser notre code à l'aide du "Scope Inspector", qui est un outil disponible dans l'éditeur depuis la command palette de VS Code.
 pour visualiser la hiérarchie des scopes pour un token.
 
 \begin{figure}[!h]
@@ -1282,8 +1249,8 @@ pour visualiser la hiérarchie des scopes pour un token.
 La section "textmate scopes" montre la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
 
 La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas gérée par la spécification LSP et par l'API de VS Code non plus.
-Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible.
-%citation d'un repo
+Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible
+\cite{syntax-highlighting-editor}.
 
 \subsection{Fonctionnement}
 
@@ -1319,13 +1286,8 @@ On constate deux constructions possibles.
 La première règle applique le scope à un élément qui déclenche le match.
 La deuxième définit un délimiteur de début et de fin .
 
-% TODO : pas clé
 Les règles se trouvant dans la clé "patterns" suivante (à la ligne 12) seront appliquées aux éléments se trouvant à l'intérieur de ces délimiteurs.
 On voit qu'il est donc possible d'imbriquer les règles.
-
-\subsection{uon.tmLanguage}
-
-%TODO
 
 
 \subsubsection{Propriétés}
@@ -1333,7 +1295,6 @@ On voit qu'il est donc possible d'imbriquer les règles.
 La coloration syntaxique doit refléter au mieux cette grammaire. Il y a donc une coloration spécifique pour les propriétés appartenant à un type.
 Cela rend la coloration syntaxique fortement liée à la grammaire, mais on se rend compte d'un coup d'oeil si la propriété et correcte.
 
-% TODO : propriétés pas définis
 
 \subsection{Capture}
 
@@ -1378,8 +1339,6 @@ Cela est donc intéressant pour des langages plus complexes dans leur nature qu'
 Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
 
 \section{Auto-completion}
-
-% exemple de completion final
 
 Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliSense" \cite{intelliSense} qui un terme général désignant diverses fonctions d'édition de code.
 
