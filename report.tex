@@ -487,6 +487,7 @@ Puis, ce mécanisme s'arrêtera quand il réussira à trouver un token qui lui p
 Au pire des cas il s'agira d'un token de retour à la ligne \Gls{eof}.
 
 C'est grâce à ce mécanisme qui fait que si nous utilisons le \emph{DefaultErrorStrategy} nous obtiendrons un parse tree dans tous les cas.
+Le résultat du parsing n'a pas besoin d'être correct. Il est possible de travailler avec du code incomplet ou malformé, ce qui est relativement fréquent dans un éditeur.
 
 Malheursement, je n'ai pas pu explorer plus en profondeur ce mécanisme complexe de resynchronisation.
 Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
@@ -1344,17 +1345,14 @@ Le terme "auto-complétion" existe également sous d'autres appellations (ex : a
 
 L'intérêt est de proposer des suggestions de saisie au fur est à mesure qu'un utilisateur écrit une chaine de caractères.
 Ces suggestions sont des compléments qui pourraient convenir à la chaine de caractère saisit. Cela va donc dépendre principalement du langage traité.
-
-En JSON ou en YAML, l'auto complétion n'existe pas vraiment dû à la syntaxe même de ces langages de sérialisation.
+Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment dû à la syntaxe même de ces langages de sérialisation.
 Il n'y a pas de mots clés comme on pourrait en trouver dans un langage de programmation.
 Il n'aurait donc rien de base à proposer pour ces deux langages, sans utiliser une source d'infomation externe comme les "JSON-schéma".
-
-À la limite, seules les clé ou valeur précédemment saisies peuvent éventuellement être reproposé mais cela est fait par défaut sous VS Code pour n'importe quel type de langage
+À la limite, seules les clés ou valeurs précédemment saisies peuvent éventuellement être reproposées mais cela est fait par défaut sous VS Code pour n'importe quel type de langage
 avec le type de complétion nommé "word based completion" \cite{word-based-completions}.
 
-Donc pour commencer, lorsqu'on implémente une telle fonctionnalité, il faut savoir quoi proposer et quand le faire.
-Il est donc nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
-
+C'est pourquoi lorsqu'il faut implémenter une telle fonctionnalités, il faut savoir quoi proposer et quand le faire.
+Pour cela, Il est nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
 La syntaxe UON peut être exprimée par la figure \ref{syntax}.
 
 \begin{figure}[!ht]
@@ -1364,44 +1362,30 @@ La syntaxe UON peut être exprimée par la figure \ref{syntax}.
     \caption[syntax]{\label{syntax} UON syntax}
 \end{figure}
 
-On y remarque des points extrêmement intéressants.
+On constate que : toute valeur est un type, et un type peut avoir des propriétés associées.
 
-Toute valeur est un type, et un type peut avoir des propriétés associées.
 Les suggestions de baseront donc sur les types et leurs propriétés.
 
 \subsection{antlr4-c3}
 
-Comme mentionné au début de ce document, une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
-
-Mais en complément nous allons aussi utilisé \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
-
-Avant il n'y a avait que des solutions personnelles. Cette librairie a pour objectif de fournir une implémentation commune.
-Elle est disponible comme node module et est écrit en Typescript.
-
-Elle a été conçue par \href{https://github.com/mike-lischke}{Mike Lischke}.
-
-Cet outil est écrit en Typescript mais existe aussi en version \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/java}{JAVA} et \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/c%23}{C\#}.
-
-Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
-Nous utiliserons principalement ces candidats pour les suggestions proposées dans l'éditeur de code.
-
-c'est un outil relativement puissant, qui nous simplifie grandement la tâche
-
 % citation https://tomassetti.me/code-completion-with-antlr4-c3/
 % Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats, mais est il est quand même nécessaire de lancer l'exécution du parser (parser.uon()) pour remplir le stream de token (tokenStream).
 
-% citation MEGA TUTO
-Le moteur de complétion n'utilise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream \ref{antlr-setup}.
-Car le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état (ATN) d'ANTLR4 disponible dans le parser.
+Une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
+Mais en complément, nous allons aussi utilisé \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
+Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions lorsqu'on lui passe un input et un indice.
+Les suggestions proposées dans l'éditeur sera majoritairement des candidats fournis par le moteur. C'est donc un outil relativement puissant, qui simplifie grandement la tâche du développeur.
 
-% citation
-\textbf{Remarque} : Le résultat du parsing n'a pas besoin d'être correct. Il est possible de travailler avec du code incomplet ou malformé, ce qui est relativement fréquent dans un éditeur.
+Il a été conçue par \href{https://github.com/mike-lischke}{Mike Lischke}. Cet outil est écrit en Typescript et est disponible comme node module. Il existe aussi en version \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/java}{JAVA} et \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/c%23}{C\#}.
+
+Le moteur de complétion n'utilise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream comme illustré précédement par la figure \ref{antlr-setup}.
+Car le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état d'ANTLR4 disponible dans le parser. \cite{antlr-mega-tutorial}
 
 Pourquoi un tel moteur ?
 Car connaitre tous les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 
-Pour notre scénario, on voudra proposer des suggestions à la position du curseur, ce qui fait le code après celui-ci ne nous intéresse pas (dans le cadre actuel du langage).
+Dans le cadre de ce projet, on voudra proposer des suggestions à la position du curseur, ce qui fait le code après celui-ci ne nous intéresse pas (dans le cadre actuel du langage).
 On utilisera la position du curseur (caret). Pour uniquement traiter le code du début de l'éditeur jusqu'à la position du curseur.
 
 Une utilité de prendre en compte ce qui se trouve après le curseur serait par exemple le cas de code SQL :
