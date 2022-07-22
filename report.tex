@@ -373,6 +373,7 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux s
 \subsection{Fault tolerant Parser}
 Pour fournir des fonctionnalités de langue, un point souvent mentionnée est l'utilisation d'un parser.
 Car l'arbre généré par celui-ci contient des informations concernant la structure du document utiles pour certaines fonctionnalités.
+Il s'agira souvent en pratique d'un \Gls{ast}.
 
 Des outils permettant la génération d'un parser existent à partir d'une grammaire et seront prévilégiés.
 
@@ -1373,7 +1374,7 @@ Les suggestions de baseront donc sur les types et leurs propriétés.
 
 Une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 Mais en complément, nous allons aussi utilisé \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
-Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions lorsqu'on lui passe un input et un indice.
+Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
 Les suggestions proposées dans l'éditeur sera majoritairement des candidats fournis par le moteur. C'est donc un outil relativement puissant, qui simplifie grandement la tâche du développeur.
 
 Il a été conçue par \href{https://github.com/mike-lischke}{Mike Lischke}. Cet outil est écrit en Typescript et est disponible comme node module. Il existe aussi en version \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/java}{JAVA} et \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/c%23}{C\#}.
@@ -1385,17 +1386,6 @@ Pourquoi un tel moteur ?
 Car connaitre tous les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
 Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 
-Dans le cadre de ce projet, on voudra proposer des suggestions à la position du curseur, ce qui fait le code après celui-ci ne nous intéresse pas (dans le cadre actuel du langage).
-On utilisera la position du curseur (caret). Pour uniquement traiter le code du début de l'éditeur jusqu'à la position du curseur.
-
-Une utilité de prendre en compte ce qui se trouve après le curseur serait par exemple le cas de code SQL :
-
-\begin{lstlisting}[frame=single]
-SELECT | FROM USER // ("|" étant le curseur)
-\end{lstlisting}
-
-Dans ce scénario des suggestions liées à la table USER devrait être proposé et nécessiterait un traitement particulier.
-
 Pour recevoir des candidats, il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup}, d'installer le module npm \emph{antrl4ts} et
 de donner au moteur, une instance du parser et un indice.
 
@@ -1404,16 +1394,11 @@ de donner au moteur, une instance du parser et un indice.
     let candidates = core.collectCandidates(index);
 \end{lstlisting}
 
-L'explication pour trouver cet indice se trouve dans la section \hyperref[candidates]{\textbf{Candidats}}.
-% \textbf{Remarque} : L'indice est calculé en se basant sur la taille totale du stream de token. (voir fichier completion.ts)
-
-Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
-Comme mentionné plus tard %TODO
-
-Ce qui se trouve à la suite peut être erroné, car on ne n'en tient pas compte, comme mentionner ci-dessus.
+Les explications complémentaires concernant l'input à traiter et l'indice à fournir se trouve plus tard, à la section \ref{candidates}.
 
 Nous recevrons alors un objet de type \emph{CandidatesCollection}.
 
+% TODO https://github.com/lark-parser/lark/issues/684 -> api ?
 \begin{lstlisting}[frame=single]
     class CandidatesCollection {
         tokens: Map<number, TokenList>;
@@ -1421,48 +1406,31 @@ Nous recevrons alors un objet de type \emph{CandidatesCollection}.
     }
 \end{lstlisting}
 
-Cette collection contient deux map.
+Cette collection contient deux map : \emph{tokens} et \emph{rules} .
 
-\textbf{tokens} : fait le lien entre le prochain token possible et une liste contenant des tokens qui doit le suivre immédiatement, si elle existe.
+La map \emph{tokens} fait le lien entre le prochain token possible et une liste contenant des tokens qui doit le suivre immédiatement, si elle existe.
 
-Nous allons uniquement utiliser les clés de cette map pour proposer nos suggestions.
+%Nous allons uniquement utiliser les clés de cette map pour proposer nos suggestions.
+%Car la liste n'est jamais utilisée actuellement, il n'y jamais deux tokens qui devrait se suivre obligatoirement dans la grammaire qui sont proposés par le moteur.
+%Par exemple pour obtenir une séquence de token comme dans l'exemple suivant :
 
-Car la liste n'est jamais utilisée actuellement, il n'y jamais deux tokens qui devrait se suivre obligatoirement dans la grammaire qui sont proposés par le moteur.
-
-Par exemple pour obtenir une séquence de token comme dans l'exemple suivant :
-
-\begin{lstlisting}
-    !map {switch : |}
-                   - !bool
-                   - !bool true
-\end{lstlisting}
-
-Cela nécessiterait d'adapter la grammaire en conséquence pour que la valeur "true" soit le seul élément possible qui suit "!bool".
-
-% TODO
-% - parler de comment convertir ce symbole en token
-% - c'est quoi la valeur concrètement : La valeur d'un token ou son nom ?
+%\begin{lstlisting}
+%    !map {switch : |}
+%                   - !bool
+%                   - !bool true
+%\end{lstlisting}
+%Cela nécessiterait d'adapter la grammaire en conséquence pour que la valeur "true" soit le seul élément possible qui suit "!bool".
 
 
-\textbf{rules} : fait le lien entre la règle du parser actuelle et la liste de règles utilisé pour arriver à ce stade.
-
+La map \emph{rules} fait le lien entre la règle du parser actuelle et la liste de règles utilisé pour arriver à ce stade.
 Cette map nous permet de questionner la liste des symboles pour retourner des informations supplémentaires.
-
-% TODO https://github.com/lark-parser/lark/issues/684
-
-%Comment aurions nous du procéder sans un tel outil ?
-%Il évidemment possible de le faire sans ce moteur.
-%Un excellent article mentionne une telle implémentation aussi avec ANTLR ici.
-
-%Cela rend bien entendu le travail plus conséquent.
 
 \subsubsection{Symbol tables}
 
-C'est un mécanisme puissant de c3 mais que nous n'allons pas exploiter,
-car je n'ai pas trouvé d'usage dans le cadre du cahier des charges de ce projet et par manque de temps.
+C'est un mécanisme de c3 mais qui ne sera pas exploité, car je n'ai pas trouvé d'usage dans le cadre du cahier des charges de ce projet et par manque de temps.
 Cependant il reste intéressant de détailler brièvement son utilité pour d'éventuelles améliorations.
 
-On pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST. % TODO AST abbréviation
+On pourrait penser qu'avoir à disposition un parser nous permettrait de récupérer toutes les informations nécessaires au travers d'un AST.
 Cependant ce n'est pas le cas pour la plupart des scénarios.
 Nous pouvons savoir quels sont les tokens valide à un emplacement (ce qui est suffisant pour nous). Mais pour certains langages, des informations manquent.
 Et c'est ce que la table de symboles essaye de résoudre.
@@ -1545,7 +1513,6 @@ ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas d
 
 C'est un mécanisme intéressant, mais fortement lié à l'application
 
-
 \subsection{Triggers}
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
 On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
@@ -1560,6 +1527,22 @@ avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre 
 %TODO : quick-suggest-setting (par défaut ?) : https://github.com/microsoft/vscode/issues/101333}
 
 \subsection{Candidats}\label{candidates}
+
+%Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
+%Comme mentionné plus tard %TODO
+
+%Ce qui se trouve à la suite peut être erroné, car on ne n'en tient pas compte, comme mentionner ci-dessus.
+
+Dans le cadre de la grammaire utilisé dans ce projet, le code se trouvant après un élément après le curseur n'a pas d'impact .
+On utilisera la position du curseur (caret). Pour uniquement traiter le code du début de l'éditeur jusqu'à la position du curseur.
+
+Une utilité de prendre en compte ce qui se trouve après le curseur serait par exemple le cas de code SQL :
+
+\begin{lstlisting}[frame=single]
+SELECT | FROM USER // ("|" étant le curseur)
+\end{lstlisting}
+
+Dans ce scénario des suggestions liées à la table USER devrait être proposé et nécessiterait un traitement particulier.
 
 %Il est nécessair d'implémenter une fonction pour convertir la positon actuelle du curseur en la position du prochain token attendu.
 %Pour être transmis à la fonction "collectCandidates(tokenIndex)". %todo
