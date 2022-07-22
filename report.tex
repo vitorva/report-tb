@@ -1505,13 +1505,21 @@ Ce qui n'est pas possible avec le moteur.
     \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
 \end{figure}
 
-%TODO : résultat
+% TODO : exemple concret
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/snippet-suggestion.png}
+    \end{center}
+    \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
+\end{figure}
 
-Il est possible de passer à la case suivante à l'aide de la touche tab. %case..
+Ce modèle de snippet permet d'afficher une chaine de caractères avec des case vides à remplir.
+Il est possible de passer à la case suivante à l'aide de la touche \emph{tab}.
+
 Cependant il est nécessaire de proposer ces suggestions au bon moment. La solution envisagée et de vérifier que le token du type possédant
-ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas de schéma % TODO
+ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas de schéma
 
-C'est un mécanisme intéressant, mais fortement lié à l'application
+C'est un mécanisme utile est simple, mais fortement lié à l'application et il ne faudrait trop en utiliser.
 
 \subsection{Triggers}
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
@@ -1519,10 +1527,10 @@ On peut aussi ajouter au provider des symboles qui vont trigger son activation. 
 Cependant il ne s'agit que d'une appréciation personnelle.
 
 %TODO :
-No suggestion :
-quand un espace précède un nouveau mot alors c'est simple pour le placer
-quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car VS Code peut trigger l'autocomplete n'importe quand et du coup
-avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
+%No suggestion :
+%quand un espace précède un nouveau mot alors c'est simple pour le placer
+%quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car VS Code peut trigger l'autocomplete n'importe quand et du coup
+%avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
 
 %TODO : quick-suggest-setting (par défaut ?) : https://github.com/microsoft/vscode/issues/101333}
 
