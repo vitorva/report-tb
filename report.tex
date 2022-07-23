@@ -1369,9 +1369,6 @@ Les suggestions de baseront donc sur les types et leurs propriétés.
 
 \subsection{antlr4-c3}
 
-% citation https://tomassetti.me/code-completion-with-antlr4-c3/
-% Le moteur de complétion n'utlise pas le parse tree pour proposer des candidats, mais est il est quand même nécessaire de lancer l'exécution du parser (parser.uon()) pour remplir le stream de token (tokenStream).
-
 Une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
 Mais en complément, nous allons aussi utilisé \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
@@ -1391,16 +1388,20 @@ Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 Pour recevoir des candidats, il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup}, d'installer le module npm \emph{antrl4ts} et
 de donner au moteur, une instance du parser et un indice.
 
-\begin{lstlisting}[frame=single]
+\begin{listing}[!ht]
+    \begin{minted}{typescript}
     let core = new c3.CodeCompletionCore(parser);
     let candidates = core.collectCandidates(index);
-\end{lstlisting}
+    \end{minted}
+    \caption{setup c3}
+    \label{c3-setup}
+\end{listing}
 
 Un candidat est un token qui pourrait se situer à une position donnée dans l'input.
 Cette position correspond à un indice donné au moteur.
 
 \subsubsection{Indexation}
-L'indexation est gérée de deux manières différentes comme illustré par la figure \ref{candidat-index} tiré de la documentation de c3.
+L'indexation est gérée de deux manières différentes comme illustré par la figure \ref{candidat-index}, tiré de la documentation de c3.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1411,11 +1412,11 @@ L'indexation est gérée de deux manières différentes comme illustré par la f
 
 Cela va dépendre si on décide d'ignorer ou non les espaces depuis la grammaire g4.
 
-Ce qui est fait actuellement c'est de récupérer ces tokens dans un canal mais sans le considérer dans le langage comme un token faisant parti intégrante dans une règle.
-C'est ce qui est recommandé dans la documentation du projet c3 de ne pas ignorer les espaces. Car cela permet de gérer plus de cas particuliers \cite{c3-example-soql}.
+Ce qui est fait actuellement c'est de récupérer ces tokens dans un canal mais sans le considérer dans le langage.
+C'est ce qui est recommandé dans la documentation du projet c3. Car cela permet de gérer plus de cas particuliers \cite{c3-example-soql}.
 % https://neuroning.com/post/implementing-code-completion-for-vscode-with-antlr/
 
-Même si l'on n'en profite pas actuellement, cela ne modifie pas le code en soit et cela permet l'extensibilité du code. % TODO : à vérifier
+Même si l'on n'en profite pas actuellement, cela permet l'extensibilité du code par la suite. % TODO : à vérifier
 
 % La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
 
@@ -1495,8 +1496,8 @@ Les tokens peuvent être classé en deux catégories.
 Ceux dans la valeur sont fixes
 Ceux dans la valeur dépendent de la saisie d'un utilisateur au travers d'expression régulière.
 
-La seconde n'est pas intéressante, car le moteur ne fera que retourner le nom du token ce qui est inutile.
-La première catégorie, il faut aussi ignorer les tokens : parenthèse, accolades et les deux-points, car ce n'est pas vraiment pertinent.
+La seconde n'est pas intéressante, car le moteur ne fera que retourner le nom du token ce qui est inutile. Par exemple "NUMBER", lorsqu'il est possible d'avoir un nombre.
+La première catégorie, il faut aussi ignorer les tokens : parenthèse, accolades car ce n'est pas vraiment pertinent. % et les deux-points
 
 \subsection{Gestion des erreurs }\label{error handle}
 
@@ -1528,10 +1529,9 @@ C'est ce qui peut être fait de la manière suivante :
     \item Étape 4 : relancer la phase de la création du parser en lui donnant le texte modifié.
 \end{enumerate}
 
-Pour l'instant : % TODO
-
-Avec ce mécanisme personnalisé on arrive à rendre la complétion un peu plus tolérante aux erreurs, mais le problème et que l'on couple la logique du moteur avec l'application et donc n'est pas une très bonne pratique.
+Mais cette approche nécessite de traiter énormément de cas particulier et mais le problème et que l'on couple la logique du moteur avec l'application et donc n'est pas une très bonne pratique.
 Car si on modifie la grammaire, il faudra répercuter les changements dans l'application.
+C'est pourquoi actuellement on ne supprime que la première ligne qui pose problème et qu'il n'a pas été jugé nécessaire d'aller plus loin.
 
 \subsection{Snippets}
 Il est possible d'ajouter des snippets sous VS Code. C'est-à-dire des templates qui nous permettent de générer du code prédéfini. Puis de les ajouter aux suggestions.
