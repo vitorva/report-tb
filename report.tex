@@ -529,19 +529,10 @@ Le rôle d'un format de sérialisation et de pouvoir représenter des données s
 Un éditeur ne manipulant qu'un fichier statique, les étapes de sérialisation et désérialisation ne se feront pas à notre niveau.
 Pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un environnement de programmation (ex : Python).
 
-% TODO : Sérialisation
-% TODO : Desérialisation
-
-% TODO : Parler des similutes différences
-%\subsection{JSON}
-%\subsection{YAML}
-%\subsection{XML}
 
 \subsection{Pourquoi ?}
-Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication m2m (machine to machine) ainsi que pour l'IoT (Internet of Things).
+Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication \Gls{m2m} ainsi que pour l'\Gls{IoT}.
 Ces communications nécessitent souvent de communiquer entre de petits appareils dont la puissance de calcul est très limitée.
-La perspective de disposer d'un protocole de communication applicatif à la fois interopérable et adaptée aux échanges à faible puissance est très appréciable.
-Parce que % TODO
 
 \subsection{Communication}
 Lorsque deux appareils veulent échanger des informations, ils disposent de deux canaux de communication :
@@ -589,7 +580,16 @@ Chaque élément est composé d'un type. Et chacun de ces types peut avoir des p
 Dans de telles communications, la validation des données transmises entre des machines dont la puissance de calcul est très limitée est un atout majeur.
 Une des propriétés uniques de UON est l'usage de schéma directement intégré dans le langage.
 
-% TODO : Lister les différentes formes de schéma de validation
+C'est une structure qui décrit comment un fichier ou type doit être représenté.
+
+UON propose 4 différents types de stratégies.
+
+\begin{itemize}
+    \item Embedded schema
+    \item Included schema
+    \item Linked schema
+    \item Separated schema
+\end{itemize}
 
 \subsection{Liens}
 Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
@@ -871,6 +871,9 @@ comme possible clé alors on aura une erreur si on ne le précise pas \dots % TO
         | '!';
 \end{lstlisting}
 
+%REGEX
+% utilisation d'outils en ligne : ex : https://regex101.com/
+% référence officielle : https://www.regular-expressions.info/
 
 \subsubsection{Quoted}
 
@@ -984,6 +987,7 @@ la figure.
         \end{minipage}
     }
     \caption{UON VS Code extension structure}
+    \label{project-structure}
 \end{figure}
 
 Le code de l'implémentation est disponible sur le dépôt public \href{https://github.com/vitorva/vscode-uon}{suivant}.
@@ -1092,45 +1096,20 @@ L'extension apparaitra automatiquement dans le marketplace si elle est publiée.
 
 \subsection{Intégration continue (CI)}
 
-Comme le squelette de base de l'extension a été créé en utilisant le générateur Yeoman de VS Code, la structure pour écrire nos tests d'intégrations
-existe déjà.
-% citation : https://code.visualstudio.com/api/working-with-extensions/testing-extension
+Le squelette de base de l'extension ayant été créé en utilisant le générateur Yeoman de VS Code, la structure pour écrire nos tests d'intégrations
+existe déjà \cite{testing-extension}.
 
-Il suffit de lancer la commande "npm run test" ou "yarn test" pour lancer les tests se trouvant dans le répertoire % TODO.
+Il suffit de lancer la commande "npm run test" ou "yarn test" pour lancer tous les tests se trouvant dans le répertoire \emph{test} (voir figure \ref{project-structure}).
 
-C'est l'api \href{https://mochajs.org/api/}{mocha} qui est utilisé pour ces tests.
+C'est l'API \href{https://mochajs.org/api/}{mocha} qui est utilisé pour exécuter ces tests.
 
 Actuellement on teste de cette façon les fonctionnalités de la complétion et de l'outline view.
 
-Concernant les tests pour la coloration syntaxique, le module \href{https://github.com/PanAeon/vscode-tmgrammar-test}{vscode-tmgrammar-test} a été choisi.
+Concernant les tests pour la coloration syntaxique, le module \href{https://www.npmjs.com/package/vscode-tmgrammar-test?activeTab}{vscode-tmgrammar-test} a été choisi.
 Car depuis mocha, on a pas moyen de le faire.
 
 Nous avons donc quelques tests unitaires simples, mais qui permet toutefois de s'assurer qu'un changement ne vient pas modifier le comportement d'une manière inattendue.
-
-Tous les tests se trouvent dans le dossier test à la racine du projet. % TODO lien avec l'arborescence
-
-% TODO
-\subsubsection{Autocomplétion}
-On s'assure que les candidates de complétions attendues à un emplacement soient les bons selon une entrée de code.
-
-\subsubsection{Syntax highlight}
-créer un fichier .uon
-faire un -snap
-modifier le fichier snap et rajouter l'entête qui nous permet de définir que c'est un fichier tests
-on peut maintenant le tester avec la commande : -test
-
-% https://www.npmjs.com/package/vscode-tmgrammar-test?activeTab
-
-
-\subsubsection{Outline view}
-Un visiteur pour compter le nombre de noeuds attendus pour s'assurer qu'on soit bien passé par les noeuds
-
-% Créer les construction à la main et comparer leur sorti textuelles
-
-%REGEX
-% utilisation d'outils en ligne : ex : https://regex101.com/
-% référence officielle : https://www.regular-expressions.info/
-
+La description des tests se trouve directement dans les fichiers concernées.
 
 \subsection{Deployement automatisé (CD)}
 
@@ -1590,24 +1569,15 @@ Ce type de complétion est nommé "word based completion" dans VS Code.
 La outline view est une représentation de la structure du fichier actuellement ouvert par l'éditeur.
 On appelle généralement cette structure le "document outlining" ou "code outlining".
 
-% https://code.visualstudio.com/api/references/vscode-api
-% https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol
-% https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/
-En analysant les spécifications LSP ou le DocumentSymbolProvider de l'api VS Code, on constate que l'outline peut être représenté sous deux formes :
+En analysant la spécification \href{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/}{LSP} ou le \href{https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol}{DocumentSymbolProvider} de l'api VS Code, on constate que l'outline peut être représenté sous deux formes :
 
 \begin{itemize}
     \item SymbolInformation qui est une flat list de tous les symboles trouvés dans un document. Dans ce cas, ni le range de localisation du symbole ni le nom du conteneur du symbole ne doivent être utilisés pour déduire une hiérarchie.
-    \item DocumentSymbol qui est une hiérarchie de symboles trouvés dans un document texte donné
+    \item DocumentSymbol qui est une hiérarchie de symboles trouvés dans un document.
 \end{itemize}
-%TODO : citation ?
 
-la structure peut être donc représenté de manière hiérarchique ou non (seulement être listés).
-
-%TODO Lien
-
-Un élément de l'outline (noeud) représente un élément unique du texte ou une structure.
-
-On a accès à cette représentation dans le sidebar gauche par défaut.
+La structure peut être donc représenté de manière hiérarchique ou seulement être listés.
+On a accès à cette représentation dans la sidebar gauche par défaut.
 
 %TODO : picture
 \begin{figure}[!h]
@@ -1617,7 +1587,7 @@ On a accès à cette représentation dans le sidebar gauche par défaut.
     \caption[outline-view-sidebar]{\label{outline-view-sidebar} outline-view-sidebar}
 \end{figure}
 
-ou depuis la barre de recherche en saisissant la commande "CTRL + SHIFT + o" :
+ou depuis la command palette en saisissant la combinaison "CTRL + SHIFT + o" :
 
 %TODO : picture
 \begin{figure}[!h]
@@ -1629,7 +1599,7 @@ ou depuis la barre de recherche en saisissant la commande "CTRL + SHIFT + o" :
 
 Il est possible obtenir la structure d'un fichier en analysant manuellement le texte (par exemple ligne par ligne).
 Mais cette approche n'est pas optimale et il serait difficile de représenter la structure hiérarchique du document à l'aide de regex par exemple,
-comme mentionné au point : % TODO
+%comme mentionné au point : % TODO
 
 Nous allons donc utiliser notre parser.
 
@@ -2046,7 +2016,6 @@ Lors de la réalisation de ce Travail de bachelor, nous avons mis on place des m
 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
 Un changement peut avoir des répercussions sur l'ensemble de celles-ci\dots
-
 
 %% \vfil
 %% \hspace{8cm}\makeatletter\@author\makeatother\par
