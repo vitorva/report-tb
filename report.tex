@@ -1425,7 +1425,7 @@ La map \emph{tokens} fait le lien entre le prochain token possible et une liste 
 La map \emph{rules} fait le lien entre la règle du parser actuelle et la liste de règles utilisé pour arriver à ce stade.
 Cette map nous permet de questionner la liste des symboles pour retourner des informations supplémentaires.
 
-\subsubsection{Symbol tables}
+\subsubsection{Symbol tables}\label{Symbol tables}
 
 C'est un mécanisme de c3 mais qui ne sera pas exploité, car je n'ai pas trouvé d'usage dans le cadre du cahier des charges de ce projet et par manque de temps.
 Cependant il reste intéressant de détailler brièvement son utilité pour d'éventuelles améliorations.
@@ -1463,6 +1463,7 @@ La première catégorie, il faut aussi ignorer les tokens : parenthèse, accolad
 On aurait pu penser naïvement que le mécanisme avancé de récupération d'erreur \emph{Parser Error Recovery Strategy} permettrait également de rendre celui de la complétion aussi plus tolérant.
 Mais ce mécanisme n'est utilisé que pour générer un parse tree, cela est donc inutile pour ce cas. % car se base sur TODO
 
+%Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
 Donc comme déjà mentionner, pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
 Car sinon on pourrait avoir dans le stream de token des éléments qui ne seront pas compris par le moteur et l'on n’obtiendra pas de candidats.
 
@@ -1526,6 +1527,7 @@ L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider
 On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
 Cependant il ne s'agit que d'une appréciation personnelle.
 
+\subsection{Pas de suggestion}
 %TODO :
 %No suggestion :
 %quand un espace précède un nouveau mot alors c'est simple pour le placer
@@ -1536,43 +1538,13 @@ Cependant il ne s'agit que d'une appréciation personnelle.
 
 \subsection{Candidats}\label{candidates}
 
-%Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
-%Comme mentionné plus tard %TODO
+Un candidat est un token qui pourrait se situer à une position donnée dans l'input.
+Cette position correspond à un indice donné au moteur.
 
-%Ce qui se trouve à la suite peut être erroné, car on ne n'en tient pas compte, comme mentionner ci-dessus.
+\subsubsection{Indexation}
+Pour comprendre certains choix fait par la suite, il est nécessaire de d'expliquer l'indexation.
 
-Dans le cadre de la grammaire utilisé dans ce projet, le code se trouvant après un élément après le curseur n'a pas d'impact .
-On utilisera la position du curseur (caret). Pour uniquement traiter le code du début de l'éditeur jusqu'à la position du curseur.
-
-Une utilité de prendre en compte ce qui se trouve après le curseur serait par exemple le cas de code SQL :
-
-\begin{lstlisting}[frame=single]
-SELECT | FROM USER // ("|" étant le curseur)
-\end{lstlisting}
-
-Dans ce scénario des suggestions liées à la table USER devrait être proposé et nécessiterait un traitement particulier.
-
-%Il est nécessair d'implémenter une fonction pour convertir la positon actuelle du curseur en la position du prochain token attendu.
-%Pour être transmis à la fonction "collectCandidates(tokenIndex)". %todo
-
-Il est nécessaire d'implémenter une fonction pour trouver l'indice du prochain candidat.
-
-Actuellement ce qu'on veut c'est le prochain token possible après donc il s'agira % TODO
-
-La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
-Un point important est de savoir si l'on tient compte ou non des espaces vides dans la grammaire.
-
-Sans les espaces, il est difficile de gérer certains cas particuliers % TODO montrer des exemples
-
-Actuellement pour connaitre l'indice du ou des prochains candidats, on récupère le flux des tokens (tokenStream) trouvé lors du parsing.
-Puis, on récupère dans un tableau chaque token individuellement (y compris les espaces).
-
-Cependant lorsque l'utilisateur écrit et que cela trigger l'autocomplétion, le texte parsé est souvent incorrect, car le dernier élément saisi n'est pas encore complet.
-
-Grâce à la taille du tableau et en se basant sur les erreurs qui ont été générées, on peut déduire l'indice d'un ou des prochains tokens que l'on peut afficher.
-
-\subsubsection{Index du candidat}
-L'indexation est gérée de deux manières différentes. En fonction de la prise en compte de l'espace ou non.
+L'indexation est gérée de deux manières différentes comme illustré par la figure \ref{candidat-index} tiré de la documentation de c3.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1581,8 +1553,36 @@ L'indexation est gérée de deux manières différentes. En fonction de la prise
     \caption[Indexation des candidats]{\label{candidat-index} Indexation des candidats}
 \end{figure}
 
-Cela va dépendre si on décide d'ignorer ou non les espaces dans la grammaire g4.
-Les développeurs de c3 recommandent de ne pas ignorer les espaces. Car cela permet de gérer plus de cas particuliers.
+Cela va dépendre si on décide d'ignorer ou non les espaces depuis la grammaire g4.
+
+Ce qui est fait actuellement c'est de récupérer ces tokens dans un canal mais sans le considérer dans le langage comme un token faisant parti intégrante dans une règle.
+C'est ce qui est recommandé dans la documentation du projet c3 de ne pas ignorer les espaces. Car cela permet de gérer plus de cas particuliers.
+% https://neuroning.com/post/implementing-code-completion-for-vscode-with-antlr/
+
+Même si l'on n'en profite pas actuellment, cela ne modifie pas le code en soit et cela permet l'extensibilité du code. % TODO : à vérifier
+
+% La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
+
+\subsubsection{Trouver l'indice}
+Donc pour demander des candidats, il serait nécessaire de convertir la position du curseur dans un indice. Mais seulement si on prend en compte tout le code.
+
+La méthode actuellement appliqué et qu'on ne va pas traiter le code entier de la page.
+Seulement le code entre le début de la page et jusqu'à la position du curseur sera extrait.
+Car dans le cadre de la grammaire utilisé dans ce projet, le code se trouvant après un élément après le curseur n'a pas d'impact.
+
+Actuellement ce qu'on veut c'est le prochain token possible
+
+%Actuellement pour connaitre l'indice du ou des prochains candidats, on récupère le flux des tokens (tokenStream) trouvé lors du parsing.
+%Puis, on récupère dans un tableau chaque token individuellement (y compris les espaces).
+
+%%% todo example
+
+Ainsi lorsque l'on passera cet input au token stream qui retournera la liste des tokens trouvé dans l'ordre dans le texte.
+On pourra déduire l'indice du prochain candidats en se basant sur la taille du tableau.
+On peut déduire l'indice du prochain token en se basant sur la taille du token stream % ref.
+Ce token stream
+
+En soustrayant la valeur de 3 .... on arrive à obtenir à chaque fois un candidats. % TODO
 
 \subsection{Mécanisme automatique}
 VS Code va automatiquement filtrer les suggestions pendant la saisie à l'aide d'un algorithme de fuzzing search.
