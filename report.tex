@@ -1365,7 +1365,7 @@ La syntaxe UON peut être exprimée par la figure \ref{syntax}.
 
 On constate que : toute valeur est un type, et un type peut avoir des propriétés associées.
 
-Les suggestions de baseront donc sur les types et leurs propriétés.
+Les suggestions se baseront donc sur les types et leurs propriétés.
 
 \subsection{antlr4-c3}
 
@@ -1421,42 +1421,43 @@ Même si l'on n'en profite pas actuellement, cela permet l'extensibilité du cod
 % La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
 
 \subsubsection{Trouver l'indice}
-Donc pour demander des candidats, il serait nécessaire de convertir la position du curseur dans un indice. Mais seulement si on prend en compte tout le code.
 
-La méthode actuellement appliqué et qu'on ne va pas traiter le code entier de la page.
-Seulement le code entre le début de la page et jusqu'à la position du curseur sera extrait.
-Car dans le cadre de la grammaire utilisé dans ce projet, le code se trouvant après un élément après le curseur n'a pas d'impact.
+L'indice devrait correspondre à l'emplacement du curseur dans l'input.
 
-Actuellement ce qu'on veut c'est le prochain token possible
+À priori, il serait nécessaire de convertir la position du curseur dans un indice.
+Mais cela est n'est pas réelement nécessaire, si on ne prend pas en compte tout le code.
 
-%Actuellement pour connaitre l'indice du ou des prochains candidats, on récupère le flux des tokens (tokenStream) trouvé lors du parsing.
-%Puis, on récupère dans un tableau chaque token individuellement (y compris les espaces).
+La méthode actuellement appliquée et que l'on va extraire le code saisie jusqu'à la position du curseur.
+C'est ce code qui sera l'input que l'on va donner au parser lorsque la complétion sera trigger par VS Code.
 
-%%% todo example
+Il sera ensuite possible de déduire l'indice du prochain candidats en se basant sur la taille du tableau de tokens que le token stream contient.
 
-Ainsi lorsque l'on passera cet input au token stream qui retournera la liste des tokens trouvé dans l'ordre dans le texte.
-On pourra déduire l'indice du prochain candidats en se basant sur la taille du tableau.
-On peut déduire l'indice du prochain token en se basant sur la taille du token stream % ref.
-Ce token stream
-
-En soustrayant la valeur de 3 .... on arrive à obtenir à chaque fois un candidats. % TODO
+%Ce traitement a été choisi car le code se trouvant après le curseur n'a pas d'impact sur la génération des candidats.
+%Et que l'on pas dans la syntaxe de la grammaire actuellement, des cas à gérer concernant la position du curseur.
 
 \subsection{CandidatesCollection}
 
 Le résultat du moteur à l'appel de la fonction \emph{collectCandidates} est un objet de type \emph{CandidatesCollection}.
 
 % TODO https://github.com/lark-parser/lark/issues/684 -> api ?
-\begin{lstlisting}[frame=single]
+\begin{listing}[!ht]
+    \begin{minted}{typescript}
     class CandidatesCollection {
         tokens: Map<number, TokenList>;
         rules: Map<number, RuleList>;
     }
-\end{lstlisting}
+    \end{minted}
+    \caption{CandidatesCollection}
+    \label{CandidatesCollection}
+\end{listing}
 
-Cette collection contient deux map : \emph{tokens} et \emph{rules} .
+Cette collection contient deux map : \emph{tokens} et \emph{rules}.
 
 La map \emph{tokens} fait le lien entre le prochain token possible et une liste contenant des tokens qui doit le suivre immédiatement, si elle existe.
+
 Nous allons principalement utiliser les clés de cette map pour proposer nos suggestions.
+Cette clé est juste l'id d'un token. Cette id sera converti pour représenter la valeur du token qu'il représente et c'est ce qui sera affiché dans l'éditeur.
+% TODO
 
 La liste est aussi utilisé à une moindre mesure pour obtenir par exemple des suggestions suivantes : "descripton : "
 On obtient deux tokens d'un coup "description" et ":"
@@ -1481,9 +1482,7 @@ Cependant, un langage de sérialisation est relativement moins complexe à gére
 Nous n'avons par exemple pas à mémoriser des variables et leur visibilité au sein du code.
 
 Mais il est mentionné dans la spécification qu'un schéma pourrait être défini au même niveau que le payload.
-Avec ce scénario en tête, une table de symboles pourrait se révéler utile.
-
-Car on pourrait se servir de ce schéma de validation qui spécifierait un nouveau type pour proposer de la complétion appropriée
+Avec ce scénario en tête, une table de symboles pourrait se révéler utile. Car on pourrait se servir de ce schéma de validation qui spécifierait un nouveau type pour proposer de la complétion appropriée
 lorsque l'on saisira ce type dans le payload. Typiquement des propriétés.
 
 \subsection{Tokens ignorés}
@@ -1493,11 +1492,13 @@ Cela est nécessaire pour nous, car tous les tokens ne sont pas intéressant.
 
 Les tokens peuvent être classé en deux catégories.
 
-Ceux dans la valeur sont fixes
-Ceux dans la valeur dépendent de la saisie d'un utilisateur au travers d'expression régulière.
+\begin{enumerate}
+    \item Ceux dans leur valeur sont fixes.
+    \item Ceux dans leur valeur dépendent de la saisie d'un utilisateur au travers d'expression régulière.
+\end{enumerate}
 
+Les tokens qui sont utiliser comme suggestions sont ceux issue de a première catégorie. Mais quelques tokens sont ignorés : comme les parenthèse, accolades car ce n'est pas vraiment pertinent. % et les deux-points
 La seconde n'est pas intéressante, car le moteur ne fera que retourner le nom du token ce qui est inutile. Par exemple "NUMBER", lorsqu'il est possible d'avoir un nombre.
-La première catégorie, il faut aussi ignorer les tokens : parenthèse, accolades car ce n'est pas vraiment pertinent. % et les deux-points
 
 \subsection{Gestion des erreurs }\label{error handle}
 
