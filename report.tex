@@ -1108,8 +1108,7 @@ Actuellement on teste de cette façon les fonctionnalités de la complétion et 
 Concernant les tests pour la coloration syntaxique, le module \href{https://www.npmjs.com/package/vscode-tmgrammar-test?activeTab}{vscode-tmgrammar-test} a été choisi.
 Car depuis mocha, on a pas moyen de le faire.
 
-Nous avons donc quelques tests unitaires simples, mais qui permet toutefois de s'assurer qu'un changement ne vient pas modifier le comportement d'une manière inattendue.
-La description des tests se trouve directement dans les fichiers concernées.
+Quelques tests unitaires simples ont été implémenté, mais qui permet toutefois de s'assurer qu'un changement ne vient pas modifier le comportement d'une manière inattendue.
 
 \subsection{Deployement automatisé (CD)}
 
@@ -1125,12 +1124,6 @@ Elle consiste à exécuter la commande vsce publish depuis notre package.json po
 Il est nécessaire d'ajouter le token (PAT) comme secret dans notre dépôt github. %todo ref
 
 \textbf{Remarque } : On ne peut déployer qu'une extension avec une version supérieure que la précédente. % TODO : automatisé ça ?
-
-
-% TODO : maintenance
-%Les explications permettant de reprendre le projet se trouve sur le Readme à la racine du repository
-% Ne devrait pas faire parti de l'organisation du prof ?
-
 
 \section{Génération du parser ANTLR}
 \subsubsection{Grammaire}
@@ -1235,40 +1228,71 @@ Une des raisons évoquées et que ce mécanisme doit être le plus rapide possib
 
 \subsection{Fonctionnement}
 
-Voici ci-dessous un exemple relativement simple, mais permettant de comprendre le mécanisme général utilisé dans notre fichier "uon.tmLanguage.json" :
-\begin{lstlisting}[frame=single, caption={Textmate grammar},label={Textmate grammar}]
- 1  {  scopeName = 'source.untitled';
- 2     patterns = (
- 3        {  name = 'keyword.control.untitled';
- 4           match = '\b(if|while|for|return)\b';
- 5        },
- 6        {  name = 'string.quoted.double.untitled';
- 7           begin = '"';
- 8           end = '"';
- 9           patterns = (
-10              {  name = 'constant.character.escape.untitled';
-11                 match = '\\.';
-12              }
-13           );
-14        },
-14     );
-15  }
-\end{lstlisting}
-\textbf{"scopeName"} (ligne 1) : Scope racine du fichier
+La figure \ref{Textmate grammar} illustre un exemple très simplifié utilisé du fichier "uon.tmLanguage.json".
 
-\textbf{"patterns"} (ligne 2) : C'est un tableau contenant les règles actuelles utilisées pour parser le document. Elles sont appliquées dans l'ordre.
-Ces règles peuvent être directement écrites à cet emplacement, mais il est aussi possible de les définir dans le "repository". Puis de les inclure.
+\begin{listing}[!ht]
+    \begin{minted}{JSON}
+       1. {
+       2.   "name": "UON",
+       3.   "scopeName": "source.uon",
+       4.   "patterns": [
+       5.       {
+       6.           "include": "#root_value"
+       7.       },
+       8.       {
+       9.           "include": "#comments"
+      10.       }
+      11.    ],
+      12.    "repository": {
+      13.       "unquotedObjectKey": {
+      14.           "match": "[\\p{L}]([\\p{L}]|[\\p{N}]|[\\p{Pc}])*",
+      15.            name": "entity.name.tag.unquotedObjectKey.uon"
+      16.        },
+      17.        "comments": {
+      18.           "begin": "#",
+      19.           "beginCaptures": {
+      20.               "0": {
+      21.                       "name": "punctuation.definition.comment.begin.uon"
+      22.                }
+      23.            },
+      24.            "end": "\\n",
+      25.            "endCaptures": {
+      26.               "0": {
+      27.                       "name": "punctuation.definition.comment.end.uon"
+      28.               }
+      29.             },
+      30.            "name": "comment.line.number-sign.uon"
+      31.            // "patterns": [ ... ]
+      32.        }
+      33.    }
+      34. }
+    \end{minted}
+    \caption{Textmate grammar}
+    \label{Textmate grammar}
+\end{listing}
 
-\textbf{"repository"} : Un dictionnaire (clé-valeur) de règles.
+Dans cette exemple, la coloration n'est appliqué que sur les commentraires et les clés sans guillemets du langage UON.
+Tout n'est pas couvert dans cette exemple, mais cela permet de bien comprendre le mécanisme général utilisé.
 
-\textbf{"name"} : Nom d'un scope
+Les points importants sont les suivants :
+
+\textbf{"scopeName"} (ligne 3) : Scope racine du fichier. C'est le scope de base appliqué sur chaque élément.
+
+\textbf{"patterns"} (ligne 4) :
+C'est un tableau contenant les règles actuelles utilisées pour parser le document en sein du scope courrant.
+Elles sont appliquées dans l'ordre.
+Ces règles peuvent être directement écrites à cet emplacement, mais il est aussi possible de les définir dans un objet devant être nommé "repository". Puis de les inclure, comme fait actuellement.
+
+\textbf{"repository"} (ligne 12) : Un dictionnaire (clé-valeur) de règles.
+
+\textbf{"name"} : le nom d'un scope qui sera attribuer.
 
 On constate deux constructions possibles.
-La première règle applique le scope à un élément qui déclenche le match.
-La deuxième définit un délimiteur de début et de fin .
+La première règle applique le scope à un élément qui déclenche directement l'expression régulière.
 
-Les règles se trouvant dans la clé "patterns" suivante (à la ligne 12) seront appliquées aux éléments se trouvant à l'intérieur de ces délimiteurs.
-On voit qu'il est donc possible d'imbriquer les règles.
+La deuxième définit un délimiteur de début et de fin.
+On peut "capturer" des parties et leur attribuer des scopes encore plus spécifique.
+Il est aussi possible de rajouter un objet "patterns" pour appliquer des règles plus spécifique à l'intérieur de ces délimiteurs.
 
 \subsubsection{Propriétés}
 
@@ -1282,7 +1306,6 @@ Cela rend la coloration syntaxique fortement liée à la grammaire, mais on se r
 Il y a globalement deux manières pour appliquer un scope.
 
 La première et de définir un caractère de départ et un autre de fin. Puis définir les patterns que l'on appliquera aux éléments se trouvant à l'intérieur.
-
 
 Mais dans certains cas, il n'y a pas de délimiteur et on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
 a déclenché.
@@ -1932,90 +1955,66 @@ Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que cer
 
 \chapter{Conclusion}
 
-\section{Difficultés rencontrés}
-
-\section{Amélioration possible}
-
-
-% TODO
-
 % what should be included in a conclusion ?
 % Restate your thesis.
 % Synthesize or summarize your major points.
 % Make the context of your argument clear.
 
+L'objectif de ce travail de bachelor était de pouvoir avoir à disposition dans l'éditeur, les éléments pour permettre aux mieux la rédaction d'un fichier UON.
+Et cela, sans devoir consulter la documentation.
 
-Travailler sur ce projet s'est révélé être très intéressant.
-
-%L'objectif de ce travail de bachelor est de pouvoir avoir à disposition dans l'éditeur, les éléments de base pour
-%Sans devoir consulter la documentation
-
-Il a fallu découvrir et analyser un nouveau langage.
+Il a donc fallu découvrir et analyser un nouveau langage.
 Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouvant s'avérer utile comme support pour ce langage.
+Découvrir les technologies permettant leur implémentation et ensuite pouvoir les utiliser en sein de notre application.
 
-Découvrir les technologies permettant leur implémentation et ensuite pouvoir les utiliser en sein de notre application. % fonctionnalité cohérente entre elles
+Lors de la phase de recherche, il a été appris qu'un parser est un élément important pour fournir du support de langage.
+Heursement des outils existent pour en générer un depuis une grammaire.
 
-
-%TODO : déplacer
-%Il a été mentionner à plusieurs reprises qu'un parser est un élément pouvant nous faire aboutir à notre but.
-%Heursement pour nous, des outils existent pour en générer un depuis une grammaire, nous faisant gagner un temps de développement énorme.
-% De plus avec cette approche, cela nous permet de travailler sur la grammaire en même temps que les fonctionnalités à implémenter.
-
-Nous avons vu qu'il est possible de s'aider d'outils déjà existants et que cela peut, si bien utiliser, accélérer grandement la mise en place d'un support de langage.
+faisant gagner un temps de développement énorme, en accélérant grandement la mise en place d'un support de langage.
+De plus avec cette approche, cela nous permet de travailler sur la grammaire en même temps que les fonctionnalités à implémenter.
 
 ANTLR s'est avéré être une composante dominante du projet. De plus sa gestion des erreurs permet d'avoir une meilleure tolérance concernant les erreurs
 qui sont fréquentes dans un éditeur.
 
-L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte\dots
-
-% TODO : Déplacer
-%Nous avons vu est pu classifier les fonctionnalités dans deux catégories : Declarative et Programmatic features
-%La première est fortement couplé à l'editeur. Pour la seconde nous avons choisi l'approche consistant à utiliser l'api de vscode.
-%Mais cette api étant standardisé avec la norme LSP.
-%Déplacer ces fonctionnalités en sein d'un langage serveur est possible
-
-%% Les points d'améliorations : LSP
-%% Avoir une notion de scope / schéma de validation interne si possible
-
-
-
-%Implémenter du support nous oblige à analyser un langage en profondeur\dots
-
-%Le support d'un langage est un sujet vaste et nous n'avons vu qu'une partie de ce qui est possible de faire.
-
-%C'est aussi un sujet qui est très libre
-
+L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte.
 
 Pour pouvoir fournir du support pour un langage, on est obligé de connaitre la grammaire sur laquelle ces fonctionnalités porteront.
 Heursement pour nous nous avons pu reprendre une implémentation existante que nous avons adaptée pour couvrir nos besoins.
 
-Les éléments qui ont requis le plus de travail ont été la complétion.
-Car même si le moteur est extrêmement puissant et qu'il convient très bien pour notre utilisation. Il reste toutefois important de comprendre son fonctionnement et que c'est un outil pouvant s'avérer complexe.
-
-Adapter la grammaire a été un challenge ANTLR et différent de Lark, la complétion nécessite aussi d'adapter la grammaire.
-
-%La outline ?
-%La subtilité concernant les captures regex dans la grammaires
-
 Nous avons fait le choix de travailler uniquement dans un environnement VS Code mais fournissant toutes les clés pour des extensibilités futures
-
 VS Code est un environnement riche et complexe, mais qui est extrêmement bien documenter et agréable à utiliser.
 Il est toutefois parfois même difficile de savoir ce que peut faire cet éditeur par défaut ou non.
 
 De plus chaque langage ayant ses spécifiés, les besoins peuvent variées les uns des autres.
 Les mêmes fonctionnalités entre deux langages peuvent avoir des comportements relativement différents.
-
 L'avantage d'avoir travaillé sur un langage de sérialisation comme UON est que cela est relativement moins complexe à gérer qu'un langage de programmation.
-C'est une bonne porte d'entrée ...
 Cela nous oblige à découvrir et prendre conscience ce qu'il est possible de faire plus généralement.
-
 Mais UON est aussi plus complexe que ces concurrents sur plein de points.
-Ce qu'il fait qu'il reste encore des améliorations possibles
 
-Lors de la réalisation de ce Travail de bachelor, nous avons mis on place des mécanismes
+Travailler sur ce projet s'est révélé être très intéressant.
+
+\section{Difficultés rencontrés}
+
+Il n'y a pas de consensus, c'est donc difficile de savoir si on effectue la "bonne" méthodologie.
+
+Les éléments qui ont requis le plus de travail ont été la complétion.
+Car même si le moteur est extrêmement puissant et qu'il convient très bien pour notre utilisation. Il reste toutefois important de comprendre son fonctionnement et que c'est un outil pouvant s'avérer complexe.
+Adapter la grammaire a été un challenge. ANTLR et différent de Lark.
 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
-Un changement peut avoir des répercussions sur l'ensemble de celles-ci\dots
+Un changement peut avoir des répercussions sur l'ensemble de celles-ci.
+
+\section{Amélioration possible}
+
+La grammaire peut-être modifié ou étendue davantage.
+Un point intéressant serait d'avoir la possiblité d'avoir un schéma de validation directement intégré au collection pour éviter de devoir travailler sur deux fichiers différents.
+
+Il serait intéressant de déplacer la logique des fonctionnalités de l'extension dans un langage server. Cela pour ne plus dépendre de l'API VS Code et pour permettre de réutiliser ce travail
+dans des extensions d'autres éditeurs.
+
+Le "linter" a partiellement été implémenté et se base sur la détection des erreurs d'ANTLR.
+
+
 
 %% \vfil
 %% \hspace{8cm}\makeatletter\@author\makeatother\par
