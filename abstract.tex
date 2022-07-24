@@ -1,29 +1,14 @@
 % Francais
 
 % • le contexte,
-En 2018, Le Professeur Yves Chevallier a imaginé un nouveau format de sérialisation proche de YAML et JSON nommé UON.
+En 2018, le professeur Yves Chevallier a imaginé un nouveau format de sérialisation proche de YAML et JSON nommé UON.
 
-UON vise à rassembler toutes les caractéristiques utiles des formats de sérialisation les plus utilisés (XML, YAML et JSON) en un seul format qui les englobe et le rend adapté à la communication m2m, des dispositifs embarqués de faible puissance aux plateformes haut de gamme basées sur le cloud.
+UON vise à rassembler toutes les caractéristiques utiles des formats de sérialisation les plus utilisés sur internet (XML, YAML et JSON),
+en un seul format qui les englobe.
+
+Cela afin de le rendre adapté à la communication \Gls{m2m} pour des dispositifs embarqués de faible puissance, jusqu'aux plateformes haut de gamme basées sur le cloud.
 
 Il offre des fonctionnalités supplémentaires utiles pour accroître l'interopérabilité entre différents types d'appareils. Ses principaux avantages par rapport à d'autres langages similaires sont les suivants :
-
-%Validation schema
-%Binary payload
-%Canonical form
-%Physical quantities and units
-%References
-%Standard API
-%Type properties
-%User types
-
-%Schéma de validation
-%Charge utile binaire
-%Forme canonique
-%Quantités et unités physiques
-%Références
-%API standard
-%Propriétés des types
-%Types d'utilisateurs
 
 \begin{itemize}
     \item Typage fort
@@ -42,25 +27,27 @@ Pour être utilisable, ce format de sérialisation devrait disposer de son propr
 % • les objectifs du travail,
 % editeur de texte ou de code ?
 Ce Travail de bachelor à l'objectif de répondre à ce besoin en permettant l'utilisation du langage UON dans un éditeur de code.
-Sa syntaxe devra être prise en charge à terme par les principaux éditeurs de code. Nous nous focaliserons ici, uniquement sur l'éditeur VS Code.
+Sa syntaxe devra être prise en charge à terme par les principaux éditeurs de code. Ce travail se focalisera uniquement sur VS Code.
 Le support de langage consistera donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON.
 
 % • la méthodologie utilisée,
 Le travail s'est effectué de manière agile tout en essayant de respecter au mieux le planning.
-Des discussions avec l'enseignant ont eu lieu chaque semaine pour s'assurer de la bonne avancée du projet.
 
-Les trois premières semaines ont été majoritairement consacrées a se rensigner.
-Un PoC a aussi vite été réalisé pour s'assurer de la faisabilité de certaines fonctionnalités.
+Des discussions relativement fréquentes avec l'enseignant ont eu lieu pour s'assurer de la bonne avancée du projet.
+
+Les trois premières semaines ont été majoritairement consacrées a se renseigner.
+Un PoC a aussi vite été réalisé pour s'assurer de la faisabilité de certaines fonctionnalités avant de se consacrer à la réalisation du projet.
 
 % • les principaux résultats de la recherche ou, si confidentiel, au moins la nature
 %   des résultats,
 Au terme de ce projet, les points attendus du cahier des charges ont été effectués. Il s'agit de :
 \begin{itemize}
-    \item Définir une grammaire UON
-    \item Implémenter une intégration continue
-    \item Implémenter de l'autocomplétion : Les éléments proposés à l'utilisateur sont des mots-clés : (le nom des structures, les types et leurs propriétés associées).
+    \item Définir la grammaire du langage UON utilisée.
+    \item Implémenter une intégration continue.
+    \item Implémenter de l'autocomplétion : les éléments proposés à l'utilisateur sont des mots-clés (le nom des structures, les types et leurs propriétés associées).
     \item Implémenter une outline view.
-    \item Implémenter la documentation on hover
+    \item Implémenter la documentation on hover.
+    \item Commencer à implement un Linter simple pour signaler des erreurs.
 \end{itemize}
 
 % • perspectives et recommandations
@@ -68,7 +55,7 @@ Les perspectives concernant ce sujet sont vastes, mais des améliorations possib
 \begin{itemize}
     \item Implémenter les points du CDC dans la partie "si le temps le permet"
     \item Créer un langage server et déplacer, adapter le code pour pouvoir l'utiliser.
-    \item Continuer à améliorer la grammaire et adapter les fonctionnalités en conséquence
+    \item Continuer à améliorer la grammaire et adapter les fonctionnalités en conséquence.
 \end{itemize}
 
 Étant donné l'étendue d'un tel sujet, le travail s'est focalisé sur une partie de ce qu'il est possible de faire.
