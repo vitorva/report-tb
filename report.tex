@@ -406,21 +406,18 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 
 \subsection{ANTLR}
 
-\Gls{antlr} est un générateur de parser, il est actuellement dans sa quatrième version.
+\Gls{antlr} est un générateur de parser qui est actuellement dans sa quatrième version.
 Il a été créé par Terence Parr à l'Université de San Francisco et est très utilisé, autant dans le monde académique que professionnel \cite{antlr}.
 
 Le générateur prend en entré une grammaire, qui est un fichier décrivant formellement un langage. La grammaire d'ANTLR est décrite en utilisant la notation \Gls{ebnf}.
-L'algorithme de parsing utilisé dans sa version la plus récente est le "Adaptive LL(*)" qui est décrit comme une amélioration de l'algorithme
-"LL(*)" utilisé dans sa version précédente \cite{adaptive-ll}. L'algorithme "LL" est consiste à une analyse de l'input de gauche à droite et en construit une "Leftmost derivation" \cite{ll}.
 
-ANTLR est composé de deux parties principales. Il y a l'outil en java qui permet de générer le lexer et le parseur, donc le code permettant de reconnaitre un langage comme mentionné dans la section \ref{parsing}.
+ANTLR est composé de deux parties principales. Il y a l'outil en java qui permet de générer le lexer et le parser, donc le code permettant de reconnaitre un langage comme mentionné dans la section \ref{parsing}.
 Ainsi que l'environnement d'exécution (runtime) qui permet leur exécution.
 
-Il n'y a donc, seulement qu'un seul outil qui permet de générer le code dans les langages cibles. Et il est écrit en Java.
-
+Il y a donc, seulement un seul outil qui permet de générer le code dans les langages cibles. Et il est écrit en Java.
 Pour pouvoir utiliser cet outil dans un environnement autre que Java, il est nécessaire de l'utiliser dans un runtime (environnement d'exécution) propre au langage souhaité.
 
-Le runtime ainsi que les fichiers générés sont dans le même langage. La liste se trouve \href{https://github.com/antlr/antlr4/blob/master/doc/targets.md}{ici}.
+Le runtime ainsi que les fichiers générés doivent être dans le même langage. La liste se trouve \href{https://github.com/antlr/antlr4/blob/master/doc/targets.md}{ici}.
 Malheursement, le typscript n'en fait pas parti.
 
 \subsubsection{antlr4ts}
@@ -431,7 +428,7 @@ Il a été conçu par Sam Harwell indépendamment de l'organisation ANTLR.
 
 C'est un outil qui semble populaire est très utilisé.
 
-L'initialisation de base est la suivante :
+La figure \ref{antlr-setup} illustre un exemple simple d'initialisation.
 
 \begin{listing}[!ht]
     \begin{minted}{typescript}
@@ -448,17 +445,12 @@ L'initialisation de base est la suivante :
     \label{antlr-setup}
 \end{listing}
 
-\textbf{Remarque} :
-Comme mentionné plus loin au chapitre \hyperref[grammar scope]{4}. Le précédent travail de Bachelor s'était concentré sur l'utilisation d'un parseur généré depuis une grammaire Lark.
-L'implémentation de son parser n'a pas été privilégiée, car il aurait été nécessaire de créer l'infrastructure permettant de l'utiliser.
-Et antlr4ts semble être un choix plus naturel dans un environnement VS Code.
-
 \subsubsection{ATN}
 
 La version 4 de ANTLR a comme avantage sur son ancienne version (ANTLR3) d'avoir la structure de la grammaire directement disponible dans le parser via
 un mécanisme de machine à état \Gls{atn}.
 
-Ci-dessous est illustré l'ATN d'une séquence en UON :
+La figure \ref{seq_ATN} montre un atn d'une règle de parser.
 
 \begin{figure}[!ht]
     \begin{center}
@@ -467,18 +459,20 @@ Ci-dessous est illustré l'ATN d'une séquence en UON :
     \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
 \end{figure}
 
+Cela permet de comprendre que le parser passe par plusieurs états lors d'une analyse syntaxique.
+Cette image a été généré en utilisant le plugin \href{https://marketplace.visualstudio.com/items?itemName=mike-lischke.vscode-antlr4}{ANTLR4 grammar syntax support}.
+
 \subsubsection{Gestion des erreurs}
 
-%citation ?
 ANTLR est capable de signaler des erreurs et se rétablir d'erreurs plus graves qui pourraient faire échouer le processus de parsing.
 ANTLR définit l'interface \emph{ANTLRErrorStrategy} pour résoudre ce problème.
 Elle sert à définir une stratégie concernant les erreurs rencontrées.
 
 On peut distinguer trois types d'erreurs \cite{ANTLRErrorStrategy} :
 \begin{itemize}
-    \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans l' ATN (aucune des alternatives disponibles ne pouvait correspondre).
+    \item L'analyseur syntaxique n'a pas pu déterminer le chemin à prendre dans l'ATN (aucune des alternatives disponibles ne pouvait correspondre).
     \item L'input actuel ne correspond pas ce que nous attendons.
-    \item Un prédicat évalué comme faux
+    \item Un prédicat évalué comme faux.
 \end{itemize}
 
 Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliquée et qui consiste à supprimer un token qui poserait problème ou en rajouter un s'il manquerait, avant de
@@ -494,26 +488,6 @@ Le résultat du parsing n'a pas besoin d'être correct. Il est possible de trava
 Malheursement, je n'ai pas pu explorer plus en profondeur ce mécanisme complexe de resynchronisation.
 Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
 
-%https://medium.com/pragmatic-programmers/altering-antlrs-error-handling-strategy-80ce7d046730
-%* The default implementation resynchronizes the parser by consuming tokens
-%* until we find one in the resynchronization set--loosely the set of tokens
-%* that can follow the current rule
-
-%https://www.antlr.org/api/Java/org/antlr/v4/runtime/DefaultErrorStrategy.html
-%https://pub.dev/documentation/antlr4/latest/antlr4/DefaultErrorStrategy-class.html
-
-%https://stackoverflow.com/questions/18550031/how-to-control-error-handling-and-synchronization-in-antlr-4-c-sharp/18553706#18553706
-%https://github.com/antlr/antlr4/blob/master/runtime/Java/src/org/antlr/v4/runtime/DefaultErrorStrategy.java
-
-
-% https://stackoverflow.com/questions/25467627/how-to-continue-parsing-after-an-error-in-antlr-4-4
-%Antlr 4's parser error strategy is to drop tokens from the input until it can detect a sane state and then
-% it continues parsing. Looking at your example, while trying to recover maybe it never reaches a sane state before EOF.
-
-%https://pub.dev/documentation/antlr4/latest/antlr4/DefaultErrorStrategy-class.html
-
-
-%% UON se veut ête moins ambigue que ces alternatives pour l'utilisateur\dots
 \section{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML.
 Il cherche à regrouper les meilleures caractéristiques de ces formats de sérialisation en un seul format.
