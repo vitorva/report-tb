@@ -570,6 +570,8 @@ UON propose 4 différents types de stratégies.
     \item Separated schema
 \end{itemize}
 
+%  Un schéma est un document qui décrit la spécification d'un nouveau type.
+
 \subsection{Liens}
 Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
 Et le dépôt du projet se trouve \href{https://github.com/uon-language/specification}{ici}.
@@ -578,38 +580,35 @@ Et le dépôt du projet se trouve \href{https://github.com/uon-language/specific
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
 Il est donc important de préciser sur quels éléments du langage nous nous focaliserons.
 
-Une spécification d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujetx à interprétation.
+Une spécification d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujet à interprétation.
 C'est un langage complexe et qui pourrait encore, être ammener à évoluer. Les propositions et les suggestions sont les bienvenues.
 
-Heurseuement pour nous, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim.
+Heurseuement, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim.
 Cette grammaire se trouve sur \href{https://github.com/uon-language/uon-parser/tree/master/grammar}{ici}
 
-Nous nous appuierons sur cette grammaire que nous convertirons en format ANTLR et ferons les modifications jugées nécessaires.
+Cette grammaire a été convertie en format ANTLR. Des modifications ont été apportées et seront expliquées par la suite.
 
-Les fonctionnalités se baseront sur celle-ci. Ceci dans le but de rester cohérents entre elles.
-Nous ferons attention à son extensibilité et expliquerons les choix d'implémentations.
+Les fonctionnalités se baseront sur celle-ci. Dans le but de rester cohérents entre elles.
 
-Cette grammaire se trouve décrite dans le fichier UON.g4 du projet.
+La grammaire finale est écrite dans le fichier UON.g4.
 
 \section{Résumé}
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
-Nous utiliserons la grammaire qui a été adaptée dans le format d'ANTLR pour illustrer nos exemples.
+La grammaire qui a été adaptée dans le format d'ANTLR sera utilisé pour illustrer nos exemples.
 
-\subsection{root value}
-
-Un fichier UON peut contenir trois structures différentes.
+Un fichier UON peut contenir trois structures différentes : les collections en json et yaml, ainsi qu'un schéma.
 
 \begin{lstlisting}[frame=single,caption={uon-root-value},label={uon-root-value}]
     uon: root_value;
 
-    root_value: json_collection | schema;
+    root_value: json_collection | yaml_collection | schema;
 
     json_collection: json_map | json_seq;
 
     yaml_collection: yaml_map | yaml_seq;
 \end{lstlisting}
 
-\subsubsection{Collections}
+\subsection{Collections}
 La grammaire actuelle nous permet de définir des collections. Ces collections sont des mapping et séquences soit dans un format proche de json ou de yaml.
 
 UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à certain degré, mon prédécesseur avait jugé utile d'incorporer ce format
@@ -621,7 +620,6 @@ les modifications nécessaires qui ont été apportées.
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
 % TODO : exemple de map
-
 \begin{lstlisting}[frame=single,caption={json-map},label={json-map}]
     {
         "name" ( description : a12 ) :  !str( comment : ok , optional: False) ok, # error with outline with simply 12
@@ -647,7 +645,6 @@ ok2 : -23
 
 
 % TODO : exemple de seq
-
 \begin{lstlisting}[frame=single,caption={json-seq},label={json-seq}]
 \dots
 \end{lstlisting}
@@ -658,11 +655,11 @@ ok2 : -23
 \end{lstlisting}
 
 
-\subsubsection{Schéma}
-On peut définir également un schéma de validation. Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
+\subsection{Schéma}
+On peut définir également un schéma de validation.
 
+Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
 Cette séparation permet d'éviter des ambiguïtés. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
-Un schéma est un document qui décrit la spécification d'un nouveau type.
 
 \begin{lstlisting}[frame=single,caption={yaml-seq},label={yaml-seq}]
     \dots
@@ -674,8 +671,9 @@ Les types supportés sont les suivants :
 
 \subsection{Propriétés}
 
-Les proprités en UON sont décrit dans la section \ref{properties}.
+Les propriétés en UON sont décrit dans la section \ref{properties}.
 
+% TODO
 Les clés des mapping des propriétés peuvent posséder des propriétés de présentation.
 Les types dans un schéma de validation peuvent posséder des propriétés de validation.
 
