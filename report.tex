@@ -1051,6 +1051,8 @@ Quelques tests unitaires simples ont été implémenté, mais qui permet toutefo
 
 \subsection{Deployement automatisé (CD)}
 
+% TODO :  incréementer le numéro de verison !
+
 L'extension est actuellement automatiquement déployée lorsqu'une release sur la branche main est réalisée.
 L'étape de mise en place est détaillée par VS Code à cet \href{https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions}{emplacement}.
 
@@ -1087,6 +1089,8 @@ Il nous génère ces fichiers :
 
 % Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On peut s'aider en parallèle de la coloration syntaxique.
 % TODO : https://macromates.com/manual/en/language_grammars
+
+% Dark + (default dark)
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a deux composantes principales.
@@ -1840,6 +1844,8 @@ Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifier pou
 
 \subsection{Quick fick}
 
+%  // https://stackoverflow.com/questions/57438198/typescript-element-implicitly-has-an-any-type-because-expression-of-type-st
+
 Actuellement il y a un seul quick fix qui a été implémenté, et cela à titre de découverte.
 
 Ce quickfix permet de supprimer le token qui pose problème en se basant sur les ranges fourni lors de la création d'un objet Diagnostic depuis le listener.
@@ -1887,14 +1893,35 @@ Les suivantes ont été implémentées :
 
 \subsection{Diagramme de gantt}
 Voici le diagramme de Gantt pour ce projet.
-Ce diagramme sera potentiellement mis à jour durant ce semestre du fait que certaines tâches ne sont pas connues à l'avance et pour réorganiser des taches si besoin.
 
 \includepdf[page=1]{assets/planning/gantt.pdf}
 
+\subsection{État actuel du projet}
+
+L'état actuel du projet sur Github (au moment de la rédaction de ce rapport) correspond au commit sur la branche main, avec le hash : 584677bb5c5c215666dd7232ac4fa8fea0c453d4.
+
+Actuellement l'extension est \href{https://marketplace.visualstudio.com/items?itemName=vitorva.vscode-uon}{disponible} sur le marketplace de VS Code.
+Elle fourni du support de langage sur une grammaire fonctionnelle UON qui est capable de traiter des mappings et des séquences de type JSON et YAML, ainsi qu'un schéma de validation.
+
+Passons maintenant en revue les tâches convenues dans le cahier des charges :
+
+\begin{itemize}
+    \item Une intégration continue (tests et publication automatisé) a été implémenté.
+    \item Une coloration syntaxique é été implémenté
+    \item De l'auto-complétion  à été implémenté
+    \item Une outline view a été implémenté
+    \item Afficher des informations au survol d'une souris à été implémenté (trivial)
+\end{itemize}
+
+Il resterait à :
+
+\begin{itemize}
+    \item Corriger quelques erreurs encore existant
+    \item Implémenter les fonctionnalités de la rubrique "si le temps le permet"
+\end{itemize}
 
 \chapter{Conclusion}
 
-% what should be included in a conclusion ?
 % Restate your thesis.
 % Synthesize or summarize your major points.
 % Make the context of your argument clear.
@@ -1932,27 +1959,53 @@ Mais UON est aussi plus complexe que ces concurrents sur plein de points.
 
 Travailler sur ce projet s'est révélé être très intéressant.
 
-\section{Difficultés rencontrés}
+\section{Difficultés rencontrées}
 
-Il n'y a pas de consensus, c'est donc difficile de savoir si on effectue la "bonne" méthodologie.
+Même si des extensions fournissant du support de langage existent et sont facilement disponible, j'ai remarqué en analysant leur code source qu'il n'y a pas de consensus sur la manière d'implémenter une fonctionnalité (ex : complétion).
+C'est donc difficile de savoir si on effectue la "bonne" méthodologie.
 
-Les éléments qui ont requis le plus de travail ont été la complétion.
-Car même si le moteur est extrêmement puissant et qu'il convient très bien pour notre utilisation. Il reste toutefois important de comprendre son fonctionnement et que c'est un outil pouvant s'avérer complexe.
-Adapter la grammaire a été un challenge. ANTLR et différent de Lark.
+Concernant le générateur de parser ANTLR, c'est est un outil puissant mais assez complexe à prendre en main.
+Au début du projet, certaines règles de la grammaire étaient malformées est causaient des erreurs qui n'était pas facilement percéptible.
+De plus, comme c'est une implémentation en Typescript qui est utilisé, peu d'exemples existent et cela a compliqué le travail lorsque des erreurs survenaient.
+
+Adapter la grammaire a été un challenge. Il a été necessaire de modifier certaines règles car le comportement par défaut posait parfois problème. ANTLR étant différent de Lark.
+
+La gestion des deux format (JSON et YAML) c'est revelé être assez complexe, dû à la gestion des indentations à traiter nous-même.
+
+Du temps a été passé pour essayer d'améliorer le comportement des erreurs sans succès. Le comportement par défaut n'étant jamais réelement améliorer.
+
+Les fonctionnalités qui ont requis le plus de travail ont été la complétion et l'outline view.
+Pour la complétion, même si le moteur est extrêmement puissant et qu'un usage basique convient très bien pour notre utilisation.
+Il a été nécessaire d'analyser son fonctionnement pour comprendre ce qu'il était possible de faire.
+
+Un point complexe a été la manière de trouver le bonne indice car des situations particulières pouvait fausser le résultat attendues.
+
+Pour l'outline view. Il a fallu comprendre comment contruire l'objet.
+Ajouter la gestion des propriétés s'est aussi revelé difficle.
 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
 Un changement peut avoir des répercussions sur l'ensemble de celles-ci.
 
+C'est le premier "gros" projet que j'ai été ammené à réaliser seul.
+
+
 \section{Amélioration possible}
 
-La grammaire peut-être modifié ou étendue davantage.
+La grammaire peut-être modifié ou étendue davantage selon les besoins des utilisateurs.
 Un point intéressant serait d'avoir la possiblité d'avoir un schéma de validation directement intégré au collection pour éviter de devoir travailler sur deux fichiers différents.
 
 Il serait intéressant de déplacer la logique des fonctionnalités de l'extension dans un langage server. Cela pour ne plus dépendre de l'API VS Code et pour permettre de réutiliser ce travail
-dans des extensions d'autres éditeurs.
+dans des extensions d'autres éditeurs plus facilement.
 
 Le "linter" a partiellement été implémenté et se base sur la détection des erreurs d'ANTLR.
+Les messages d'erreurs sont ceux qu'ANTLR affiche en cas d'erreur et ne sont les plus "user-friendly". Il faudrait donc adapter ces messages.
+Il faudrait aussi pouvoir proposer des corrections d'erreurs (ex : quickfix) plus avancées.
 
+Le fichier \emph{UonCompletionErrorStrategy.ts} ne fait que surchager le comportement par défaut. Si le comportement doit être améliorer, c'est ce fichier qui doit être modifié.
+
+\section{Erreur existante}
+
+Imbriquer des mapping ou sequences en format YAML ne fonctionne pas correctement. Cela vient de la gestion des indentations qu'il faudrait corriger.
 
 
 %% \vfil
