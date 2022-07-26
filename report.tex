@@ -340,7 +340,7 @@ Il y a deux approches pour les implémenter que nous allons voir ci-dessous.
 
 \subsubsection{VS Code API (Direct implementation)}
 La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'API de VS Code} pour les fonctionnalités de langage.
-Cette API permet d'implémenter directement les fonctionnalités du langage sans devoir implémenté l'infrastructure les supportant.
+Cette API permet d'implémenter directement les fonctionnalités du langage sans devoir mettre en place l'infrastructure les supportant.
 % TODO : s'assurer que l'api vscode une implementation de LSP ?
 % Comment faire la transition entre mon implémentationa avec celle d'un langage server
 
@@ -349,7 +349,7 @@ L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera
 
 \subsection{Language server}
 
-La seconde solution est de fournir nous-mêmes ces méthodes en respectant la spécifiation LSP \cite{lsp-specification} au travers d'un langage serveur.
+La seconde solution est de fournir nous-mêmes ces méthodes en respectant la spécification LSP \cite{lsp-specification} au travers d'un langage serveur.
 Les avantages souvent mentionnés ce cette approche sont que le langage server peut être écrit avec le langage que l'on souhaite et
 que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ces fonctionnalités sans devoir les implémenter de nouveau.
 
@@ -363,10 +363,10 @@ Pour être utilisé sur VS Code, un langage server à deux parties :
 
 Le client et le serveur communiquent à l'aide du protocole LSP (pour "language server") dès que des informations devraient être fournies à l'éditeur.
 
-L'implémentation d'un tel serveur peut être libre en respect avec la spécification, mais des implémentations existent déjà. Telle que \emph{LSP4} implémenté en Java ou \emph{VS Code-languageserver-node}
-implémenté en Typescript qui n'est pas exclusivement réservé à VS Code comme son nom pourrait l'indiquer.
+L'implémentation d'un tel serveur peut être libre en respect avec la spécification, mais des implémentations existent déjà. Telle que \emph{LSP4} écrit en Java ou \emph{VS Code-languageserver-node}
+écrit en Typescript qui n'est pas exclusivement réservé à VS Code comme son nom pourrait l'indiquer.
 
-Un langage server peut être utilisé sur d'autre éditeur compatible mais le client devra être implémenté de nouveau pour chaque éditeur.
+Un langage server peut être utilisé sur d'autre éditeur compatible, mais le client devra être implémenté de nouveau pour chaque éditeur.
 Cette approche est aussi plus complexe à implémenter.
 
 \subsection{API vs LSP}\label{api vs lsp}
