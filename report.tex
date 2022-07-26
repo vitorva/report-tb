@@ -2015,26 +2015,26 @@ J'ai donc beaucoup appris et me servirais de ces leçons pour la suite. Travaill
 Même si des extensions fournissant du support de langage existent et sont facilement disponibles, j'ai remarqué en analysant leur code source qu'il n'y a pas de consensus sur la manière d'implémenter une fonctionnalité (ex : complétion).
 C'est donc difficile de savoir si on effectue la "bonne" méthodologie.
 
-Concernant le générateur de parser ANTLR, c'est est un outil puissant mais assez complexe à prendre en main.
-Au début du projet, certaines règles de la grammaire étaient malformées est causaient des erreurs qui n'était pas facilement percéptible.
+Concernant le générateur de parser ANTLR, c'est un outil puissant, mais assez complexe à prendre en main.
+Au début du projet, certaines règles de la grammaire étaient malformées est causaient des erreurs qui n'était pas facilement perceptibles.
 De plus, comme c'est une implémentation en Typescript qui est utilisée, peu d'exemples existent et cela a compliqué le travail lorsque des erreurs survenaient.
 
-Adapter la grammaire a été un challenge. Il a été necessaire de modifier certaines règles car le comportement par défaut posait parfois problème. ANTLR étant différent de Lark.
+Adapter la grammaire a été un challenge. Il a été nécessaire de modifier certaines règles, car le comportement par défaut posait parfois problème. ANTLR étant différent de Lark.
 
-La gestion des deux format (JSON et YAML) c'est revelé être assez complexe, dû à la gestion des indentations à traiter nous-même.
+La gestion des deux formats (JSON et YAML) c'est révélé être assez complexe, dû à la gestion des indentations à traiter.
 
-Du temps a été passé pour essayer d'améliorer le comportement des erreurs sans succès. Le comportement par défaut n'étant jamais réelement amélioré.
+Du temps a été passé pour essayer d'améliorer le comportement des erreurs sans succès. Le comportement par défaut n'étant jamais réellement amélioré.
 
 Les fonctionnalités qui ont requis le plus de travail ont été la complétion et l'outline view.
 Pour la complétion, même si le moteur est extrêmement puissant et qu'un usage basique convient très bien pour notre utilisation.
 Il a été nécessaire d'analyser son fonctionnement pour comprendre ce qu'il était possible de faire.
-Un point complexe a été la manière de trouver le bonne indice car des situations particulières pouvait fausser le résultat attendues.
+Un point complexe a été la manière de trouver le bon indice car des situations particulières pouvait fausser le résultat attendu.
 
-Pour l'outline view, il a fallu comprendre comment construire un objet en cours d'un parcours DFS. Et ajouter la gestion des propriétés avait rajouter une couche de complexité supplémentaires.
+Pour l'outline view, il a fallu comprendre comment construire un objet en cours d'un parcours DFS. Et ajouter la gestion des propriétés avait rajouté une couche de complexité supplémentaire.
 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
 Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci.
-J'ai malheureusement, je pense, perdu du temps à corriger ce genres d'erreurs.
+J'ai malheureusement, je pense, perdu du temps à corriger ce genre d'erreurs.
 
 La rédaction du rapport a aussi représenté un challenge. Il s'agit d'un travail conséquent étant donné l'ampleur d'un tel projet.
 
