@@ -1551,17 +1551,17 @@ Ce type de complétion est nommé "word based completion" dans VS Code.
 
 \section{Outline view}
 
-La outline view est une représentation de la structure du fichier actuellement ouvert par l'éditeur.
-On appelle généralement cette structure le "document outlining" ou "code outlining".
+La outline view est une représentation de la structure d'un fichier actuellement ouvert par l'éditeur. On appelle généralement cette structure le "document outlining" ou "code outlining".
 
 En analysant la spécification \href{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/}{LSP} ou le \href{https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol}{DocumentSymbolProvider} de l'api VS Code, on constate que l'outline peut être représenté sous deux formes :
 
 \begin{itemize}
-    \item SymbolInformation qui est une flat list de tous les symboles trouvés dans un document. Dans ce cas, ni le range de localisation du symbole ni le nom du conteneur du symbole ne doivent être utilisés pour déduire une hiérarchie.
+    \item SymbolInformation qui est une flat list de tous les symboles trouvés dans un document.
     \item DocumentSymbol qui est une hiérarchie de symboles trouvés dans un document.
 \end{itemize}
 
 La structure peut être donc représenté de manière hiérarchique ou seulement être listés.
+
 On a accès à cette représentation dans la sidebar gauche par défaut.
 
 %TODO : picture
@@ -1583,13 +1583,18 @@ ou depuis la command palette en saisissant la combinaison "CTRL + SHIFT + o" :
 \end{figure}
 
 Il est possible obtenir la structure d'un fichier en analysant manuellement le texte (par exemple ligne par ligne).
-Mais cette approche n'est pas optimale et il serait difficile de représenter la structure hiérarchique du document à l'aide de regex par exemple,
-%comme mentionné au point : % TODO
+Mais cette approche n'est pas optimale et il serait difficile de représenter la structure hiérarchique du document à l'aide de regex \cite{antlr-mega-tutorial}.
 
 Nous allons donc utiliser notre parser.
 
-Le résulat du résultat est un "parse tree" (aussi nommé CST) qui est une représentation concrète de notre input. Le parse tree contient toutes les infomrations et beaucoup d'entre elles ne nous intéressent pas.
+Le résulat du résultat est un "parse tree" (aussi nommé CST) qui est une représentation concrète de notre input.
+Le parse tree contient toutes les informations et beaucoup d'entre elles ne nous intéressent pas.
 Typiquement les informations grammaticales et structurelles.
+C'est pourquoi il faut pouvoir le parcourir pour en extraire un AST.
+Un AST est une représentation abstraite de notre input. Il ne contient généralement que les informations les plus pertinentes \cite{cst}.
+
+Par exemple, le parse tree d'une opération arithmétique simple pourrait être représenté par la figure \ref{parse-tree}.
+
 \begin{figure}[!h]
     \begin{center}
         \frame{\includegraphics[width=8cm]{assets/figures/parse-tree.PNG}}
@@ -1597,8 +1602,7 @@ Typiquement les informations grammaticales et structurelles.
     \caption[Exemple d'un parse tree]{\label{parse-tree} UON parse tree}
 \end{figure}
 
-C'est pourquoi il faut pouvoir le parcourir pour en extraire un AST.
-Un AST est une représentation abstraite de notre input. Il ne contient généralement que les informations les plus pertinentes.
+Son AST pourrait être, par exemple, ce que l'on voit à la figure \ref{ast}.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1606,9 +1610,8 @@ Un AST est une représentation abstraite de notre input. Il ne contient généra
     \end{center}
     \caption[Exemple d'un AST]{\label{ast} UON AST}
 \end{figure}
-%TODO : Images non contractuelles
 
-Donc pour le générer on va vouloir récupérer uniquement ces informations pendant le parcours.
+Donc pour générer une telle structure, il va falloir parcourir le parse tree pour récupérer uniquement les informations utiles pendant le parcours.
 
 Pour parcourir un arbre, deux approches sont possibles : Le pattern Listener ou Visitor.
 La première consiste à écouter les types de noeuds traversés qui nous intéressent. Le problème et que cette approche ne nous permet pas de manipuler un objet en cours de route ni gérer le flux d'exécution.
@@ -1623,9 +1626,9 @@ L'arbre sera donc un objet VS Code de type \href{https://code.visualstudio.com/a
 
 Il y a quelques points intéressants à commenter concernant cet objet.
 
-La variable "children" qui nous permet d'avoir des encapsulations d'objets "DocumentSymol".
+La variable \emph{children} qui nous permet d'avoir des encapsulations d'objets \emph{DocumentSymol}.
 
-Un noeud doit être représenté par un "Symbolkind" % https://vshaxe.github.io/vscode-extern/vscode/SymbolKind.html
+Un noeud doit être représenté par un \emph{Symbolkind} % https://vshaxe.github.io/vscode-extern/vscode/SymbolKind.html
 Nous sommes donc limités sur la représentation et devons faire les ajustements nécessaires.
 
 Il y a deux paramètres de ranges à fournir à la création de l'objet : une qui contient leur définition et une qui pointe vers leur plage la plus intéressante, par exemple la plage d'un identifiant.
@@ -1638,7 +1641,7 @@ Dans notre cas les deux peuvent représenter la même chose et représenter la r
 %the keyword class and ends with the closing }) and the selectionRange is often only the symbol's token range
 %(but according to the specification, it can also include the doc comment block and the visibility modifiers, it is the implementor's choice).
 
-Lors de la génération des fichiers ANTLR, il est indiqué de générer également un fichier visiteur "UONVisitor" en précisant le tag "- visitor".
+Lors de la génération des fichiers ANTLR, il est indiqué de générer également un fichier visiteur \emph{UONVisitor} en précisant le tag \emph{- visitor}.
 
 Cela va nous créer un fichier qui contiendra une interface définissant une fonction pour chaque type de noeud de note parseur et retournera un résultat de type générique.
 Chacune de ses fonctions prend comme paramètre son contexte.
