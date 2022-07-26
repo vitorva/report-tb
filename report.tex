@@ -146,7 +146,7 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
 
 \subsection*{Grammaire}
 \begin{itemize}
-    \item Indiquer le « scope » de la grammaire UON utilisée.
+    \item Indiquer le "scope" de la grammaire UON utilisée.
 \end{itemize}
 \textbf{Remarque} : toutes les fonctionnalités se baseront sur cette grammaire.
 
@@ -212,7 +212,7 @@ Ce processus peut être représenté par la figure \ref{Analayse du code source}
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=12cm]{assets/figures/interpreter-flow.PNG}}
+        \frame{\includegraphics[width=14cm]{assets/figures/interpreter-flow.PNG}}
     \end{center}
     \caption[Analayse du code source]{\label{Analayse du code source} Analayse du code source}
 \end{figure}
@@ -260,7 +260,7 @@ En général, l'extension est une combinaison de plusieurs \emph{Contribution Po
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 
-La structure de base d'une extension est illustrée par la figure \ref{basic VS Code extension structure}.
+La structure de base d'une extension est illustrée par la figure \ref{Squelette de base d'une extension VS Code}.
 
 % https://tex.stackexchange.com/questions/98703/framebox-and-subfigure-with-dirtree-package
 \begin{figure}[H] % \begin{figure}[!h]
@@ -280,7 +280,7 @@ La structure de base d'une extension est illustrée par la figure \ref{basic VS 
             }
         \end{minipage}
     }
-    \caption[basic VS Code extension structure]{\label{basic VS Code extension structure} basic VS Code extension structure}
+    \caption[Squelette de base d'une extension VS Code]{\label{Squelette de base d'une extension VS Code} Squelette de base d'une extension VS Code}
 \end{figure}
 
 \textbf{Extension Manifest} :
@@ -360,7 +360,7 @@ Cette approche est aussi plus complexe à implémenter.
 
 \subsection{API vs LSP}\label{api vs lsp}
 
-Le schéma suivant \ref{api vs lsp} montre la correspondance des méthodes entre la première et seconde approche.
+Le schéma suivant \ref{API de VS Code vs méthodes LSP} montre la correspondance des méthodes entre la première et seconde approche.
 
 Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux solutions.
 
@@ -368,7 +368,7 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux s
     \begin{center}
         \frame{\includegraphics[width=8cm]{assets/figures/api-vscode.png}}
     \end{center}
-    \caption[API vs LSP]{\label{api vs lsp} VS Code API vs LSP method}
+    \caption[API de VS Code vs méthodes LSP]{\label{API de VS Code vs méthodes LSP} API de VS Code vs méthodes LSP}
 \end{figure}
 
 \subsection{Fault tolerant Parser}
@@ -428,7 +428,7 @@ Il a été conçu par Sam Harwell indépendamment de l'organisation ANTLR.
 
 C'est un outil qui semble populaire est très utilisé.
 
-La figure \ref{antlr-setup} illustre un exemple simple d'initialisation.
+La figure \ref{Utilisation du parser d'ANTLR} illustre un exemple simple d'utilisation.
 
 \begin{listing}[!ht]
     \begin{minted}{typescript}
@@ -441,8 +441,8 @@ La figure \ref{antlr-setup} illustre un exemple simple d'initialisation.
         parser.addErrorListener(errorListener);
         let tree = parser.expression();
     \end{minted}
-    \caption{antlr-setup}
-    \label{antlr-setup}
+    \caption{Utilisation du parser d'ANTLR}
+    \label{Utilisation du parser d'ANTLR}
 \end{listing}
 
 \subsubsection{ATN}
@@ -450,13 +450,13 @@ La figure \ref{antlr-setup} illustre un exemple simple d'initialisation.
 La version 4 de ANTLR a comme avantage sur son ancienne version (ANTLR3) d'avoir la structure de la grammaire directement disponible dans le parser via
 un mécanisme de machine à état \Gls{atn}.
 
-La figure \ref{seq_ATN} montre un atn d'une règle de parser.
+La figure \ref{ATN d'une séquence} montre un atn d'une règle de parser.
 
 \begin{figure}[!ht]
     \begin{center}
         \includegraphics[width=12cm]{assets/figures/seq_ATN.png}
     \end{center}
-    \caption[ATN d'une séquence]{\label{seq_ATN} ATN d'une séquence}
+    \caption[ATN d'une séquence]{\label{ATN d'une séquence} ATN d'une séquence}
 \end{figure}
 
 Cela permet de comprendre que le parser passe par plusieurs états lors d'une analyse syntaxique.
@@ -527,7 +527,7 @@ et une puissante passerelle domotique. Pour réduire la taille du payload, les d
     \begin{center}
         \frame{\includegraphics[width=15cm]{assets/figures/data-exchange.png}}
     \end{center}
-    \caption[UON data exchange]{\label{data-exchange}UON data exchange}
+    \caption[Échange de données en UON]{\label{data-exchange}Échange de données en UON}
 \end{figure}
 
 À droite on affine le schéma. Pour réduire davantage les données transmises.
@@ -600,7 +600,8 @@ La grammaire qui a été adaptée dans le format d'ANTLR sera utilisé pour illu
 
 Un fichier UON peut contenir trois structures différentes : les collections en json et yaml, ainsi qu'un schéma.
 
-\begin{lstlisting}[frame=single,caption={uon-root-value},label={uon-root-value}]
+\begin{listing}[!ht]
+    \begin{minted}{ANTLR}
     uon: root_value;
 
     root_value: json_collection | yaml_collection | schema;
@@ -608,7 +609,10 @@ Un fichier UON peut contenir trois structures différentes : les collections en 
     json_collection: json_map | json_seq;
 
     yaml_collection: yaml_map | yaml_seq;
-\end{lstlisting}
+    \end{minted}
+    \caption{Valeur racine de la grammaire UON}
+    \label{uon-root-value}
+\end{listing}
 
 \subsection{Collections}
 La grammaire actuelle nous permet de définir des collections. Ces collections sont des mapping et séquences soit dans un format proche de json ou de yaml.
@@ -792,10 +796,10 @@ Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" 
     \begin{center}
         \frame{\includegraphics[width=8cm]{assets/figures/literal-key-uon.PNG}}
     \end{center}
-    \caption[literal-key-uon]{\label{literal-key-uon}literal-key-uon}
+    \caption[Utilisation d'un token de type literal comme clé]{\label{literal-key-uon}Utilisation d'un token de type literal comme clé}
 \end{figure}
 
-Sur le schéma \ref*{literal-key-uon} On voit que la clé et bien un token de type \emph{literal}.
+Sur le schéma \ref{literal-key-uon} On voit que la clé et bien un token de type \emph{literal}.
 Ce token \emph{temperature} existe comme token car c'est une valeur utilisée comme quantité, mais si on ne précise pas explicitement que l'on souhaite avoir cette valeur
 comme possible clé alors on aura une erreur si on ne le précise pas \dots % TODO
 
@@ -816,6 +820,7 @@ comme possible clé alors on aura une erreur si on ne le précise pas \dots % TO
 %REGEX
 % utilisation d'outils en ligne : ex : https://regex101.com/
 % référence officielle : https://www.regular-expressions.info/
+% https://www.regular-expressions.info/anchors.html
 
 \subsubsection{Quoted}
 
@@ -927,7 +932,7 @@ la figure.
             }
         \end{minipage}
     }
-    \caption{UON VS Code extension structure}
+    \caption{Structure du projet}
     \label{project-structure}
 \end{figure}
 
@@ -953,7 +958,8 @@ Ceci dans le but d'installer Yeoman et VS Code Extension Generator.
 
 La commande pour l'installation est la suivante :
 
-\begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
+% ,caption={generator-code},label={generator-code}
+\begin{lstlisting}[frame=single]
 npm install -g yo generator-code
 \end{lstlisting}
 
@@ -969,7 +975,7 @@ Et de compléter ce qui est attendu dans le terminal pour créer notre extension
     \begin{center}
         \includegraphics[width=8cm]{assets/figures/yo-code.png}
     \end{center}
-    \caption[Yo Code generator]{\label{yo-code}Yo Code generator}
+    \caption[Générateur Yo Code]{\label{yo-code}Générateur Yo Code}
 \end{figure}
 
 Cela nous créera l'arborescence mentionnée précédemment au point \hyperref[Extension File Structure]{Extension File Structure}.
@@ -1323,7 +1329,7 @@ Les suggestions proposées dans l'éditeur sera majoritairement des candidats fo
 
 Il a été conçue par \href{https://github.com/mike-lischke}{Mike Lischke}. Cet outil est écrit en Typescript et est disponible comme node module. Il existe aussi en version \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/java}{JAVA} et \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/c%23}{C\#}.
 
-Le moteur de complétion n'utilise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream comme illustré précédement par la figure \ref{antlr-setup}.
+Le moteur de complétion n'utilise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream comme illustré précédement par la figure \ref{Utilisation du parser d'ANTLR}.
 Car le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état d'ANTLR4 disponible dans le parser. \cite{antlr-mega-tutorial}
 
 Pourquoi un tel moteur ?
@@ -1332,7 +1338,7 @@ Et cet outil apporte une solution pratique est élégante pour résoudre ce cas.
 
 \subsection{Candidats}\label{candidates}
 
-Pour recevoir des candidats, il suffit d'avoir un environnement comme présenté par la figure \ref{antlr-setup}, d'installer le module npm \emph{antrl4ts} et
+Pour recevoir des candidats, il suffit d'avoir un environnement comme présenté par la figure \ref{Utilisation du parser d'ANTLR}, d'installer le module npm \emph{antrl4ts} et
 de donner au moteur, une instance du parser et un indice.
 
 \begin{listing}[!ht]
@@ -1903,16 +1909,16 @@ Voici le diagramme de Gantt pour ce projet.
 L'état actuel du projet sur Github (au moment de la rédaction de ce rapport) correspond au commit sur la branche main, avec le hash : 584677bb5c5c215666dd7232ac4fa8fea0c453d4.
 
 Actuellement l'extension est \href{https://marketplace.visualstudio.com/items?itemName=vitorva.vscode-uon}{disponible} sur le marketplace de VS Code.
-Elle fourni du support de langage sur une grammaire fonctionnelle UON qui est capable de traiter des mappings et des séquences de type JSON et YAML, ainsi qu'un schéma de validation.
+Elle fournit du support de langage sur une grammaire fonctionnelle UON qui est capable de traiter des mappings et des séquences de type JSON et YAML, ainsi qu'un schéma de validation.
 
 Passons maintenant en revue les tâches convenues dans le cahier des charges :
 
 \begin{itemize}
     \item Une intégration continue (tests et publication automatisé) a été implémenté.
-    \item Une coloration syntaxique é été implémenté
-    \item De l'auto-complétion  à été implémenté
+    \item Une coloration syntaxique à été implémenté
+    \item De l'auto-complétion à été implémenté
     \item Une outline view a été implémenté
-    \item Afficher des informations au survol d'une souris à été implémenté (trivial)
+    \item Afficher des informations au survol (information on hover) d'une souris à été implémenté
 \end{itemize}
 
 Il resterait à :
@@ -2036,7 +2042,6 @@ L'éditeur affiche un caractère erroné (ondulation rouge) au début du documen
 \printnoidxglossary
 \addcontentsline{toc}{chapter}{Glossaire}
 
-\textbf{TODO : Ajouter dans la Bibliographie https://www.regular-expressions.info/anchors.html}
 \printbibliography
 \addcontentsline{toc}{chapter}{Bibliographie}
 
