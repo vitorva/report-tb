@@ -596,9 +596,15 @@ La grammaire finale est écrite dans le fichier UON.g4.
 
 \section{Résumé}
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
-La grammaire qui a été adaptée dans le format d'ANTLR sera utilisé pour illustrer nos exemples.
 
-Un fichier UON peut contenir trois structures différentes : les collections en json et yaml, ainsi qu'un schéma.
+Ci-dessous se trouveront des exemples de ce qu'il est possible de faire.
+Les points concernant une adaption particulière ou des modifications seront expliqué à la section \ref{modification}.
+
+\textbf{Remmarque} : La grammaire qui a été adaptée dans le format d'ANTLR sera utilisé pour illustrer nos exemples.
+
+\subsection{Éléments racines}
+
+Un fichier UON peut contenir comme élément racine trois structures différentes : les collections en json et yaml, ainsi qu'un schéma.
 
 \begin{listing}[!ht]
     \begin{minted}{antlr}
@@ -618,10 +624,7 @@ Un fichier UON peut contenir trois structures différentes : les collections en 
 La grammaire actuelle nous permet de définir des collections. Ces collections sont des mapping et séquences soit dans un format proche de json ou de yaml.
 
 UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à certain degré, mon prédécesseur avait jugé utile d'incorporer ce format
-dans le langage. Cette structure a été reprise, mais expliquons dans la section \ref{modification}
-les modifications nécessaires qui ont été apportées.
-
-\textbf{Remarque} : par simplicité nous dirons simplement qu'il s'agit du format "json" ou "yaml".
+dans le langage.
 
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
@@ -1685,7 +1688,6 @@ Elle est illustré par la figure \ref{visitChildren}.
     \label{visitChildren}
 \end{listing}
 
-
 Le résultat par défaut est une liste vide. Lors du parcours de la remontée dans un noeud parent, nous allons rassembler les enfants dans une liste.
 
 Pourquoi manipuler une liste au lieu d'un objet \emph{DocumentSymbol} directement ?
@@ -1801,12 +1803,12 @@ Nous aurons donc l'outline suivante :
 C'est une fonctionnalité assez triviale qui consiste à afficher une explication lorsque l'on passe le curseur sur un élément.
 Cela consiste à aller chercher dans un dictionnaire si la valeur sélectionnée est bien une clé du dictionnaire et de récupérer la valeur si c'est bien le cas.
 
-Ce dictionnaire est un fichier.json qui est importé dans le fichier \emph{extension.js}.
-
-Il est nécessaire de rajouter la ligne \emph{"resolveJsonModule": true} dans le fichier tsconfig.json pour autoriser ce type d'import.
+Ce dictionnaire est un fichier.json qui est importé comme module. Il a été nécessaire de rajouter la ligne \emph{"resolveJsonModule": true} dans le fichier tsconfig.json pour autoriser ce type d'import.
 
 Même si son implémentation est relativement simple, il n'en reste pas moins un élément fortement utile et pouvant être étendu par la suite.
-Le code est déjà réutilisé pour fournir la documentation des types lors des suggestions de complétions.  % \ref{}
+Le code est déjà réutilisé pour fournir la documentation des types lors des suggestions de complétions.
+
+Les informations affiché au survol de la souris d'un élément sont directement tiré de la spécification.
 
 \section{Lint}
 %On affiche les erreurs trouvé avec antlr -> avantages positions
@@ -2023,7 +2025,7 @@ Un point contraignant lorsque l'on développe un support de langage, et que la g
 Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci.
 J'ai malheureusement, je pense, perdu du temps à corriger ce genres d'erreurs.
 
-La rédaction d'un rapport conséquent a aussi représenter un challenge. Étant donné que c'est pas quelquechose que j'ai l'habitude de faire.
+La rédaction du rapport a aussi représenté un challenge. Il s'agit d'un travail conséquent étant donné l'ampleur d'un tel projet.
 
 \section{Amélioration possible}
 
