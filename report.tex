@@ -826,12 +826,12 @@ Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" 
 
 Sur la figure \ref{literal-key-uon}, on voit que la clé et bien un token de type \emph{literal}.
 Ce token \emph{temperature} existe comme token car c'est une valeur utilisée comme quantité, mais si on ne précise pas explicitement que l'on souhaite avoir cette valeur
-comme possible clé alors on aura une erreur si on ne le précise pas \dots % TODO
+comme possible clé alors on aura une erreur.
 
 \subsubsection{Unquoted}
 
-%% TODO
-\begin{lstlisting}[frame=single,caption={Règle concernant les strings sans guillement},label={unquoted}]
+\begin{listing}[!ht]
+    \begin{minted}{antlr}
     UNQUOTED_STRING: IDENTIFIER+;
 
     IDENTIFIER
@@ -840,7 +840,10 @@ comme possible clé alors on aura une erreur si on ne le précise pas \dots % TO
         | [\p{N}]    // matches any kind of numeric character in any script.
         | [\p{Pc}]   //  punctuation character such as an underscore that connects words.
         | '!';
-\end{lstlisting}
+    \end{minted}
+    \caption{Règle concernant les strings sans guillement}
+    \label{unquoted-rule}
+\end{listing}
 
 %REGEX
 % utilisation d'outils en ligne : ex : https://regex101.com/
@@ -893,7 +896,7 @@ quantité et unités
 \section{Debugging}
 
 Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l'aide d'un terminal, cela peut même se révéler extrêmement difficile.
-Heursement pour nous, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visualiser en temps réel, le parse tree du texte que l'on est en train de saisir.
+Heureusement, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visualiser en temps réel, le parse tree du texte que l'on est en train de saisir.
 
 % TODO : Figure d'intelj en action
 
