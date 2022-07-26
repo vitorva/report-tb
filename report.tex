@@ -1613,11 +1613,12 @@ Son AST pourrait être, par exemple, ce que l'on voit à la figure \ref{ast}.
 
 Donc pour générer une telle structure, il va falloir parcourir le parse tree pour récupérer uniquement les informations utiles pendant le parcours.
 
-Pour parcourir un arbre, deux approches sont possibles : Le pattern Listener ou Visitor.
+Pour parcourir un arbre, deux approches sont possibles : Le pattern \emph{Listener} ou \emph{Visitor}.
 La première consiste à écouter les types de noeuds traversés qui nous intéressent. Le problème et que cette approche ne nous permet pas de manipuler un objet en cours de route ni gérer le flux d'exécution.
 Car il n'est pas possible de communiquer entre les noeuds. Cela peut être tout de même utile si l'on veut afficher la structure de l'arbre dans un terminal par exemple.
-
 Contrairement à la seconde approche, qui nous permet de gérer ces deux cas. Et c'est donc tout naturellement que cette solution a été privilégiée.
+
+\section{DocumentSymbol}
 
 Cependant on ne va pas d'abord créer un AST puis construire la outline view à l'aide de celui-ci.
 Nous allors directement construire l'outline view à la volé, pendant le parcours du parse tree. L'outline view sera une représentation directe de notre AST.
@@ -1625,72 +1626,77 @@ Nous allors directement construire l'outline view à la volé, pendant le parcou
 L'arbre sera donc un objet VS Code de type \href{https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol}{DocumentSymbol}.
 
 Il y a quelques points intéressants à commenter concernant cet objet.
+La variable \emph{children} permet d'avoir des encapsulations d'objets \emph{DocumentSymbol}. C'est ce qui permettra de créer une hiérarchie.
+Un noeud doit être représenté par un \emph{Symbolkind}. Nous sommes donc limités sur la représentation et devons faire les ajustements nécessaires.
 
-La variable \emph{children} qui nous permet d'avoir des encapsulations d'objets \emph{DocumentSymol}.
-
-Un noeud doit être représenté par un \emph{Symbolkind} % https://vshaxe.github.io/vscode-extern/vscode/SymbolKind.html
-Nous sommes donc limités sur la représentation et devons faire les ajustements nécessaires.
-
-Il y a deux paramètres de ranges à fournir à la création de l'objet : une qui contient leur définition et une qui pointe vers leur plage la plus intéressante, par exemple la plage d'un identifiant.
+Il y a deux paramètres de ranges à fournir à la création de l'objet. Leur différence n'est pas forcément très clair.
 
 Le premier se veut plus global que le second.
+La première range indique l'entiéreté de la définition d'un objet. Par exemple, pour une classe en Typescript en séléctionnerait le mot \emph{class} si on clique sur le nom de la classe.
+Le deuxième range (selectionRange) se veut plus spécifique en ciblant uniquement un seul token.
 Dans notre cas les deux peuvent représenter la même chose et représenter la range du token affiché dans l'éditeur.
 
-% https://stackoverflow.com/questions/55846146/make-vs-code-parse-and-display-the-structure-of-a-new-language-to-the-outline-re/63060797#63060797
-%The range is the definition range (the whole definition of your symbol, e.g. for a typescript class, it starts at
-%the keyword class and ends with the closing }) and the selectionRange is often only the symbol's token range
-%(but according to the specification, it can also include the doc comment block and the visibility modifiers, it is the implementor's choice).
+\section{Visitor}
 
 Lors de la génération des fichiers ANTLR, il est indiqué de générer également un fichier visiteur \emph{UONVisitor} en précisant le tag \emph{- visitor}.
 
 Cela va nous créer un fichier qui contiendra une interface définissant une fonction pour chaque type de noeud de note parseur et retournera un résultat de type générique.
 Chacune de ses fonctions prend comme paramètre son contexte.
 
-%Cette interface étends la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/ParseTreeVisitor.html}{ParseTreeVisitor} de ANTLR qui gère le méchanisme de parcours et d'aggrégation des résulats.
+La classe UonASTVisitor implémente cette interface qui étend la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html}{AbstractParseTreeVisitor}
+pour obtenir le comportement par défaut du pattern visitor. Elle gère le méchanisme de parcours et d'aggrégation des résulats.
 
-La classe UonASTVisitor implémente cette interface et étend la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html}{AbstractParseTreeVisitor}
-pour obtenir le comportement par défaut du pattern visitor.
+Pour obtenir l'ASR, on doit donner le parse tree créé par le parser à la fonction d'entrée \emph{visit} de notre visitor.
 
-On doit donner le "parse tree" créé par le parser à la fonction d'entrée \emph{visit} de notre visitor. % const ast = uonASTVisitor.visit(tree);
+\begin{listing}[!ht]
+    \begin{minted}{typescript}
+        const ast = uonASTVisitor.visit(tree);
+    \end{minted}
+    %\caption{Utilisation du parser d'ANTLR}
+    %\label{Utilisation du parser d'ANTLR}
+\end{listing}
 
-L'intérêt d'utiliser le pattern Visitor est de pouvoir retourner un élément à chaque étape du parcours.
 De plus note classe \emph{UONVisitor} étant générique, c'est ce qui nous permet de manipuler un objet VS code.
-
-%TODO : raison ?
-%La classe surchargée est de type "any" car pendant le parcours un élément peu être de deux natures différentes (Une valeur/terminal ou une strucutre Vscode).
-
+Actuellement la classe surchargée est de type \emph{any} car pendant le parcours un élément peu être de deux natures différentes (un noeud terminal ou un DocumentSymbol).
+Cette séparation est faite pour simplifier des étapes de constructions.
 
 \subsection{visitChildren}
-%Des fonctions de la classe AbstractParseTreeVisitor ont été surchargé pour adapter le comportement à notre situation.
+La fonction \emph{visitChildren} permet la taversé de l'arbre.
 
-La fonction \emph{visitChildren} est la suivante :
+Elle est illustré par la figure \ref{visitChildren}.
 
-\begin{lstlisting}
-1.    visitChildren(node) {
-2.        let result : any = this.defaultResult();
-3.        let n = node.childCount;
-4.        for (let i = 0; i < n; i++) {
-5.            if (!this.shouldVisitNextChild(node, result)) {
-6.                break;
-7.            }
-8.            let c = node.getChild(i);
-9.            let childResult = c.accept(this);
-10.            result = this.aggregateResult(result, childResult);
-12.        }
-13.        return result;
-14.    }
-\end{lstlisting}
+\begin{listing}[!ht]
+    \begin{minted}{typescript}
+    visitChildren(node: RuleNode) {
+        let result: any = this.defaultResult();
+        let n = node.childCount;
+        for (let i = 0; i < n; i++) {
+            if (!this.shouldVisitNextChild(node, result)) {
+                break;
+            }
+            let c = node.getChild(i);
+            let childResult = c.accept(this);
+            result = this.aggregateResult(result, childResult);
+        }
+        return result;
+    }
+    \end{minted}
+    \caption{Fonction visitChildren }
+    \label{visitChildren}
+\end{listing}
+
 
 Le résultat par défaut est une liste vide. Lors du parcours de la remontée dans un noeud parent, nous allons rassembler les enfants dans une liste.
 
-Pourquoi ne pas manipuler directement un objet \emph{DocumentSymbol} au lieu d'une liste ?
+Pourquoi manipuler une liste au lieu d'un objet \emph{DocumentSymbol} directement ?
 Tout simplement, car sinon on aurait du le faire dans la fonction d'agrégation et l'on préféra ici déléguer la logique dans le noeud parent concerné
-qui pourra utiliser les valeurs récupérer pour construire l'information voulue.
+qui pourra utiliser les valeurs récupérer pour construire l'information voulue par exemple dans une séquence ou un mapping.
 
 C'est un choix d'implémentation pour faciliter la construction d'un objet \emph{DocumentSymbol}.
 
 \subsection{Parcours}
-Le parcours est effectué selon un algorithme de parcours en profondeur (DFS).
+
+Le parcours est effectué selon un algorithme \Gls{dfs}.
 
 Pour rappel un parcours DFS est effectué dans l'ordre affiché à la figure \ref*{Algorithme de parcours en profondeur (DFS)}
 
@@ -1715,8 +1721,8 @@ Il faut donc pouvoir être capable de récupérer la position d'un élément du 
 
 Heursement on peut récupérer cette information lors d'un parcours d'un noeud terminal du parse tree.
 Il suffit d'observer le token associé au symbole de ce noeud et plus particulièrement les
-propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait de "colonne")
-Il faut toutefois juste corriger la position de la ligne en lui soustraient une valeur de 1 car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR % TODO
+propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait généralement de colonne)
+Il faut toutefois juste corriger la position de la ligne en lui soustraient une valeur de 1 car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR.
 
 \subsection{Résultat}
 L'aspect visuel de l'outline view à été conçu pour ressembler à celle de JSON et de YAML.
@@ -1800,7 +1806,7 @@ Ce dictionnaire est un fichier.json qui est importé dans le fichier \emph{exten
 Il est nécessaire de rajouter la ligne \emph{"resolveJsonModule": true} dans le fichier tsconfig.json pour autoriser ce type d'import.
 
 Même si son implémentation est relativement simple, il n'en reste pas moins un élément fortement utile et pouvant être étendu par la suite.
-Le code est déjà réutilisé pour fournir la documentation des types lors des suggestions de complétions  % \ref{}
+Le code est déjà réutilisé pour fournir la documentation des types lors des suggestions de complétions.  % \ref{}
 
 \section{Lint}
 %On affiche les erreurs trouvé avec antlr -> avantages positions
@@ -2016,6 +2022,8 @@ Pour l'outline view, il a fallu comprendre comment construire un objet en cours 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
 Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci.
 J'ai malheureusement, je pense, perdu du temps à corriger ce genres d'erreurs.
+
+La rédaction d'un rapport conséquent a aussi représenter un challenge. Étant donné que c'est pas quelquechose que j'ai l'habitude de faire.
 
 \section{Amélioration possible}
 
