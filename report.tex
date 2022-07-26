@@ -141,7 +141,7 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
     \item Réaliser une extension dans le code source se trouve sur Github.
     \item Publier l'extension sur \href{https://marketplace.visualstudio.com/}{le marketplace} de Visual Studio.
     \item Documenter la mise en place de l'extension et l'implémentation des fonctionnalités.
-    \item Le système doit disposer d’une intégration continue.
+    \item Le système doit disposer d'une intégration continue.
 \end{itemize}
 
 \subsection*{Grammaire}
@@ -158,7 +158,7 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
 
 \subsubsection*{Auto-complétion}
 \begin{itemize}
-    \item Des propositions de complétions doivent apparaitre pendant la saisie d’une chaine de texte si des complétions possibles existent pour une telle chaine.
+    \item Des propositions de complétions doivent apparaitre pendant la saisie d'une chaine de texte si des complétions possibles existent pour une telle chaine.
 \end{itemize}
 
 \subsubsection*{Document Outlining}
@@ -168,7 +168,7 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
 
 \subsubsection*{Hover Information}
 \begin{itemize}
-    \item Lorsque l'on passe le curseur sur un élément du texte, des informations le concernant doivent apparaitre s’ils existent pour celui-ci.
+    \item Lorsque l'on passe le curseur sur un élément du texte, des informations le concernant doivent apparaitre s'ils existent pour celui-ci.
 \end{itemize}
 
 \subsection*{Si le temps le permet}
@@ -187,18 +187,18 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
 
 \subsubsection*{Converter (outil permettant de convetir du code)}
 \begin{itemize}
-    \item Du code JSON est capable d’être converti en UON et inversement.
-    \item Du code YAML est capable d’être converti en UON et inversement.
+    \item Du code JSON est capable d'être converti en UON et inversement.
+    \item Du code YAML est capable d'être converti en UON et inversement.
 \end{itemize}
 
 \chapter{Pré-étude}
 
 \section{Parsing}\label{parsing}
 
-Le résultat de l'analyse syntaxique (parsing) nous permet d'obtenir une représentation de la strucutre d'un texte. Ce qui est très utile dans le cadre d'un support de langage.
+Le résultat de l'analyse syntaxique (parsing) nous permet d'obtenir une représentation de la structure d'un texte. Ce qui est très utile dans le cadre d'un support de langage.
 
-Il est donc important de rappeler le mécanisme générale. Car avant la phase de l'analyse syntaxique, il y a habituellement une analyse lexicale.
-À cette étape, un input (du code ou texte) est décomposé en une liste de token à l'aide d'un lexer.
+Il est donc important de rappeler le mécanisme général. Car avant la phase de l'analyse syntaxique, il y a habituellement une analyse lexicale.
+À cette étape, un input (du code ou texte) est décomposé en une liste de tokens à l'aide d'un lexer.
 
 Ce sont ces tokens qui seront ensuite utilisés lors de l'analyse syntaxique.
 L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire.
@@ -206,7 +206,7 @@ L'analyse syntaxique consiste à regarder quelles sont les règles qui sont appl
 Le résultat de cette analyse est un "Parse Tree" qui représente toutes les dérivations de notre input en fonction de la grammaire.
 Elle est souvent représentée sous forme d'un arbre hiérarchique.
 
-Généralement c'est cette structure finale qui sera interprété ou compilée.
+Généralement c'est cette structure finale qui sera interprétée ou compilée.
 
 Ce processus peut être représenté par la figure \ref{Analayse du code source}.
 
@@ -692,7 +692,7 @@ Nous allons garder presque la même structure, car cette grammaire regroupe déj
 
 Cependant quelques points concernant la structure générale ont été modifiés.
 
-Pour commencer il a fallu convertir la grammaire dans à la main car aucun convertisseur n’existe. Heursement ANTLR et Lark se basent sur une notation EBNF.
+Pour commencer il a fallu convertir la grammaire dans à la main car aucun convertisseur n'existe. Heursement ANTLR et Lark se basent sur une notation EBNF.
 Ce qui fait que la structure de la grammaire reste relativement semblable.
 
 Le seul point de divergence a été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci varie légèrement. Et sur la gestion de l'indentation.
@@ -1474,7 +1474,7 @@ Mais ce mécanisme n'est utilisé que pour générer un parse tree, cela est don
 
 %Donc comme déjà mentionner, pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
 Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
-Car sinon on pourrait avoir dans le stream de token des éléments qui ne seront pas compris par le moteur et l'on n’obtiendra pas de candidats.
+Car sinon on pourrait avoir dans le stream de token des éléments qui ne seront pas compris par le moteur et l'on n'obtiendra pas de candidats.
 
 Une explication fournit par le créateur du moteur dans la rubrique "issues" du dépot du \href{ https://github.com/mike-lischke/antlr4-c3/issues/29}{projet}.
 % https://github.com/mike-lischke/antlr4-c3/issues/29
