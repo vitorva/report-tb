@@ -224,7 +224,7 @@ Il a été choisi, car il fait partie des éditeurs les plus populaires. C'est �
 D'autres alternatives existent comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fournit également de quoi implémenter une extension.
 C'est donc un choix personnel.
 
-Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes. Plus généralement des fichiers statiques, comme un langage de sérialisation. Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le débogage de programme plus complexe.
+Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes. Plus généralement des fichiers statiques, comme un langage de sérialisation. Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debugging de programme plus complexe.
 
 Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit.
 
@@ -287,7 +287,7 @@ La structure de base d'une extension est illustrée par la figure \ref{Squelette
 chaque extension doit contenir un fichier \emph{package.json}. En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à VS Code.
 
 \textbf{Extension Entry File} :
-il s'agit du fichier prinicipal de l'extension (Extension.js).
+il s'agit du fichier principal de l'extension (Extension.js).
 De base, il contient deux fonctions : \emph{activate} et \emph{deactivate}.
 La fonction activate est exécutée à l'activation de notre extension par un \emph{Activation Event}. On initialisera ici notre extension.
 La fonction \emph{deactivate} est exécutée lorsque l'application devient inactive et sert principalement à nettoyer le code avant la désactivation de l'extension
@@ -297,11 +297,11 @@ La fonction \emph{deactivate} est exécutée lorsque l'application devient inact
 Nous avons donc vu les briques de bases pour la conception d'une extension. Mais cette base est suffisante pour commencer à travailler.
 
 Si vous souhaitez vous renseigner d'avantages sur l'élaboration d'une extension vous pouvez consulter la page \href{https://code.visualstudio.com/api}{suivante}.
-Concernant les fonctionnalités générales de l'éditeur VS Code vous pouvez consulter consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
+Concernant les fonctionnalités générales de l'éditeur VS Code vous pouvez consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \section{Support de langage}
 VS Code fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en deux catégories détaillées
-dans dans les sections \hyperref[Declarative language features][Declarative language features] et \hyperref[Programmatic language features][Programmatic language features] ci-dessous.
+dans les sections \hyperref[Declarative language features]{Declarative language features} et \hyperref[Programmatic language features]{Programmatic language features}.
 
 \subsection{Declarative language features}\label{Declarative language features}
 Elles ajoutent un support d'édition de texte de base pour un langage de programmation.
@@ -324,7 +324,18 @@ Il s'agit de fonctionnalités implémentées à l'aide de fichier de configurati
 Puis, elles doivent être enregistrées comme \emph{Contribute Point}.
 
 \subsection{Programmatic language features}\label{Programmatic language features}
-Il s'agit de fonctionnalité plus riche et plus complexe à mettre en place (p.ex : "Hovers", "Go to Definition", "diagnostic errors", "IntelliSense" \space et "CodeLens".
+Il s'agit de fonctionnalité plus riche et plus complexe à mettre en place.
+Par exemple, les éléments suivants :
+
+\begin{itemize}
+    \item hover information
+    \item jump to Definition
+    \item bracket matching
+    \item error checking
+    \item bracket autosurrounding
+    \item auto completion
+\end{itemize}
+
 Il y a deux approches pour les implémenter que nous allons voir ci-dessous.
 
 \subsubsection{VS Code API (Direct implementation)}
