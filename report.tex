@@ -601,7 +601,7 @@ La grammaire qui a été adaptée dans le format d'ANTLR sera utilisé pour illu
 Un fichier UON peut contenir trois structures différentes : les collections en json et yaml, ainsi qu'un schéma.
 
 \begin{listing}[!ht]
-    \begin{minted}{ANTLR}
+    \begin{minted}{antlr}
     uon: root_value;
 
     root_value: json_collection | yaml_collection | schema;
@@ -626,11 +626,11 @@ les modifications nécessaires qui ont été apportées.
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
 % TODO : exemple de map
-\begin{lstlisting}[frame=single,caption={json-map},label={json-map}]
+\begin{lstlisting}[frame=single,caption={Exemple d'un mapping en format JSON},captionpos=b,label={json-map}]
     {
-        "name" ( description : a12 ) :  !str( comment : ok , optional: False) ok, # error with outline with simply 12
+        "name" ( description : a12 ) :  !str(optional: False) paul,
         age: !float !float128 !float32 +12.2 C,
-        hobbys ( description : "what i like the most",  optional : false ) : !seq [
+        hobbys ( description : "what i like the most" ) : !seq [
             "cinema", "sport", "etc..."],
         license  :  !bool  true,
         car:   !bool false,
@@ -640,7 +640,7 @@ Ces collections peuvent être imbriqué seulement par format, on ne peut pas avo
     }
 \end{lstlisting}
 
-\begin{lstlisting}[frame=single,caption={yaml-map},label={yaml-map}]
+\begin{lstlisting}[frame=single,caption={Exemple d'un mapping en format YAML},captionpos=b,label={yaml-map}]
 ok :
     -  ok
     - !float32 12
@@ -649,17 +649,15 @@ ok :
 ok2 : -23
 \end{lstlisting}
 
-
 % TODO : exemple de seq
-\begin{lstlisting}[frame=single,caption={json-seq},label={json-seq}]
+\begin{lstlisting}[frame=single,caption={Exemple d'une séquence en format JSON},captionpos=b,label={json-seq}]
 \dots
 \end{lstlisting}
 
 
-\begin{lstlisting}[frame=single,caption={yaml-seq},label={yaml-seq}]
+\begin{lstlisting}[frame=single,caption={Exemple d'une séquence en format YAML},captionpos=b,label={yaml-seq}]
 \dots
 \end{lstlisting}
-
 
 \subsection{Schéma}
 On peut définir également un schéma de validation.
@@ -667,7 +665,7 @@ On peut définir également un schéma de validation.
 Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
 Cette séparation permet d'éviter des ambiguïtés. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
 
-\begin{lstlisting}[frame=single,caption={yaml-seq},label={yaml-seq}]
+\begin{lstlisting}[frame=single,caption={Exemple d'un schéma de validation},captionpos=b,label={yaml-seq}]
     \dots
 \end{lstlisting}
 
@@ -744,22 +742,31 @@ Le code permettant est une adaptation d'une solution déjà existance pour du YA
 
 Il est maintenant possible d'avoir par exemple la règle suivante :
 
-\begin{lstlisting}[frame=single,caption={generator-code},label={generator-code}]
-    yaml_seq : INDENT (SEQUENCE_TYPE)? seq_item+ DEDENT;
-\end{lstlisting}
+\begin{listing}[!ht]
+    \begin{minted}{antlr}
+        yaml_seq : INDENT (SEQUENCE_TYPE)? seq_item+ DEDENT;
+    \end{minted}
+    \caption{Règle de grammaire gérant les indentations}
+    \label{ex-indentation-rule}
+\end{listing}
 
 Les tokens INDENT et DEDENT seront créés par le lexer si nécessaire.
 
 \subsubsection{Minus}
-\begin{lstlisting}[frame=single,caption={uon-number},label={uon-number}]
-NUMBER:
-	(('+'|'-')? INT ('.' [0-9]*)? EXP?) // +1.e2, 1234, 1234.5
-	| '.' [0-9]+ EXP? // -.2e3
-	| (('+'|'-')? '0' [xX] HEX+) // 0x12345678
-	| (('+'|'-')? '0' [oO] HEX+) ; // 0o12345678
 
-NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
-\end{lstlisting}
+\begin{listing}[!ht]
+    \begin{minted}{antlr}
+    NUMBER:
+        (('+'|'-')? INT ('.' [0-9]*)? EXP?) // +1.e2, 1234, 1234.5
+        | '.' [0-9]+ EXP? // -.2e3
+        | (('+'|'-')? '0' [xX] HEX+) // 0x12345678
+        | (('+'|'-')? '0' [oO] HEX+) ; // 0o12345678
+
+    NUMERIC_LITERAL: 'inf' | 'nan' | '-inf' | '-nan' | '+inf' | '+nan';
+    \end{minted}
+    \caption{Règle de grammaire concernant les nombres}
+    \label{number-rule}
+\end{listing}
 
 Le caractère "-" étant utilisé pour définir une séquence en format yaml.
 Il a fallu forcer le caractère directement dans l'expression régulière définissant un nombre.
@@ -768,12 +775,16 @@ Il a fallu forcer le caractère directement dans l'expression régulière défin
 
 \subsection{String}
 
-\begin{lstlisting}[frame=single,caption={uon-string},label={uon-string}]
-    string :
-	literal
-	| QUOTED_STRING
-	| UNQUOTED_STRING;
-\end{lstlisting}
+\begin{listing}[!ht]
+    \begin{minted}{antlr}
+        string :
+        literal
+        | QUOTED_STRING
+        | UNQUOTED_STRING;
+    \end{minted}
+    \caption{Règle de grammaire concernant les strings}
+    \label{string-rule}
+\end{listing}
 
 Une valeur textuelle peut soit être entre guillemets ou non.
 
@@ -806,7 +817,7 @@ comme possible clé alors on aura une erreur si on ne le précise pas \dots % TO
 \subsubsection{Unquoted}
 %% TODO
 
-\begin{lstlisting}[frame=single,caption={unquoted},label={unquoted}]
+\begin{lstlisting}[frame=single,caption={Règle concernant les strings sans guillement},label={unquoted}]
     UNQUOTED_STRING: IDENTIFIER+;
 
     IDENTIFIER
@@ -825,7 +836,7 @@ comme possible clé alors on aura une erreur si on ne le précise pas \dots % TO
 \subsubsection{Quoted}
 
 %% TODO
-\begin{lstlisting}[frame=single,caption={quoted},label={quoted}]
+\begin{lstlisting}[frame=single,caption={Règle concernant les strings avec guillement},label={quoted}]
     QUOTED_STRING:
     '"' DOUBLE_QUOTE_CHAR* '"'
     | '"''"''"' DOUBLE_QUOTE_CHAR* '"''"''"'
@@ -847,7 +858,7 @@ N'importe quelle caractère peut se trouver
 Des propriétés de présentation ont été rajoutées en reprenant les constructions utilisées pour définir des propriétés pour les clés ainsi que de validation.
 
 % "_" dans le caption cause des erreurs !!!
-\begin{lstlisting}[frame=single,caption={types properties},label={types_properties}]
+\begin{lstlisting}[frame=single,caption={Règle concernant les propriétés de présentation des types},label={types_properties}]
     types_properties: OPEN_PAR (types_propertie (COMMA types_propertie)*)? CLOSE_PAR;
     types_propertie: comment | description | optional;
     comment: COMMENT COLON string;
@@ -1142,14 +1153,14 @@ Ce procédé nous permet de profiter des thèmes de VS Code implémenté par dé
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/vscode-dark-theme.PNG}
     \end{center}
-    \caption[vscode dark theme]{\label{vscode-dark-theme} vscode-dark-theme}
+    \caption[Thème vscode dark]{\label{vscode-dark-theme} vscode-dark-theme}
 \end{figure}
 
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/vscode-kimbi-dark-theme.PNG}
     \end{center}
-    \caption[vscode kimbi dark theme]{\label{vscode-kimbi-dark-theme} vscode kimbi dark theme}
+    \caption[Thème vscode kimbi dark]{\label{vscode-kimbi-dark-theme} vscode kimbi dark theme}
 \end{figure}
 
 \subsubsection{Example}
@@ -1182,7 +1193,7 @@ Une des raisons évoquées et que ce mécanisme doit être le plus rapide possib
 La figure \ref{Textmate grammar} illustre un exemple très simplifié utilisé du fichier "uon.tmLanguage.json".
 
 \begin{listing}[!ht]
-    \begin{minted}{JSON}
+    \begin{minted}{json}
        1. {
        2.   "name": "UON",
        3.   "scopeName": "source.uon",
@@ -1218,7 +1229,7 @@ La figure \ref{Textmate grammar} illustre un exemple très simplifié utilisé d
       33.    }
       34. }
     \end{minted}
-    \caption{Textmate grammar}
+    \caption{Exemple simple d'une grammaire Texmate}
     \label{Textmate grammar}
 \end{listing}
 
@@ -1278,14 +1289,14 @@ Par exemple avec du code Typescript :
     \begin{center}
         \includegraphics[width=15cm]{assets/figures/semantic-coloration-without.png}
     \end{center}
-    \caption[Sans coloration sémantique]{\label{semantic-coloration-without} Sans coloration sémantique}
+    \caption[Exemple sans coloration sémantique]{\label{semantic-coloration-without} Sans coloration sémantique}
 \end{figure}
 
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=15cm]{assets/figures/semantic-coloration-with.png}
     \end{center}
-    \caption[Sans coloration sémantique ]{\label{semantic-coloration-with} Avec coloration sémantique }
+    \caption[Exemple avec coloration sémantique ]{\label{semantic-coloration-with} Avec coloration sémantique }
 \end{figure}
 
 On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d'une fonction.
@@ -1313,7 +1324,7 @@ La syntaxe UON peut être exprimée par la figure \ref{syntax}.
     \begin{center}
         \frame{\includegraphics[width=12cm]{assets/figures/syntax.png}}
     \end{center}
-    \caption[syntax]{\label{syntax} UON syntax}
+    \caption[Règle de syntaxe en UON]{\label{syntax} UON syntax}
 \end{figure}
 
 On constate que : toute valeur est un type, et un type peut avoir des propriétés associées.
@@ -1346,7 +1357,7 @@ de donner au moteur, une instance du parser et un indice.
     let core = new c3.CodeCompletionCore(parser);
     let candidates = core.collectCandidates(index);
     \end{minted}
-    \caption{setup c3}
+    \caption{Initialisation du moteur de complétion c3}
     \label{c3-setup}
 \end{listing}
 
@@ -1558,7 +1569,7 @@ On a accès à cette représentation dans la sidebar gauche par défaut.
     \begin{center}
         \frame{\includegraphics[width=14cm]{assets/figures/outline-view-sidebar.PNG}}
     \end{center}
-    \caption[outline-view-sidebar]{\label{outline-view-sidebar} outline-view-sidebar}
+    \caption[Outline view disponible depuis la sidebar]{\label{outline-view-sidebar} outline-view-sidebar}
 \end{figure}
 
 ou depuis la command palette en saisissant la combinaison "CTRL + SHIFT + o" :
@@ -1568,7 +1579,7 @@ ou depuis la command palette en saisissant la combinaison "CTRL + SHIFT + o" :
     \begin{center}
         \frame{\includegraphics[width=14cm]{assets/figures/outline-view-searchbar.PNG}}
     \end{center}
-    \caption[outline-view-searchbar]{\label{outline-view-searchbar} outline-view-searchbar}
+    \caption[Outline view disponible depuis la searchbar]{\label{outline-view-searchbar} outline-view-searchbar}
 \end{figure}
 
 Il est possible obtenir la structure d'un fichier en analysant manuellement le texte (par exemple ligne par ligne).
@@ -1581,9 +1592,9 @@ Le résulat du résultat est un "parse tree" (aussi nommé CST) qui est une repr
 Typiquement les informations grammaticales et structurelles.
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/parse-tree.PNG}}
+        \frame{\includegraphics[width=8cm]{assets/figures/parse-tree.PNG}}
     \end{center}
-    \caption[UON parse tree]{\label{parse-tree} UON parse tree}
+    \caption[Exemple d'un parse tree]{\label{parse-tree} UON parse tree}
 \end{figure}
 
 C'est pourquoi il faut pouvoir le parcourir pour en extraire un AST.
@@ -1593,7 +1604,7 @@ Un AST est une représentation abstraite de notre input. Il ne contient généra
     \begin{center}
         \frame{\includegraphics[width=10cm]{assets/figures/ast.PNG}}
     \end{center}
-    \caption[UON AST]{\label{ast} UON AST}
+    \caption[Exemple d'un AST]{\label{ast} UON AST}
 \end{figure}
 %TODO : Images non contractuelles
 
