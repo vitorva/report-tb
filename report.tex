@@ -593,11 +593,11 @@ Et le dépôt du projet se trouve \href{https://github.com/uon-language/specific
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
 Il est donc important de préciser sur quels éléments du langage nous nous focaliserons.
 
-Une spécification d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujet à interprétation.
-C'est un langage complexe et qui pourrait encore, être ammener à évoluer. Les propositions et les suggestions sont les bienvenues.
+Une spécification d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujets à interprétation.
+C'est un langage complexe et qui pourrait encore, être amener à évoluer. Les propositions et les suggestions sont les bienvenues.
 
-Heurseuement, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim.
-Cette grammaire se trouve sur \href{https://github.com/uon-language/uon-parser/tree/master/grammar}{ici}
+Heureusement, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim.
+Cette grammaire se trouve \href{https://github.com/uon-language/uon-parser/tree/master/grammar}{ici}
 
 Cette grammaire a été convertie en format ANTLR. Des modifications ont été apportées et seront expliquées par la suite.
 
@@ -609,9 +609,9 @@ La grammaire finale est écrite dans le fichier UON.g4.
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
 
 Ci-dessous se trouveront des exemples de ce qu'il est possible de faire.
-Les points concernant une adaption particulière ou des modifications seront expliqué à la section \ref{modification}.
+Les points concernant une adaptation particulière ou des modifications seront expliqués à la section \ref{modification}.
 
-\textbf{Remmarque} : La grammaire qui a été adaptée dans le format d'ANTLR sera utilisé pour illustrer nos exemples.
+\textbf{Remarque} : La grammaire qui a été adaptée dans le format d'ANTLR sera utilisée pour illustrer nos exemples.
 
 \subsection{Éléments racines}
 
@@ -634,7 +634,7 @@ Un fichier UON peut contenir comme élément racine trois structures différente
 \subsection{Collections}
 La grammaire actuelle nous permet de définir des collections. Ces collections sont des mapping et séquences soit dans un format proche de json ou de yaml.
 
-UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à certain degré, mon prédécesseur avait jugé utile d'incorporer ce format
+UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à un certain degré (reduced set), mon prédécesseur avait jugé utile d'incorporer ce format
 dans le langage.
 
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
@@ -689,7 +689,7 @@ Les types supportés sont les suivants :
 
 \subsection{Propriétés}
 
-Les propriétés en UON sont décrit dans la section \ref{properties}.
+Les propriétés en UON sont décrites dans la section \ref{properties}.
 
 % TODO
 Les clés des mapping des propriétés peuvent posséder des propriétés de présentation.
@@ -703,7 +703,7 @@ Nous allons garder presque la même structure, car cette grammaire regroupe déj
 
 Cependant quelques points concernant la structure générale ont été modifiés.
 
-Pour commencer il a fallu convertir la grammaire dans à la main car aucun convertisseur n'existe. Heursement ANTLR et Lark se basent sur une notation EBNF.
+Pour commencer il a fallu convertir la grammaire dans à la main car aucun convertisseur n'existe. Heureusement, ANTLR et Lark se basent sur une notation EBNF.
 Ce qui fait que la structure de la grammaire reste relativement semblable.
 
 Le seul point de divergence a été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci varie légèrement. Et sur la gestion de l'indentation.
@@ -713,7 +713,7 @@ Concernant la structure d'un fichier de grammaire ANTLR .g4 il y a quelques subt
 \begin{itemize}
     \item Le fichier doit comporter le même nom que la règle de départ.
     \item Les règles de lexer définissent comment une chaine de texte doit être tokenifier. Elles doivent être écrites en majuscule.
-    \item Les règles de parser définissent comment une suite de tokens sera intérprétée. Elles doivent être écrites en miniscule.
+    \item Les règles de parser définissent comment une suite de tokens sera interprétée. Elles doivent être écrites en minuscule.
 \end{itemize}
 
 \subsection{YAML}
@@ -734,25 +734,25 @@ Et la gestion des indentations nécessite de prendre en compte les retours à la
 
 Il y a donc trois solutions qui ont été envisagées :
 
-La première est de rajouter des tokens de retour ou il serait jugé bon de les avoir dans la grammaire, et de les rendres optionnels.
+La première est de rajouter des tokens de retour ou il serait jugé bon de les avoir dans la grammaire, et de les rendre optionnels.
 Mais ce n'est pas très propre et on risque d'en placer énormément.
 
 Le deuxième serait d'ignorer tout simplement les erreurs.  C'est-à-dire que si on à un token de retour à la ligne qui ne devrait pas être là, alors l'ignorer tout simplement.
 On pourrait penser ce mécanisme simple se révélerait efficace. Cependant cela pose problème pour le moteur de complétion qui a besoin d'avoir un input correct, comme expliqué dans la section \ref{error handle}
 
-La troisième solution trouvée et celle actuellement utilisée. Elle consiste à prendre par défaut les retours à la ligne et de les ignorers dès qu'on détecte les tokens
-qui ne sont jamais utilisé dans un format YAML (Les accolades et virgules).
+La troisième solution trouvée et celle actuellement utilisée. Elle consiste à prendre par défaut les retours à la ligne et de les ignorer dès qu'on détecte les tokens
+qui ne sont jamais utilisés dans un format YAML (les accolades et virgules).
 
 Dès lors que les retours à la ligne existent, nous pouvons maintenant placer les tokens INDENT et DEDENT depuis le lexer
 pour pouvoir gérer les imbrications correctement.
 
-Pour ce faire, à chaque fois qu'un espace qu'un retour à la ligne est détecté par le lexer, nous prenons compte de la taille de l'espacement qu'il contient ("\\r\\n    ")
+Pour ce faire, à chaque fois qu'un espace qu'un retour à la ligne est détecté par le lexer, nous prenons compte de la taille de l'espacement qu'il contient (ex : "\\r\\n    ")
 Cet espacement nous permettra de savoir si l'on doit rajouter des INDENT ou DEDENT.
 
 Il est possible de placer le code permettant ce mécanisme dans le fichier grammaire, en l'écrivant dans le block \emph{lexer:@member{}}.
 Lors de la génération, le code est placé dans le lexer. Cependant lors de la génération les imports seront manquants, il est nécessaire d'aller les rajouter manuellement.
 
-Le code permettant est une adaptation d'une solution déjà existance pour du YAML dans une grammaire ANTLR, elle se trouve \href{https://github.com/umaranis/FastYaml}{ici}
+Le code permettant est une adaptation d'une solution déjà existante pour du YAML dans une grammaire ANTLR, elle se trouve \href{https://github.com/umaranis/FastYaml}{ici}
 
 Il est maintenant possible d'avoir par exemple la règle suivante :
 
@@ -824,13 +824,13 @@ Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" 
     \caption[Utilisation d'un token de type literal comme clé]{\label{literal-key-uon}Utilisation d'un token de type literal comme clé}
 \end{figure}
 
-Sur le schéma \ref{literal-key-uon} On voit que la clé et bien un token de type \emph{literal}.
+Sur la figure \ref{literal-key-uon}, on voit que la clé et bien un token de type \emph{literal}.
 Ce token \emph{temperature} existe comme token car c'est une valeur utilisée comme quantité, mais si on ne précise pas explicitement que l'on souhaite avoir cette valeur
 comme possible clé alors on aura une erreur si on ne le précise pas \dots % TODO
 
 \subsubsection{Unquoted}
-%% TODO
 
+%% TODO
 \begin{lstlisting}[frame=single,caption={Règle concernant les strings sans guillement},label={unquoted}]
     UNQUOTED_STRING: IDENTIFIER+;
 
@@ -1574,7 +1574,7 @@ En analysant la spécification \href{https://microsoft.github.io/language-server
     \item DocumentSymbol qui est une hiérarchie de symboles trouvés dans un document.
 \end{itemize}
 
-La structure peut être donc représenté de manière hiérarchique ou seulement être listés.
+La structure peut être donc représentée de manière hiérarchique ou seulement lister des éléments.
 
 On a accès à cette représentation dans la sidebar gauche par défaut.
 
@@ -1600,8 +1600,8 @@ Il est possible obtenir la structure d'un fichier en analysant manuellement le t
 Mais cette approche n'est pas optimale et il serait difficile de représenter la structure hiérarchique du document à l'aide de regex \cite{antlr-mega-tutorial}.
 
 Nous allons donc utiliser notre parser.
-
-Le résulat du résultat est un "parse tree" (aussi nommé CST) qui est une représentation concrète de notre input.
+% TODO
+Le résulat du parser est un "parse tree" (aussi nommé CST) qui est une représentation concrète de notre input.
 Le parse tree contient toutes les informations et beaucoup d'entre elles ne nous intéressent pas.
 Typiquement les informations grammaticales et structurelles.
 C'est pourquoi il faut pouvoir le parcourir pour en extraire un AST.
@@ -1613,7 +1613,7 @@ Par exemple, le parse tree d'une opération arithmétique simple pourrait être 
     \begin{center}
         \frame{\includegraphics[width=8cm]{assets/figures/parse-tree.PNG}}
     \end{center}
-    \caption[Exemple d'un parse tree]{\label{parse-tree} UON parse tree}
+    \caption[Exemple d'un parse tree]{\label{parse-tree} Exemple d'un parse tree}
 \end{figure}
 
 Son AST pourrait être, par exemple, ce que l'on voit à la figure \ref{ast}.
@@ -1622,7 +1622,7 @@ Son AST pourrait être, par exemple, ce que l'on voit à la figure \ref{ast}.
     \begin{center}
         \frame{\includegraphics[width=10cm]{assets/figures/ast.PNG}}
     \end{center}
-    \caption[Exemple d'un AST]{\label{ast} UON AST}
+    \caption[Exemple d'un AST]{\label{ast} Exemple d'un AST}
 \end{figure}
 
 Donc pour générer une telle structure, il va falloir parcourir le parse tree pour récupérer uniquement les informations utiles pendant le parcours.
@@ -1635,7 +1635,7 @@ Contrairement à la seconde approche, qui nous permet de gérer ces deux cas. Et
 \section{DocumentSymbol}
 
 Cependant on ne va pas d'abord créer un AST puis construire la outline view à l'aide de celui-ci.
-Nous allors directement construire l'outline view à la volé, pendant le parcours du parse tree. L'outline view sera une représentation directe de notre AST.
+L'outline view sera plutôt crée à la volé, pendant le parcours du parse tree. L'outline view sera une représentation directe de notre AST.
 
 L'arbre sera donc un objet VS Code de type \href{https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol}{DocumentSymbol}.
 
@@ -1643,10 +1643,10 @@ Il y a quelques points intéressants à commenter concernant cet objet.
 La variable \emph{children} permet d'avoir des encapsulations d'objets \emph{DocumentSymbol}. C'est ce qui permettra de créer une hiérarchie.
 Un noeud doit être représenté par un \emph{Symbolkind}. Nous sommes donc limités sur la représentation et devons faire les ajustements nécessaires.
 
-Il y a deux paramètres de ranges à fournir à la création de l'objet. Leur différence n'est pas forcément très clair.
+Il y a deux paramètres de ranges à fournir à la création de l'objet. Leur différence n'est pas forcément très claire.
 
 Le premier se veut plus global que le second.
-La première range indique l'entiéreté de la définition d'un objet. Par exemple, pour une classe en Typescript en séléctionnerait le mot \emph{class} si on clique sur le nom de la classe.
+La première range indique l'entièreté de la définition d'un objet. Par exemple, pour une classe en Typescript en sélectionnerait le mot \emph{class} si on clique sur le nom de la classe.
 Le deuxième range (selectionRange) se veut plus spécifique en ciblant uniquement un seul token.
 Dans notre cas les deux peuvent représenter la même chose et représenter la range du token affiché dans l'éditeur.
 
@@ -1658,7 +1658,7 @@ Cela va nous créer un fichier qui contiendra une interface définissant une fon
 Chacune de ses fonctions prend comme paramètre son contexte.
 
 La classe UonASTVisitor implémente cette interface qui étend la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html}{AbstractParseTreeVisitor}
-pour obtenir le comportement par défaut du pattern visitor. Elle gère le méchanisme de parcours et d'aggrégation des résulats.
+pour obtenir le comportement par défaut du pattern visitor. Elle gère le mécanisme de parcours et d’agrégation des résultats.
 
 Pour obtenir l'ASR, on doit donner le parse tree créé par le parser à la fonction d'entrée \emph{visit} de notre visitor.
 
@@ -1671,13 +1671,13 @@ Pour obtenir l'ASR, on doit donner le parse tree créé par le parser à la fonc
 \end{listing}
 
 De plus note classe \emph{UONVisitor} étant générique, c'est ce qui nous permet de manipuler un objet VS code.
-Actuellement la classe surchargée est de type \emph{any} car pendant le parcours un élément peu être de deux natures différentes (un noeud terminal ou un DocumentSymbol).
+Actuellement la classe surchargée est de type \emph{any} car pendant le parcours un élément peut être de deux natures différentes (un noeud terminal ou un DocumentSymbol).
 Cette séparation est faite pour simplifier des étapes de constructions.
 
 \subsection{visitChildren}
-La fonction \emph{visitChildren} permet la taversé de l'arbre.
+La fonction \emph{visitChildren} permet la traversée de l'arbre.
 
-Elle est illustré par la figure \ref{visitChildren}.
+Elle est illustrée par la figure \ref{visitChildren}.
 
 \begin{listing}[!ht]
     \begin{minted}{typescript}
@@ -1734,11 +1734,11 @@ Il faut donc pouvoir être capable de récupérer la position d'un élément du 
 
 Heursement on peut récupérer cette information lors d'un parcours d'un noeud terminal du parse tree.
 Il suffit d'observer le token associé au symbole de ce noeud et plus particulièrement les
-propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait généralement de colonne)
-Il faut toutefois juste corriger la position de la ligne en lui soustraient une valeur de 1 car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR.
+propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait généralement de colonne).
+Il faut toutefois juste corriger la position de la ligne en soustrayant la valeur d'une unité, car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR.
 
 \subsection{Résultat}
-L'aspect visuel de l'outline view à été conçu pour ressembler à celle de JSON et de YAML.
+L'aspect visuel de l'outline view a été conçu pour ressembler à celle de JSON et de YAML.
 Suivant cet exemple de code UON basique :
 
 \begin{lstlisting}
@@ -1798,7 +1798,7 @@ La représentation d'un schéma de validation est légèrement différente :
 \end{lstlisting}
 
 Dans un fichier de validation, on ne peut avoir comme valeur uniquement des types ayant ou non des propriétés. Ce sont ces éléments qui nous intéressent le plus.
-Donc on a plus de proprités "value props", mais on liste ces propriétés directement comme enfant de l'objet. Cela pour gagner en visibilité.
+Donc on a plus de propriétés \emph{value props}, mais on liste ces propriétés directement comme enfant de l'objet. Cela pour gagner en visibilité.
 
 Nous aurons donc l'outline suivante :
 
@@ -1819,7 +1819,7 @@ Ce dictionnaire est un fichier.json qui est importé comme module. Il a été n�
 Même si son implémentation est relativement simple, il n'en reste pas moins un élément fortement utile et pouvant être étendu par la suite.
 Le code est déjà réutilisé pour fournir la documentation des types lors des suggestions de complétions.
 
-Les informations affiché au survol de la souris d'un élément sont directement tiré de la spécification.
+Les informations affichées au survol de la souris d’un élément sont directement tirées de la spécification.
 
 \section{Lint}
 %On affiche les erreurs trouvé avec antlr -> avantages positions
@@ -1847,17 +1847,20 @@ Même si ANTLR propose des solutions pour se récupérer d'un processus de parsi
 Elle contient des paramètres intéressants à exploiter pour informer l'utilisateur.
 
 Sa définition est la suivante :
-\begin{lstlisting}
+\begin{listing}[!ht]
+    \begin{minted}{typescript}
     syntaxError?: <T extends TSymbol>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number, charPositionInLine: number, msg: string, e: RecognitionException | undefined) => void;
-\end{lstlisting}
+    \end{minted}
+    %\caption{Fonction visitChildren }
+    %\label{visitChildren}
+\end{listing}
 
 %Upon syntax error, notify any interested parties.
 %This is not how to recover from errors or compute error messages.
 %ANTLRErrorStrategy specifies how to recover from syntax errors and how to compute error messages.
 %This listener's job is simply to emit a computed message, though it has enough information to create its own message in many cases.
 
-Comme pour la outline %\ref*{} ,
-Il est possible de récupérer la position du token. Il suffit de récupérer les valeurs des propriétés \emph{line} et \emph{charPositionInLine}.
+Comme pour la outline, il est possible de récupérer la position du token. Il suffit de récupérer les valeurs des propriétés \emph{line} et \emph{charPositionInLine}.
 Il s'agira ici d'un token qui a posé problème et l'on voudra afficher à son emplacement l'indication visuelle (soulignement ondulé rouge) ainsi que le message d'erreur associé, lorsque l'utilisateur passe
 sa souris dessus.
 
@@ -1872,7 +1875,7 @@ On va garder en mémoire cette liste dans la classe que l'on mettra à jour à c
 Et on actualisera à chaque fois l'objet \emph{DiagnosticCollection} avec cette liste.
 
 Cependant, le parser ne pas se rendre compte si ce n'est pas plutôt le token précédent qui pourrait amener à une erreur.
-Cela ne prend non plus pas en compte ce qu'il vient après et donc remplacer un token par un de ceux proposés peut se se révélé contre-productif.
+Cela ne prend non plus pas en compte ce qu'il vient après et donc remplacer un token par un de ceux proposés peut se se révéler contre-productif.
 % TODO
 
 \subsection{Suggestion}
