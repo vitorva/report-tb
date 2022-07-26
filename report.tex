@@ -852,8 +852,8 @@ comme possible clé alors on aura une erreur.
 
 \subsubsection{Quoted}
 
-%% TODO
-\begin{lstlisting}[frame=single,caption={Règle concernant les strings avec guillement},label={quoted}]
+\begin{listing}[!ht]
+    \begin{minted}{antlr}
     QUOTED_STRING:
     '"' DOUBLE_QUOTE_CHAR* '"'
     | '"''"''"' DOUBLE_QUOTE_CHAR* '"''"''"'
@@ -864,7 +864,10 @@ comme possible clé alors on aura une erreur.
     fragment MULTILINE_QUOTE_CHAR: ~[];
 
     fragment SINGLE_QUOTE_CHAR: ~['\\\r\n];
-\end{lstlisting}
+    \end{minted}
+    \caption{Règle concernant les strings avec guillement}
+    \label{quoted-rule}
+\end{listing}
 
 N'importe quelle caractère peut se trouver
 
@@ -874,8 +877,8 @@ N'importe quelle caractère peut se trouver
 
 Des propriétés de présentation ont été rajoutées en reprenant les constructions utilisées pour définir des propriétés pour les clés ainsi que de validation.
 
-% "_" dans le caption cause des erreurs !!!
-\begin{lstlisting}[frame=single,caption={Règle concernant les propriétés de présentation des types},label={types_properties}]
+\begin{listing}[!ht]
+    \begin{minted}{antlr}
     types_properties: OPEN_PAR (types_propertie (COMMA types_propertie)*)? CLOSE_PAR;
     types_propertie: comment | description | optional;
     comment: COMMENT COLON string;
@@ -883,7 +886,12 @@ Des propriétés de présentation ont été rajoutées en reprenant les construc
     \dots
 
     string_scalar: (STR_TYPE (types_properties)?)? string;
-\end{lstlisting}
+    \end{minted}
+    \caption{Règle concernant les propriétés de présentation des types}
+    \label{types_properties-rule}
+\end{listing}
+
+%TODO
 
 number, bolean, null, string(literal, unquoted et quoted),
 literal : tous les token utilisé déjà ailleurs mais qu'on voudrait avoir dans les clé par exmeple...
