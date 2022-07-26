@@ -224,7 +224,7 @@ Il a été choisi, car il fait partie des éditeurs les plus populaires. C'est �
 D'autres alternatives existent comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fournit également de quoi implémenter une extension.
 C'est donc un choix personnel.
 
-Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes. Plus généralement des fichiers statiques, comme un langage de sérialisation. Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le debuggage de programme plus complexe.
+Un éditeur de code est un logiciel destiné à la création et l'édition de fichiers textes. Plus généralement des fichiers statiques, comme un langage de sérialisation. Contrairement à un IDE (Environnement de développement) qui permet en plus la compilation et le débogage de programme plus complexe.
 
 Visual Studio Code (ou VS Code) est un éditeur de code multi-plateforme, open source et gratuit.
 
@@ -243,16 +243,16 @@ Nous choisirons le TypeScript car VS Code recommande ce langage. Mais certaines 
 \subsection{Command palette}\label{command-palette}
 
 La \href{https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette}{command palette}
-est le point d'accès à toutes les fonctonnalités de VS Code.
+est le point d'accès à toutes les fonctionnalités de VS Code.
 
-Pour l'ouvir il faut exécuter la combinaison suivante : "CTRL + SHIFT + p".
+Pour l'ouvrir il faut exécuter la combinaison suivante : "CTRL + SHIFT + p".
 
 \subsection{Extension Anatomy}
 Il y a trois concepts cruciaux à comprendre pour réaliser une extension \cite{extension-anatomy} .
 
 \begin{itemize}
     \item \href{https://code.visualstudio.com/api/references/activation-events}{\textbf{Activation Events}}: des événements à partir desquels l'extension devient active.
-    \item \href{https://code.visualstudio.com/api/references/contribution-points}{\textbf{Contribution Points}}: des déclarations statiques qui sont faites dans l'Extension Manifest "package.json" pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ "contributes".
+    \item \href{https://code.visualstudio.com/api/references/contribution-points}{\textbf{Contribution Points}}: des déclarations statiques qui sont faites dans l'Extension Manifest \emph{package.json} pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ \emph{contributes}.
     \item \href{https://code.visualstudio.com/api/references/vscode-api}{\textbf{VS Code API}}: un ensemble d'API JavaScript que nous pouvons invoquer dans le code.
 \end{itemize}
 
