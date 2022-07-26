@@ -383,11 +383,11 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux s
 \end{figure}
 
 \subsection{Fault tolerant Parser}
-Pour fournir des fonctionnalités de langue, un point souvent mentionnée est l'utilisation d'un parser.
+Pour fournir des fonctionnalités de langue, un point souvent mentionné est l'utilisation d'un parser.
 Car l'arbre généré par celui-ci contient des informations concernant la structure du document utiles pour certaines fonctionnalités.
 Il s'agira souvent en pratique d'un \Gls{ast}.
 
-Des outils permettant la génération d'un parser existent à partir d'une grammaire et seront prévilégiés.
+Des outils permettant la génération d'un parser existent à partir d'une grammaire et seront privilégiés.
 
 Cependant dans le cadre de son utilisation dans un éditeur ou IDE, il devrait être "fault tolerant".
 Car la plupart du temps, le code dans l'éditeur est incomplet et syntaxiquement incorrect.
@@ -395,8 +395,8 @@ Mais l'on s'attend tout de même que certaines fonctionnalités continuent à fo
 
 Le parseur doit donc pouvoir générer au mieux un parse tree qui à du sens depuis du code erroné.
 
-On pourrait également se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expression régulières.
-Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrèment difficle à traiter. \cite{antlr-mega-tutorial}
+On pourrait également se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expressions régulières.
+Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrêmement difficile à traiter. \cite{antlr-mega-tutorial}
 
 %"you cannot find a (regular) expression inside another one, unless you code it by hand for each level. Something that quickly became unmaintainable."
 %Example : % TODO
@@ -420,7 +420,7 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 \Gls{antlr} est un générateur de parser qui est actuellement dans sa quatrième version.
 Il a été créé par Terence Parr à l'Université de San Francisco et est très utilisé, autant dans le monde académique que professionnel \cite{antlr}.
 
-Le générateur prend en entré une grammaire, qui est un fichier décrivant formellement un langage. La grammaire d'ANTLR est décrite en utilisant la notation \Gls{ebnf}.
+Le générateur prend en entrée une grammaire, qui est un fichier décrivant formellement un langage. La grammaire d'ANTLR est décrite en utilisant la notation \Gls{ebnf}.
 
 ANTLR est composé de deux parties principales. Il y a l'outil en java qui permet de générer le lexer et le parser, donc le code permettant de reconnaitre un langage comme mentionné dans la section \ref{parsing}.
 Ainsi que l'environnement d'exécution (runtime) qui permet leur exécution.
@@ -429,10 +429,10 @@ Il y a donc, seulement un seul outil qui permet de générer le code dans les la
 Pour pouvoir utiliser cet outil dans un environnement autre que Java, il est nécessaire de l'utiliser dans un runtime (environnement d'exécution) propre au langage souhaité.
 
 Le runtime ainsi que les fichiers générés doivent être dans le même langage. La liste se trouve \href{https://github.com/antlr/antlr4/blob/master/doc/targets.md}{ici}.
-Malheursement, le typscript n'en fait pas parti.
+Malheursement, le typscript n'en fait pas partie.
 
 \subsubsection{antlr4ts}
-Nous utiliserons donc antlr4ts, qui est un environnement d'exécution en typescript et donc parfaitement adapté pour VS Code.
+C'est \emph{antlr4ts} qui sera finalement choisi. C'est un outil permettant d'utiliser ANTLR dans environnement d'exécution en typescript et donc parfaitement adapté pour VS Code.
 Il a été conçu par Sam Harwell indépendamment de l'organisation ANTLR.
 
 % https://github.com/tunnelvisionlabs/antlr4/blob/master/doc/targets.md
