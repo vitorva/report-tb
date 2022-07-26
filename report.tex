@@ -1947,17 +1947,17 @@ Elle fournit du support de langage sur une grammaire fonctionnelle UON qui est c
 Passons maintenant en revue les tâches convenues dans le cahier des charges :
 
 \begin{itemize}
-    \item Une intégration continue (tests et publication automatisé) a été implémenté.
-    \item Une coloration syntaxique à été implémenté
-    \item De l'auto-complétion à été implémenté
+    \item Une intégration continue (tests et publications automatisées) a été implémentée.
+    \item Une coloration syntaxique a été implémenté
+    \item De l'auto-complétion a été implémenté
     \item Une outline view a été implémenté
-    \item Afficher des informations au survol (information on hover) d'une souris à été implémenté
+    \item Afficher des informations au survol (information on hover) d'une souris a été implémenté
 \end{itemize}
 
 Il resterait à :
 
 \begin{itemize}
-    \item Corriger quelques erreurs encore existant
+    \item Corriger quelques erreurs encore existantes
     \item Implémenter les fonctionnalités de la rubrique "si le temps le permet"
 \end{itemize}
 
@@ -1977,7 +1977,7 @@ Il resterait à :
 % YAML / JSON
 % Fonctionnalites
 
-L'objectif de ce travail de bachelor était le support du langage UON au travers de l'implémentation d'une extension VS Code.
+L'objectif de ce Travail de Bachelor était le support du langage UON au travers de l'implémentation d'une extension VS Code.
 
 L'idée principale de ce support était qu'il devait mettre à disposition dans l'éditeur, les éléments pour permettre aux mieux la rédaction d'un fichier UON.
 Pour éviter de devoir consulter la documentation régulièrement.
@@ -1987,19 +1987,19 @@ Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouv
 Découvrir les technologies permettant leur implémentation et ensuite pouvoir les utiliser en sein de notre application.
 
 Lors de la phase de recherche, il a été appris qu'un parser est un élément important pour fournir du support de langage.
-Heursement, des outils existent pour en générer depuis une grammaire. Cela à pour intéret majeur de faire gagner du temps de développement en accélérant grandement la mise en place d'un support de langage.
+Heursement, des outils existent pour en générer depuis une grammaire. Cela a pour intérêt majeur de faire gagner du temps de développement en accélérant grandement la mise en place d'un support de langage.
 ANTLR s'est donc avéré être une composante dominante du projet. De plus sa gestion des erreurs fournit par défaut permet d'avoir une meilleure tolérance concernant celles-ci
 qui sont fréquentes dans un éditeur.
 
 Nous avons fait le choix de travailler uniquement dans un environnement VS Code mais fournissant toutes les clés pour des extensibilités futures
 VS Code est un environnement riche et complexe, mais qui est extrêmement bien documenter et agréable à utiliser.
-Par exemple, la mise en place d'une intégration continue (tests et déployement automatisé).
-Une constatation général et qu'il est parfois difficile de savoir ce que peut faire cet éditeur par défaut ou non.
+Par exemple, sur la mise en place d'une intégration continue (tests et déploiement automatisé).
+Une constatation générale et qu'il est parfois difficile de savoir ce que peut faire cet éditeur par défaut ou non.
 
 Pour pouvoir fournir du support pour un langage, on est obligé de connaitre la grammaire sur laquelle ces fonctionnalités porteront.
 Heursement pour nous nous avons pu reprendre une implémentation concrète que nous avons adaptée pour couvrir nos besoins.
 
-Chaque langage ayant ses spécificités, les besoins peuvent variées les uns des autres.
+Chaque langage ayant ses spécificités, les besoins peuvent varier les uns des autres.
 Les mêmes fonctionnalités entre deux langages peuvent avoir des comportements relativement différents.
 L'avantage d'avoir travaillé sur un langage de sérialisation comme UON est que cela est relativement moins complexe à gérer qu'un langage de programmation.
 Cela nous oblige à découvrir et prendre conscience ce qu'il est possible de faire plus généralement.
@@ -2007,12 +2007,12 @@ Mais UON est aussi plus complexe que ces concurrents sur plein de points.
 
 L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte.
 
-Pour finir, je dirais que c'est un des plus gros projet sur lequel j'ai été ammené à travailler seul.
+Pour finir, je dirais que c'est un des plus grands projets sur lequel j'ai été amené à travailler seul.
 J'ai donc beaucoup appris et me servirais de ces leçons pour la suite. Travailler sur ce projet s'est révélé être très intéressant.
 
 \section{Difficultés rencontrées}
 
-Même si des extensions fournissant du support de langage existent et sont facilement disponible, j'ai remarqué en analysant leur code source qu'il n'y a pas de consensus sur la manière d'implémenter une fonctionnalité (ex : complétion).
+Même si des extensions fournissant du support de langage existent et sont facilement disponibles, j'ai remarqué en analysant leur code source qu'il n'y a pas de consensus sur la manière d'implémenter une fonctionnalité (ex : complétion).
 C'est donc difficile de savoir si on effectue la "bonne" méthodologie.
 
 Concernant le générateur de parser ANTLR, c'est est un outil puissant mais assez complexe à prendre en main.
