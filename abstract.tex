@@ -6,7 +6,7 @@ En 2018, le professeur Yves Chevallier a imaginé un nouveau format de sérialis
 UON vise à rassembler toutes les caractéristiques utiles des formats de sérialisation les plus utilisés sur internet (XML, YAML et JSON),
 en un seul format qui les englobe.
 
-Cela afin de le rendre adapté à la communication \Gls{m2m} pour des dispositifs embarqués de faible puissance, jusqu'aux plateformes haut de gamme basées sur le cloud.
+Cela afin de le rendre adapté à la communication \Gls{m2m} pour des dispositifs embarqués de faibles puissances, jusqu'aux plateformes haut de gamme basées sur le cloud.
 
 Il offre des fonctionnalités supplémentaires utiles pour accroître l'interopérabilité entre différents types d'appareils. Ses principaux avantages par rapport à d'autres langages similaires sont les suivants :
 
@@ -31,21 +31,21 @@ Sa syntaxe devra être prise en charge à terme par les principaux éditeurs de 
 Le support de langage consistera donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON.
 
 % • la méthodologie utilisée,
-Les premières semaines ont été majoritairement consacrées a se renseigner.
+Les premières semaines ont été majoritairement consacrées à se renseigner.
 Puis un \Gls{PoC} a été rapidement réalisé pour s'assurer de la faisabilité de certaines fonctionnalités, avant de se consacrer à la réalisation du projet.
 Ce PoC testait surtout que le moteur de complétion retournait bien des candidats et fournissait une coloration syntaxique simple.
 
 Des fonctionnalités ont connu des améliorations durant le long du projet.
-Le support de langage traitait initiallement uniquement une grammaire en UON qui permettait des construction dans un format proche en JSON.
+Le support de langage traitait initialement uniquement une grammaire en UON qui permettait des constructions dans un format proche en JSON.
 avant d'ajouter le format YAML.
-Les propriétés n'étaient pas aussi considéré dans un premier temps dans l'outline view. Puis elles ont été rajouté par la suite.
+Les propriétés n'étaient pas aussi considérées dans un premier temps dans l'outline view. Puis elles ont été rajoutées par la suite.
 
-Les principales ressources utilisés ont été :
+Les principales ressources utilisées ont été :
 
 \begin{itemize}
-    \item Le site de VS Code à été directement la source principale pour se renseigner sur la mise en place et la gestion d'une extensions.
+    \item Le site de VS Code a été directement la source principale pour se renseigner sur la mise en place et la gestion d'une extension.
     \item Des articles en ligne concernant ANTLR et le moteur de complétion.
-    \item Et bien évidement stackoverflow pour tous types de questions.
+    \item Et bien évidemment stackoverflow pour tous types de questions.
 \end{itemize}
 
 %méthodologie
@@ -68,7 +68,7 @@ Au terme de ce projet, les points attendus du cahier des charges ont été effec
     \item Implémenter de l'autocomplétion : les éléments proposés à l'utilisateur sont des mots-clés (le nom des structures, les types et leurs propriétés associées).
     \item Implémenter une outline view.
     \item Implémenter la documentation on hover.
-    \item Commencer à implement un Linter simple pour signaler des erreurs.
+    \item Commencer à implémenter un Linter simple pour signaler des erreurs.
 \end{itemize}
 
 % • perspectives et recommandations
