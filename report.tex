@@ -489,6 +489,8 @@ Malheursement, je n'ai pas pu explorer plus en profondeur ce mécanisme complexe
 Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
 
 \section{UON}
+%aborder uniquement les points globaux + essentiles et utiles pour nous
+
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML.
 Il cherche à regrouper les meilleures caractéristiques de ces formats de sérialisation en un seul format.
 Il fournit également des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs, valider les données ainsi que pour diminuer le payload.
@@ -1926,36 +1928,45 @@ Il resterait à :
 % Synthesize or summarize your major points.
 % Make the context of your argument clear.
 
-L'objectif de ce travail de bachelor était de pouvoir avoir à disposition dans l'éditeur, les éléments pour permettre aux mieux la rédaction d'un fichier UON.
-Et cela, sans devoir consulter la documentation.
+% recherche
+% UON
+% parser
+% ANTLR
+% VS Code
+%   CI/CD
+% Scope de la grammaire
+% YAML / JSON
+% Fonctionnalites
+
+L'objectif de ce travail de bachelor était le support du langage UON au travers de l'implémentation d'une extension VS Code.
+
+L'idée principale de ce support était qu'il devait mettre à disposition dans l'éditeur, les éléments pour permettre aux mieux la rédaction d'un fichier UON.
+Pour éviter de devoir consulter la documentation régulièrement.
 
 Il a donc fallu découvrir et analyser un nouveau langage.
-Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouvant s'avérer utile comme support pour ce langage.
+Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouvant s'avérer utile pour ce langage.
 Découvrir les technologies permettant leur implémentation et ensuite pouvoir les utiliser en sein de notre application.
 
 Lors de la phase de recherche, il a été appris qu'un parser est un élément important pour fournir du support de langage.
-Heursement des outils existent pour en générer un depuis une grammaire.
-
-faisant gagner un temps de développement énorme, en accélérant grandement la mise en place d'un support de langage.
-De plus avec cette approche, cela nous permet de travailler sur la grammaire en même temps que les fonctionnalités à implémenter.
-
-ANTLR s'est avéré être une composante dominante du projet. De plus sa gestion des erreurs permet d'avoir une meilleure tolérance concernant les erreurs
+Heursement, des outils existent pour en générer depuis une grammaire. Cela à pour intéret majeur de faire gagner du temps de développement en accélérant grandement la mise en place d'un support de langage.
+ANTLR s'est donc avéré être une composante dominante du projet. De plus sa gestion des erreurs fournit par défaut permet d'avoir une meilleure tolérance concernant celles-ci
 qui sont fréquentes dans un éditeur.
-
-L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte.
-
-Pour pouvoir fournir du support pour un langage, on est obligé de connaitre la grammaire sur laquelle ces fonctionnalités porteront.
-Heursement pour nous nous avons pu reprendre une implémentation existante que nous avons adaptée pour couvrir nos besoins.
 
 Nous avons fait le choix de travailler uniquement dans un environnement VS Code mais fournissant toutes les clés pour des extensibilités futures
 VS Code est un environnement riche et complexe, mais qui est extrêmement bien documenter et agréable à utiliser.
-Il est toutefois parfois même difficile de savoir ce que peut faire cet éditeur par défaut ou non.
+Par exemple, la mise en place d'une intégration continue (tests et déployement automatisé).
+Une constatation général et qu'il est parfois difficile de savoir ce que peut faire cet éditeur par défaut ou non.
 
-De plus chaque langage ayant ses spécifiés, les besoins peuvent variées les uns des autres.
+Pour pouvoir fournir du support pour un langage, on est obligé de connaitre la grammaire sur laquelle ces fonctionnalités porteront.
+Heursement pour nous nous avons pu reprendre une implémentation concrète que nous avons adaptée pour couvrir nos besoins.
+
+Chaque langage ayant ses spécificités, les besoins peuvent variées les uns des autres.
 Les mêmes fonctionnalités entre deux langages peuvent avoir des comportements relativement différents.
 L'avantage d'avoir travaillé sur un langage de sérialisation comme UON est que cela est relativement moins complexe à gérer qu'un langage de programmation.
 Cela nous oblige à découvrir et prendre conscience ce qu'il est possible de faire plus généralement.
 Mais UON est aussi plus complexe que ces concurrents sur plein de points.
+
+L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte.
 
 Travailler sur ce projet s'est révélé être très intéressant.
 
@@ -1966,7 +1977,7 @@ C'est donc difficile de savoir si on effectue la "bonne" méthodologie.
 
 Concernant le générateur de parser ANTLR, c'est est un outil puissant mais assez complexe à prendre en main.
 Au début du projet, certaines règles de la grammaire étaient malformées est causaient des erreurs qui n'était pas facilement percéptible.
-De plus, comme c'est une implémentation en Typescript qui est utilisé, peu d'exemples existent et cela a compliqué le travail lorsque des erreurs survenaient.
+De plus, comme c'est une implémentation en Typescript qui est utilisée, peu d'exemples existent et cela a compliqué le travail lorsque des erreurs survenaient.
 
 Adapter la grammaire a été un challenge. Il a été necessaire de modifier certaines règles car le comportement par défaut posait parfois problème. ANTLR étant différent de Lark.
 
@@ -1977,17 +1988,15 @@ Du temps a été passé pour essayer d'améliorer le comportement des erreurs sa
 Les fonctionnalités qui ont requis le plus de travail ont été la complétion et l'outline view.
 Pour la complétion, même si le moteur est extrêmement puissant et qu'un usage basique convient très bien pour notre utilisation.
 Il a été nécessaire d'analyser son fonctionnement pour comprendre ce qu'il était possible de faire.
-
 Un point complexe a été la manière de trouver le bonne indice car des situations particulières pouvait fausser le résultat attendues.
 
 Pour l'outline view. Il a fallu comprendre comment contruire l'objet.
-Ajouter la gestion des propriétés s'est aussi revelé difficle.
+Ajouter la gestion des propriétés s'est aussi révélé difficile.
 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
-Un changement peut avoir des répercussions sur l'ensemble de celles-ci.
+Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci.
 
-C'est le premier "gros" projet que j'ai été ammené à réaliser seul.
-
+C'est également depuis longtemps le premier "gros" projet que j'ai été ammené à réaliser seul.
 
 \section{Amélioration possible}
 
@@ -2006,6 +2015,7 @@ Le fichier \emph{UonCompletionErrorStrategy.ts} ne fait que surchager le comport
 \section{Erreur existante}
 
 Imbriquer des mapping ou sequences en format YAML ne fonctionne pas correctement. Cela vient de la gestion des indentations qu'il faudrait corriger.
+L'éditeur affiche un caractère erroné (ondulation rouge) au début du document lorsque le fichier est vide. Cela vient aussi de la gestion des indentations.
 
 
 %% \vfil
