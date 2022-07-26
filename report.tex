@@ -1985,7 +1985,8 @@ Mais UON est aussi plus complexe que ces concurrents sur plein de points.
 
 L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte.
 
-Travailler sur ce projet s'est révélé être très intéressant.
+Pour finir, je dirais que c'est un des plus gros projet sur lequel j'ai été ammené à travailler seul.
+J'ai donc beaucoup appris et me servirais de ces leçons pour la suite. Travailler sur ce projet s'est révélé être très intéressant.
 
 \section{Difficultés rencontrées}
 
@@ -2000,20 +2001,18 @@ Adapter la grammaire a été un challenge. Il a été necessaire de modifier cer
 
 La gestion des deux format (JSON et YAML) c'est revelé être assez complexe, dû à la gestion des indentations à traiter nous-même.
 
-Du temps a été passé pour essayer d'améliorer le comportement des erreurs sans succès. Le comportement par défaut n'étant jamais réelement améliorer.
+Du temps a été passé pour essayer d'améliorer le comportement des erreurs sans succès. Le comportement par défaut n'étant jamais réelement amélioré.
 
 Les fonctionnalités qui ont requis le plus de travail ont été la complétion et l'outline view.
 Pour la complétion, même si le moteur est extrêmement puissant et qu'un usage basique convient très bien pour notre utilisation.
 Il a été nécessaire d'analyser son fonctionnement pour comprendre ce qu'il était possible de faire.
 Un point complexe a été la manière de trouver le bonne indice car des situations particulières pouvait fausser le résultat attendues.
 
-Pour l'outline view. Il a fallu comprendre comment contruire l'objet.
-Ajouter la gestion des propriétés s'est aussi révélé difficile.
+Pour l'outline view, il a fallu comprendre comment construire un objet en cours d'un parcours DFS. Et ajouter la gestion des propriétés avait rajouter une couche de complexité supplémentaires.
 
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
 Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci.
-
-C'est également depuis longtemps le premier "gros" projet que j'ai été ammené à réaliser seul.
+J'ai malheureusement, je pense, perdu du temps à corriger ce genres d'erreurs.
 
 \section{Amélioration possible}
 
@@ -2023,16 +2022,21 @@ Un point intéressant serait d'avoir la possiblité d'avoir un schéma de valida
 Il serait intéressant de déplacer la logique des fonctionnalités de l'extension dans un langage server. Cela pour ne plus dépendre de l'API VS Code et pour permettre de réutiliser ce travail
 dans des extensions d'autres éditeurs plus facilement.
 
-Le "linter" a partiellement été implémenté et se base sur la détection des erreurs d'ANTLR.
-Les messages d'erreurs sont ceux qu'ANTLR affiche en cas d'erreur et ne sont les plus "user-friendly". Il faudrait donc adapter ces messages.
+Le linter a partiellement été implémenté et se base sur la détection des erreurs d'ANTLR.
+Les messages d'erreurs sont ceux qu'ANTLR affiche en cas d'erreur et ne sont très "user-friendly". Il faudrait donc adapter ces messages.
 Il faudrait aussi pouvoir proposer des corrections d'erreurs (ex : quickfix) plus avancées.
 
-Le fichier \emph{UonCompletionErrorStrategy.ts} ne fait que surchager le comportement par défaut. Si le comportement doit être améliorer, c'est ce fichier qui doit être modifié.
+Le fichier \emph{UonCompletionErrorStrategy.ts} ne fait que surchager le comportement par défaut. Si le comportement doit être amélioré, c'est ce fichier qui doit être modifié.
 
-\section{Erreur existante}
+\section{Erreurs existantes}
 
-Imbriquer des mapping ou sequences en format YAML ne fonctionne pas correctement. Cela vient de la gestion des indentations qu'il faudrait corriger.
-L'éditeur affiche un caractère erroné (ondulation rouge) au début du document lorsque le fichier est vide. Cela vient aussi de la gestion des indentations.
+La liste des erreurs connues est la suivante :
+
+\begin{itemize}
+    \item Imbriquer des mapping ou sequences en format YAML ne fonctionne pas correctement. Cela vient de la gestion des indentations qu'il faudrait corriger.
+    \item L'éditeur affiche un caractère erroné (ondulation rouge) au début du document lorsque le fichier est vide. Cela vient aussi de la gestion des indentations.
+\end{itemize}
+
 
 
 %% \vfil
