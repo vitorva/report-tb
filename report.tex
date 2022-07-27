@@ -659,8 +659,7 @@ Un fichier UON peut contenir comme élément racine trois structures différente
 \subsection{Collections}
 La grammaire actuelle nous permet de définir des collections. Ces collections sont des mapping et séquences soit dans un format proche de json ou de yaml.
 
-UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à un certain degré (reduced set), mon prédécesseur avait jugé utile d'incorporer ce format
-dans le langage.
+UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à un certain degré (reduced set), il est naturel de penser qu'un format YAML soit supporté même recommandé que son alternative.
 
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
@@ -688,14 +687,14 @@ ok :
 ok2 : -23
 \end{lstlisting}
 
-% TODO
 \begin{lstlisting}[frame=single,caption={Exemple d'une séquence en format JSON},captionpos=b,label={json-seq}]
-\dots
+[1,2, paul, jean, { key : 10}]
 \end{lstlisting}
 
-% TODO
 \begin{lstlisting}[frame=single,caption={Exemple d'une séquence en format YAML},captionpos=b,label={yaml-seq}]
-\dots
+    -
+        - !float !float128(comment : "temperature") 12 C
+        - !str text
 \end{lstlisting}
 
 \subsection{Schéma}
@@ -704,20 +703,15 @@ On peut définir également un schéma de validation.
 Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
 Cette séparation permet d'éviter des ambiguïtés. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
 
-\begin{lstlisting}[frame=single,caption={Exemple d'un schéma de validation},captionpos=b,label={yaml-seq}]
-    \dots
+\begin{lstlisting}[frame=single,caption={Exemple d'un schéma de validation},captionpos=b,label={schema}]
+    !!mySensor: !schema ( description : "provide great infos") {
+        power( optional: true) : !float(min : 5, max : 50),
+        name : !str( max: 6, min :12),
+    }
 \end{lstlisting}
 
-\subsection{Types}
-Les types supportés sont les suivants :
-% TODO
-
 \subsection{Propriétés}
-
-Les propriétés en UON sont décrites dans la section \ref{properties}.
-
-% TODO
-Les clés des mapping des propriétés peuvent posséder des propriétés de présentation.
+Les clés des mapping peuvent posséder des propriétés de présentation.
 Les types dans un schéma de validation peuvent posséder des propriétés de validation.
 
 \section{Modification}\label{modification}
@@ -895,11 +889,10 @@ comme possible clé alors on aura une erreur.
     \label{quoted-rule}
 \end{listing}
 
-N'importe quelle caractère peut se trouver
+N'importe quelle caractère peut se trouver entre guillement sauf un autre guillement et pareillement pour les apostrophe.
+Il est possible d'avoir des multilines strings.
 
-%% TODO : Multiline ? ne pas tolérer les espaces dans la clé mais dans le texte
-
-\subsection{Propriétés, unités et nombres}
+\subsection{Propriétés}
 
 Des propriétés de présentation ont été rajoutées en reprenant les constructions utilisées pour définir des propriétés pour les clés ainsi que de validation.
 
@@ -914,24 +907,10 @@ Des propriétés de présentation ont été rajoutées en reprenant les construc
     \label{types_properties-rule}
 \end{listing}
 
-%TODO
-
-number, bolean, null, string(literal, unquoted et quoted),
-literal : tous les token utilisé déjà ailleurs mais qu'on voudrait avoir dans les clé par exmeple...
-
-typs : string, nombre, boolean,
-
-quantité et unités
-
-
 \section{Debugging}
 
 Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l'aide d'un terminal, cela peut même se révéler extrêmement difficile.
 Heureusement, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visualiser en temps réel, le parse tree du texte que l'on est en train de saisir.
-
-% TODO : Figure d'intelj en action
-% Les figures représentants les arbres se baseront sur ce plugin ...
-
 
 \chapter{Implémentation}
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
@@ -1490,8 +1469,8 @@ La seconde n'est pas intéressante, car le moteur ne fera que retourner le nom d
 
 \subsection{Gestion des erreurs }\label{error handle}
 
-On aurait pu penser naïvement que le mécanisme avancé de récupération d'erreur \emph{Parser Error Recovery Strategy} permettrait également de rendre celui de la complétion aussi plus tolérant.
-Mais ce mécanisme n'est utilisé que pour générer un parse tree, cela est donc inutile pour ce cas. % car se base sur TODO
+On aurait pu penser naïvement que le mécanisme avancé de récupération d'erreur \emph{Parser Error Recovery Strategy} permettrait également de rendre la complétion plus tolérante.
+Mais ce mécanisme n'est utilisé que pour générer un parse tree, cela est donc inutile pour ce cas.
 
 %Donc comme déjà mentionner, pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
 Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
@@ -1852,6 +1831,8 @@ Nous aurons donc l'outline suivante :
 
 \section{Info on Hover}
 
+%https://stackoverflow.com/questions/57438198/typescript-element-implicitly-has-an-any-type-because-expression-of-type-st
+
 C'est une fonctionnalité assez triviale qui consiste à afficher une explication lorsque l'on passe le curseur sur un élément.
 Cela consiste à aller chercher dans un dictionnaire si la valeur sélectionnée est bien une clé du dictionnaire et de récupérer la valeur si c'est bien le cas.
 
@@ -1866,8 +1847,6 @@ Les informations affichées au survol de la souris d’un élément sont directe
 %On affiche les erreurs trouvé avec antlr -> avantages positions
 %Les erreurs sont liés au placement des tokens (manque un éléments du langages, mauvais token ou leur "ortographe").
 %Message trop technique. mais ok pour voir d'ou viens la faute.
-
-
 Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et les problèmes de syntaxe.
 
 Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
@@ -1921,7 +1900,6 @@ Et on actualisera à chaque fois l'objet \emph{DiagnosticCollection} avec cette 
 
 Cependant, le parser ne pas se rendre compte si ce n'est pas plutôt le token précédent qui pourrait amener à une erreur.
 Cela ne prend non plus pas en compte ce qu'il vient après et donc remplacer un token par un de ceux proposés peut se se révéler contre-productif.
-% TODO
 
 \subsection{Suggestion}
 Certains messages d'erreurs nous informes parfois des tokens qui devrait se situer à la place de celui qui a causé l'erreur.
@@ -1932,8 +1910,6 @@ Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifier pou
 % TODO surcharger des méthodes pour pouvoir être notifié des tokens manquant
 
 \subsection{Quick fick}
-
-%  // https://stackoverflow.com/questions/57438198/typescript-element-implicitly-has-an-any-type-because-expression-of-type-st
 
 Actuellement il y a un seul quick fix qui a été implémenté, et cela à titre de découverte.
 
