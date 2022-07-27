@@ -555,7 +555,7 @@ Il peut être décomposé au travers de 4 niveaux de complexités :
 
 \subsection{Modèle d'information}
 Chaque élément qui compose l'arbre d'objets UON est un Type qui peut avoir plusieurs propriétés qui lui sont attachées.
-Le contenu peut être soit un scalaire, soit une collection d'éléments.
+Le contenu peut être soit un scalaire, soit une collection d'éléments, comme montré à la figure \ref{information-model}.
 
 \begin{figure}[!h]
     \begin{center}
@@ -565,7 +565,15 @@ Le contenu peut être soit un scalaire, soit une collection d'éléments.
 \end{figure}
 
 \subsection{Types}
-Une caractéristique importante de l'UON est que tout type d'information appartient à un type. Les types sont organisés en différentes catégories.
+Une caractéristique importante de en UON est que tout type d'information appartient à un type. Les types sont organisés en différentes catégories.
+Ces catégories sont illustrées par la figure \ref{type-base}.
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=10cm]{assets/figures/type-base.png}}
+    \end{center}
+    \caption[Les types de base en UON]{\label{type-base}Les types de base en UON}
+\end{figure}
 
 \subsection{Propriétés}\label{properties}
 C'est là que UON devient plus complexe que les autres langages de sérialisation.
