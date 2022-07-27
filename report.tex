@@ -499,14 +499,13 @@ Le résultat du parsing n'a pas besoin d'être correct. Il est possible de trava
 Malheursement, je n'ai pas pu explorer plus en profondeur ce mécanisme complexe de resynchronisation.
 Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
 
-\section{UON}
-%aborder uniquement les points globaux + essentiles et utiles pour nous
-
+\section{UON}\label{UON}
 UON est essentiellement un langage de sérialisation qui est un superset de JSON et un superset partiel de YAML.
-Il cherche à regrouper les meilleures caractéristiques de ces formats de sérialisation en un seul format.
+Il cherche à regrouper les meilleures caractéristiques des formats de sérialisation les plus utilisés sur internet en un seul format.
 Il fournit également des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs, valider les données ainsi que pour diminuer le payload.
 
-Nous allons voir ci-dessous un aperçu général de ce langage.
+Uniquement les points essentiels dans le cadre d'un support de langage seront abordés. La spécification se trouve sur :
+\url{https://github.com/uon-language/specification/blob/master/spec.md}
 
 \subsection{Format de sérialisation}
 
@@ -517,13 +516,12 @@ Le rôle d'un format de sérialisation et de pouvoir représenter des données s
 Un éditeur ne manipulant qu'un fichier statique, les étapes de sérialisation et désérialisation ne se feront pas à notre niveau.
 Pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un environnement de programmation (ex : Python).
 
-
 \subsection{Pourquoi ?}
 Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication \Gls{m2m} ainsi que pour l'\Gls{IoT}.
 Ces communications nécessitent souvent de communiquer entre de petits appareils dont la puissance de calcul est très limitée.
 
 \subsection{Communication}
-Lorsque deux appareils veulent échanger des informations, ils disposent de deux canaux de communication :
+Lorsque deux appareils veulent échanger des informations en UON, ils disposent de deux canaux de communication :
 \begin{itemize}
     \item Un canal de communication en ligne utilisé pour la transmission des données de contenu (payload). Les données peuvent être représentées sous forme humaine et binaire.
     \item Un canal de communication contractuel utilisé pour l'accord sur la description des données (schema).
@@ -555,18 +553,42 @@ Il peut être décomposé au travers de 4 niveaux de complexités :
     \item \textbf{UON:3} offre des types et des références riches.
 \end{itemize}
 
-\subsection{Types}
-% TODO
+\subsection{Modèle d'information}
+Chaque élément qui compose l'arbre d'objets UON est un Type qui peut avoir plusieurs propriétés qui lui sont attachées.
+Le contenu peut être soit un scalaire, soit une collection d'éléments.
 
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=8cm]{assets/figures/information-model.png}}
+    \end{center}
+    \caption[Le modèle d'information]{\label{information-model}Le modèle d'information}
+\end{figure}
+
+\subsection{Types}
+Une caractéristique importante de l'UON est que tout type d'information appartient à un type. Les types sont organisés en différentes catégories.
 
 \subsection{Propriétés}\label{properties}
-Chaque élément est composé d'un type. Et chacun de ces types peut avoir des propriétés.
+C'est là que UON devient plus complexe que les autres langages de sérialisation.
+Il offre des propriétés au type permettant de contraindre, documenter ou affiner une valeur. Les propriétés sont associées à un type, pas à une valeur.
+
+Chaque élément a un type. Et chacun de ces types peut avoir des propriétés.
 3 types de propriétés existent :
 \begin{itemize}
     \item \textbf{Presentation properties} : elles influencent la présentation d'une valeur.
     \item \textbf{Validation propeties} : elles sont utilisées pour valider, contraindre et décrire un fichier UON.
     \item \textbf{Application properties} : elles ne peuvent être lues que depuis UON en utilisant le type !prop. Elles sont accessibles depuis l'application (Python, JavaScript, etc.). Elles sont utilisées pour générer un fichier sérialisé (binaire, ou UON), mais elles ne sont jamais explicitement transmises.
 \end{itemize}
+
+\subsection{Syntaxe et grammaire}
+
+\begin{figure}[!ht]
+    \begin{center}
+        \frame{\includegraphics[width=12cm]{assets/figures/syntax.png}}
+    \end{center}
+    \caption[Règle de syntaxe en UON]{\label{syntax} UON syntax}
+\end{figure}
+
+Tout est une valeur avec un type et des propriétés associés. Une clé est une valeur de type !key. Les types peuvent être imbriqués.
 
 \subsection{Validation}
 Dans de telles communications, la validation des données transmises entre des machines dont la puissance de calcul est très limitée est un atout majeur.
@@ -1343,14 +1365,7 @@ avec le type de complétion nommé "word based completion" \cite{word-based-comp
 
 C'est pourquoi lorsqu'il faut implémenter une telle fonctionnalités, il faut savoir quoi proposer et quand le faire.
 Pour cela, Il est nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
-La syntaxe UON peut être exprimée par la figure \ref{syntax}.
-
-\begin{figure}[!ht]
-    \begin{center}
-        \frame{\includegraphics[width=12cm]{assets/figures/syntax.png}}
-    \end{center}
-    \caption[Règle de syntaxe en UON]{\label{syntax} UON syntax}
-\end{figure}
+La syntaxe UON peut être exprimée par la figure \ref{syntax} dans la section \hyperref[UON]{UON}.
 
 On constate que : toute valeur est un type, et un type peut avoir des propriétés associées.
 
