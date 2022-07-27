@@ -1552,7 +1552,9 @@ ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas d
 Les snippets sont simples et utiles, mais liés à l'application. Il ne faudrait donc pas trop en utiliser.
 
 \subsection{Triggers}
-Il est possible d'ajouter au provider des symboles qui vont forcer son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
+Par défaut, il Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
+
+Il est possible d'ajouter au provider des symboles (triggerCharacters) qui vont forcer son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
 Il s'agit uniquement d'une appréciation personnelle.
 
 \subsection{Pas de suggestion}
@@ -1568,26 +1570,32 @@ On pourrait recevoir la suggestion "description:" mais l'on ne recevra rien. Car
 Il est possible de résoudre ce problème mais cela nécessite de définir la position pour la suggestion (range).
 Cela implique de gérer pleins de cas particulier de la grammaire depuis l'application. Il n'a pas été jugé pertinent de traiter ce cas, car n'apportant pas réelement un intérêt.
 
-
-
 \subsection{Mécanisme automatique}
 
-%TODO : quick-suggest-setting (par défaut ?) : https://github.com/microsoft/vscode/issues/101333}
+Il est parfois difficle de savoir ce que VS Code fourni par défaut ou à quel point un comportement peut être modifié.
+C'est le cas pour la complétion. Il est nécessaire d'aller regarder dans les paramètres (le fichier \emph{settings.json} dans VS Code) pour voir d'ou vienne certain comportement.
 
-%Quand est-ce que ça trigger tout seul
-%On peut modifier le comportement
-% "editor.acceptSuggestionOnCommitCharacter": true in settings.json?
+\subsubsection{Quick suggest}
 
-%On doit aller dans le ficheir settings.json
-% on voit 3paramètre utiles :  Acceptsuggestion on commit caracter
-% DocumentSelector
-% https://github.com/Microsoft/vscode/issues/18372
-% https://github.com/ChristianKohler/PathIntellisense/issues/52
-% https://code.visualstudio.com/api/references/vscode-api#CompletionItem
+Le \emph{quick suggest} contrôle si les suggestions doivent s'afficher automatiquement pendant la saisie.
 
-L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères.
-Par défaut, il Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
+Il est activé en dehors des strings et commentaires. Comme illustré par la figure \ref{quickSuggestions}.
 
+\begin{listing}[!ht]
+    \begin{minted}{json}
+        "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "off",
+        "strings": "off"
+        }
+    \end{minted}
+    \caption{Quick Suggestions}
+    \label{quickSuggestions}
+\end{listing}
+
+Ce n'est donc pas un comportement qui peut être paramétré depuis le provider de VS Code, mais seulement depuis l'éditeur lui-même. \cite{quick-suggestion}
+
+\subsubsection{Fuzzy search}
 
 VS Code va automatiquement filtrer les suggestions pendant la saisie à l'aide d'un algorithme de fuzzing search.
 Pour rappel le fuzzy search (ou recherche approximative) permet de trouver une chaine de caractère en fournissant une chaine qui n'a besoin d'avoir une correspondance exacte
@@ -1613,7 +1621,6 @@ La structure peut être donc représentée de manière hiérarchique ou seulemen
 
 On a accès à cette représentation dans la sidebar gauche par défaut.
 
-%TODO : picture
 \begin{figure}[!h]
     \begin{center}
         \frame{\includegraphics[width=14cm]{assets/figures/outline-view-sidebar.PNG}}
@@ -1623,7 +1630,6 @@ On a accès à cette représentation dans la sidebar gauche par défaut.
 
 ou depuis la command palette en saisissant la combinaison "CTRL + SHIFT + o" :
 
-%TODO : picture
 \begin{figure}[!h]
     \begin{center}
         \frame{\includegraphics[width=14cm]{assets/figures/outline-view-searchbar.PNG}}
