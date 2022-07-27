@@ -866,10 +866,11 @@ comme possible clé alors on aura une erreur.
     UNQUOTED_STRING: IDENTIFIER+;
 
     IDENTIFIER
-        : [\p{L}]    // matches a single code point in the category "letter"
-        | [\p{M}]    // a character intended to be combined with another character (e.g. accents, umlauts, enclosing boxes, etc.)
-        | [\p{N}]    // matches any kind of numeric character in any script.
-        | [\p{Pc}]   //  punctuation character such as an underscore that connects words.
+        : [\p{L}] //matches a single code point in the category "letter"
+        | [\p{M}] //a character intended to be combined with another character
+                  //(e.g. accents, umlauts, enclosing boxes, etc.)
+        | [\p{N}] //matches any kind of numeric character in any script.
+        | [\p{Pc}]//punctuation character such as an underscore that connects words.
         | '!';
     \end{minted}
     \caption{Règle concernant les strings sans guillement}
@@ -910,12 +911,9 @@ Des propriétés de présentation ont été rajoutées en reprenant les construc
 
 \begin{listing}[!ht]
     \begin{minted}{antlr}
-    types_properties: OPEN_PAR (types_propertie (COMMA types_propertie)*)? CLOSE_PAR;
+    types_properties: OPEN_PAR(types_propertie (COMMA types_propertie)*)?CLOSE_PAR;
     types_propertie: comment | description | optional;
     comment: COMMENT COLON string;
-
-    \dots
-
     string_scalar: (STR_TYPE (types_properties)?)? string;
     \end{minted}
     \caption{Règle concernant les propriétés de présentation des types}
@@ -1246,7 +1244,7 @@ Une des raisons évoquées et que ce mécanisme doit être le plus rapide possib
 
 \subsection{Fonctionnement}
 
-La figure \ref{Textmate grammar} illustre un exemple très simplifié utilisé du fichier "uon.tmLanguage.json".
+La figure \ref{Textmate grammar} illustre un exemple très simplifié du fichier \emph{uon.tmLanguage.json}.
 
 \begin{listing}[!ht]
     \begin{minted}{json}
@@ -1264,7 +1262,7 @@ La figure \ref{Textmate grammar} illustre un exemple très simplifié utilisé d
       12.    "repository": {
       13.       "unquotedObjectKey": {
       14.           "match": "[\\p{L}]([\\p{L}]|[\\p{N}]|[\\p{Pc}])*",
-      15.            name": "entity.name.tag.unquotedObjectKey.uon"
+      15.            "name": "entity.name.tag.unquotedObjectKey.uon"
       16.        },
       17.        "comments": {
       18.           "begin": "#",
@@ -1572,9 +1570,9 @@ Ce modèle de snippet permet d'afficher une chaine de caractères avec des case 
 Il est possible de passer à la case suivante à l'aide de la touche \emph{tab}.
 
 Cependant il est nécessaire de proposer ces suggestions au bon moment. La solution envisagée et de vérifier que le token du type possédant
-ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas de schéma
+ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas de schéma en controlant dans le stream de token que le token \emph{!schema} ne s'y trouve pas.
 
-C'est un mécanisme utile est simple, mais fortement lié à l'application et il ne faudrait trop en utiliser.
+Les snippets sont simples et utiles, mais liés à l'application. Il ne faudrait donc pas trop en utiliser.
 
 \subsection{Triggers}
 L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
@@ -1880,15 +1878,19 @@ Il est bien de rappeler que certaines erreurs de syntaxes sont plus graves que d
 Même si ANTLR propose des solutions pour se récupérer d'un processus de parsing défectueux, il reste limité et ne peut pas faire de miracle.
 
 Elle contient des paramètres intéressants à exploiter pour informer l'utilisateur.
+Ces paramètres sont illustrés par la figure \ref{syntax}.
 
-Sa définition est la suivante :
 \begin{listing}[!ht]
     \begin{minted}{typescript}
-    syntaxError?: <T extends TSymbol>(recognizer: Recognizer<T, any>, offendingSymbol: T | undefined, line: number, charPositionInLine: number, msg: string, e: RecognitionException | undefined) => void;
+    syntaxError?: <T extends TSymbol>(recognizer: Recognizer<T, any>,
+    offendingSymbol: T | undefined,line: number, charPositionInLine: number,
+    msg: string, e: RecognitionException | undefined) => void;
     \end{minted}
-    %\caption{Fonction visitChildren }
-    %\label{visitChildren}
+    \caption{Fonction syntaxError}
+    \label{syntaxError}
 \end{listing}
+
+% https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorListener.html#syntaxError(org.antlr.v4.runtime.Recognizer,java.lang.Object,int,int,java.lang.String,org.antlr.v4.runtime.RecognitionException)
 
 %Upon syntax error, notify any interested parties.
 %This is not how to recover from errors or compute error messages.
