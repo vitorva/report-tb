@@ -504,8 +504,8 @@ UON est essentiellement un langage de sérialisation qui est un superset de JSON
 Il cherche à regrouper les meilleures caractéristiques des formats de sérialisation les plus utilisés sur internet en un seul format.
 Il fournit également des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs, valider les données ainsi que pour diminuer le payload.
 
-Uniquement les points essentiels dans le cadre d'un support de langage seront abordés. La spécification se trouve sur :
-\url{https://github.com/uon-language/specification/blob/master/spec.md}
+Uniquement les points essentiels dans le cadre d'un support de langage seront abordés.
+La spécification se trouve sur : \url{https://github.com/uon-language/specification/blob/master/spec.md}.
 
 \subsection{Format de sérialisation}
 
@@ -557,7 +557,7 @@ Il peut être décomposé au travers de 4 niveaux de complexités :
 Chaque élément qui compose l'arbre d'objets UON est un Type qui peut avoir plusieurs propriétés qui lui sont attachées.
 Le contenu peut être soit un scalaire, soit une collection d'éléments, comme montré à la figure \ref{information-model}.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \begin{center}
         \frame{\includegraphics[width=8cm]{assets/figures/information-model.png}}
     \end{center}
@@ -565,15 +565,17 @@ Le contenu peut être soit un scalaire, soit une collection d'éléments, comme 
 \end{figure}
 
 \subsection{Types}
-Une caractéristique importante de en UON est que tout type d'information appartient à un type. Les types sont organisés en différentes catégories.
+Une caractéristique importante en UON est que tout type d'information appartient à un type. Les types sont organisés en différentes catégories.
 Ces catégories sont illustrées par la figure \ref{type-base}.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/type-base.png}}
+        \frame{\includegraphics[width=12cm]{assets/figures/type-base.png}}
     \end{center}
     \caption[Les types de base en UON]{\label{type-base}Les types de base en UON}
 \end{figure}
+
+La liste complète des types supportés se trouve dans la spécification.
 
 \subsection{Propriétés}\label{properties}
 C'est là que UON devient plus complexe que les autres langages de sérialisation.
@@ -589,35 +591,34 @@ Chaque élément a un type. Et chacun de ces types peut avoir des propriétés.
 
 \subsection{Syntaxe et grammaire}
 
-\begin{figure}[!ht]
+Tout est une valeur avec un type et des propriétés associés. Une clé est une valeur de type \emph{!key}. Les types peuvent être imbriqués.
+
+\begin{figure}[H]
     \begin{center}
         \frame{\includegraphics[width=12cm]{assets/figures/syntax.png}}
     \end{center}
     \caption[Règle de syntaxe en UON]{\label{syntax} UON syntax}
 \end{figure}
 
-Tout est une valeur avec un type et des propriétés associés. Une clé est une valeur de type !key. Les types peuvent être imbriqués.
-
 \subsection{Validation}
 Dans de telles communications, la validation des données transmises entre des machines dont la puissance de calcul est très limitée est un atout majeur.
 Une des propriétés uniques de UON est l'usage de schéma directement intégré dans le langage.
 
-C'est une structure qui décrit comment un fichier ou type doit être représenté.
+Ce schéma est une structure qui décrit comment un fichier ou type doit être représenté.
 
-UON propose 4 différents types de stratégies.
+UON propose 4 différents types de stratégies pour le définir.
 
 \begin{itemize}
-    \item Embedded schema
-    \item Included schema
-    \item Linked schema
-    \item Separated schema
+    \item \textbf{Embedded schema} : inclus dans le dataset, les informations sont mélangé avec les contraintes.
+    \item \textbf{Included schema} : inclus dans le dataset, les informations et contraintes sont séparés.
+    \item \textbf{Linked schema} : inclus dans le dataset en précisant la signature du schéma.
+    \item \textbf{Separated schema} : les informations et contraintes sont séparés et non liés.
 \end{itemize}
 
-%  Un schéma est un document qui décrit la spécification d'un nouveau type.
+Chaque solution présente des avantages et des inconvénients.
 
 \subsection{Liens}
-Si vous souhaitez vous renseigner d'avantages, la spécification complète du projet se trouve sur cette \href{https://github.com/uon-language/specification/}{page}.
-Et le dépôt du projet se trouve \href{https://github.com/uon-language/specification}{ici}.
+Le dépôt du projet se trouve à l'adress suivante : \url{https://github.com/uon-language/specification}
 
 \chapter{Scope de la grammaire}\label{grammar scope}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
