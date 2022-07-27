@@ -280,7 +280,7 @@ La structure de base d'une extension est illustrée par la figure \ref{Squelette
             }
         \end{minipage}
     }
-    \caption[Squelette de base d'une extension VS Code]{\label{Squelette de base d'une extension VS Code} Squelette de base d'une extension VS Code}
+    \caption[Squelette de base d'une extension VS Code]{\label{basic-structure} Squelette de base d'une extension VS Code}
 \end{figure}
 
 \textbf{Extension Manifest} :
@@ -320,7 +320,6 @@ Par exemple, les éléments suivants :
 
 Il s'agit de fonctionnalités implémentées à l'aide de fichier de configuration.
 
-% TODO : faire ref à l'explication ci-dessus ?
 Puis, elles doivent être enregistrées comme \emph{Contribute Point}.
 
 \subsection{Programmatic language features}\label{Programmatic language features}
@@ -341,8 +340,6 @@ Il y a deux approches pour les implémenter que nous allons voir ci-dessous.
 \subsubsection{VS Code API (Direct implementation)}
 La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'API de VS Code} pour les fonctionnalités de langage.
 Cette API permet d'implémenter directement les fonctionnalités du langage sans devoir mettre en place l'infrastructure les supportant.
-% TODO : s'assurer que l'api vscode une implementation de LSP ?
-% Comment faire la transition entre mon implémentationa avec celle d'un langage server
 
 Beaucoup de fonctionnalités se font en s'inscrivant à des providers depuis notre application.
 L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
@@ -398,15 +395,12 @@ Le parseur doit donc pouvoir générer au mieux un parse tree qui à du sens dep
 On pourrait également se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expressions régulières.
 Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrêmement difficile à traiter. \cite{antlr-mega-tutorial}
 
-%"you cannot find a (regular) expression inside another one, unless you code it by hand for each level. Something that quickly became unmaintainable."
-%Example : % TODO
-
 \section{Choix technologiques}
 Nous allons maintenant mentionner les technologies et approches choisies et expliquer les raisons.
 
 \subsection{Direct implementation}
 L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, la solution de contacter directement l'API de VS Code a été privilégiée.
-Si le temps le permet, toute la logique du code concernant les fonctionnalités riches\ref{Programmatic language features} pourrait être déplacée dans un langage server.
+Si le temps le permet, toute la logique du code concernant les fonctionnalités riches (voir section \ref{Programmatic language features}) pourrait être déplacée dans un langage server.
 
 Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, les providers utilisés sont les suivants :
 \begin{itemize}
@@ -670,7 +664,7 @@ dans le langage.
 
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
-% TODO : exemple de map
+% exemple de map
 \begin{lstlisting}[frame=single,caption={Exemple d'un mapping en format JSON},captionpos=b,label={json-map}]
     {
         "name" ( description : a12 ) :  !str(optional: False) paul,
@@ -694,12 +688,12 @@ ok :
 ok2 : -23
 \end{lstlisting}
 
-% TODO : exemple de seq
+% TODO
 \begin{lstlisting}[frame=single,caption={Exemple d'une séquence en format JSON},captionpos=b,label={json-seq}]
 \dots
 \end{lstlisting}
 
-
+% TODO
 \begin{lstlisting}[frame=single,caption={Exemple d'une séquence en format YAML},captionpos=b,label={yaml-seq}]
 \dots
 \end{lstlisting}
@@ -936,7 +930,6 @@ Il n'est pas simple de debugger une grammaire sans aucun outil ou seulement à l
 Heureusement, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antlr-v4}{extension} sur intellij qui nous permet de visualiser en temps réel, le parse tree du texte que l'on est en train de saisir.
 
 % TODO : Figure d'intelj en action
-
 % Les figures représentants les arbres se baseront sur ce plugin ...
 
 
@@ -944,20 +937,10 @@ Heureusement, il existe une \href{https://plugins.jetbrains.com/plugin/7358-antl
 Dans ce chapitre, nous allons explorer les aspects techniques concernant l'implémentation de fonctionnalités. Nous allons voir également plus en détail les outils utilisés ainsi que le déploiement de l'extension sur le marketplace.
 Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne devrait pas être considérée comme l'unique manière de procéder.
 
-%TODO
-%\section{Tolérance}
-%Le parseur ne devrait uniquement controler la syntaxe. une bonne règle à se rappeler et que dans le doute il est préférable de laisser l'analyser syntaxique (parser) 
-%Le document et controler la sémantique pour s'assurer que la règle a du sens
-
-%"The parser should only check the syntax. So the rule of thumb is that when in doubt you 
-%let the parser pass the content up to your program. Then, in your program, you check the semantics and make sure that the rule actually have a proper meaning."
-% Citation !!! mégathread ?
-
-
 \section{Code}
 
-Par rapport à la figure %todo
-les points suivants au été rajouté à la figure %todo
+Par rapport à la figure \ref{basic-structure}
+les points suivants au été rajouté à la figure \ref{project-structure}
 
 \textbf{Remarque} : Les "..." signifie qu'il y a des sous fichiers et/ou répertoire mais ont été ignoré pous ne pas surcharger
 la figure.
@@ -1124,20 +1107,20 @@ Quelques tests unitaires simples ont été implémenté, mais qui permet toutefo
 
 \subsection{Deployement automatisé (CD)}
 
-% TODO :  incréementer le numéro de verison !
-
 L'extension est actuellement automatiquement déployée lorsqu'une release sur la branche main est réalisée.
 L'étape de mise en place est détaillée par VS Code à cet \href{https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions}{emplacement}.
 
 Il s'agit d'une étape supplémentaire dans la pipeline après que les tests soient effectués.
 
-Elle consiste à exécuter la commande vsce publish depuis notre package.json pour publier l'extension.
+Elle consiste à exécuter la commande vsce publish depuis un github action pour publier l'extension.
 
 \href{https://www.npmjs.com/package/vsce}{vsce} est le gestionnaire d'extension de VS Code.
 
-Il est nécessaire d'ajouter le token (PAT) comme secret dans notre dépôt github. %todo ref
+Il est nécessaire d'ajouter le token (PAT) comme secret dans notre dépôt github.
 
-\textbf{Remarque } : On ne peut déployer qu'une extension avec une version supérieure que la précédente. % TODO : automatisé ça ?
+\textbf{Remarque } :
+À chaque nouvelle publication de l'extension, il est nécessaire d'incrémenter la valeur du champ \emph{version} du package.json
+On peut redéployer une extension qu'avec une version supérieure que la précédente.
 
 \section{Génération du parser ANTLR}
 \subsubsection{Grammaire}
@@ -1159,11 +1142,6 @@ Il nous génère ces fichiers :
 \end{itemize}
 
 \section{Syntax highlighting}
-
-% Pour signaler à l'utilisateur que la saisie est tout de même incorrecte. On peut s'aider en parallèle de la coloration syntaxique.
-% TODO : https://macromates.com/manual/en/language_grammars
-
-% Dark + (default dark)
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
 Il y a deux composantes principales.
@@ -1195,7 +1173,7 @@ Il s'agit d'un identifiant, c'est grâce au scope d'un token, qu'un fichier de t
 TextMate défnit des convention de nommage que de nombreux thèmes ciblent déjà et recommande de les utiliser.
 Ceci dans le but de permettre à notre langage d'être supporté le plus possible. \cite{textmate-grammars}
 
-Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créé (Thème dark par défaut sur VS Code). 
+Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créé (Thème par défaut de VS Code : Dark + ).
 Et de réutiliser les scopes définis dans ce fichier.
 
 Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
@@ -1427,7 +1405,7 @@ Ce qui est fait actuellement c'est de récupérer ces tokens dans un canal mais 
 C'est ce qui est recommandé dans la documentation du projet c3. Car cela permet de gérer plus de cas particuliers \cite{c3-example-soql}.
 % https://neuroning.com/post/implementing-code-completion-for-vscode-with-antlr/
 
-Même si l'on n'en profite pas actuellement, cela permet l'extensibilité du code par la suite. % TODO : à vérifier
+Même si l'on n'en profite pas actuellement, cela pourrait permettre une meilleur extensibilité du code si nécessaire.
 
 % La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
 
@@ -1450,7 +1428,7 @@ Il sera ensuite possible de déduire l'indice du prochain candidats en se basant
 
 Le résultat du moteur à l'appel de la fonction \emph{collectCandidates} est un objet de type \emph{CandidatesCollection}.
 
-% TODO https://github.com/lark-parser/lark/issues/684 -> api ?
+% https://github.com/lark-parser/lark/issues/684 -> api ?
 \begin{listing}[!ht]
     \begin{minted}{typescript}
     class CandidatesCollection {
@@ -1467,8 +1445,7 @@ Cette collection contient deux map : \emph{tokens} et \emph{rules}.
 La map \emph{tokens} fait le lien entre le prochain token possible et une liste contenant des tokens qui doit le suivre immédiatement, si elle existe.
 
 Nous allons principalement utiliser les clés de cette map pour proposer nos suggestions.
-Cette clé est juste l'id d'un token. Cette id sera converti pour représenter la valeur du token qu'il représente et c'est ce qui sera affiché dans l'éditeur.
-% TODO
+Cette clé est juste l'id d'un token. On va utiliser cet id et le parseur pour retrouver la valeur du token qu'il représente. C'est ce qui sera finalement affiché dans l'éditeur comme suggestion.
 
 La liste est aussi utilisé à une moindre mesure pour obtenir par exemple des suggestions suivantes : "descripton : "
 On obtient deux tokens d'un coup "description" et ":"
@@ -1558,7 +1535,7 @@ Ce qui n'est pas possible avec le moteur.
     \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
 \end{figure}
 
-% TODO : exemple concret
+% TODO : exemple concret, remplacer image
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/snippet-suggestion.png}
@@ -1575,20 +1552,43 @@ ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas d
 Les snippets sont simples et utiles, mais liés à l'application. Il ne faudrait donc pas trop en utiliser.
 
 \subsection{Triggers}
-L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères. Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
-On peut aussi ajouter au provider des symboles qui vont trigger son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
-Cependant il ne s'agit que d'une appréciation personnelle.
+Il est possible d'ajouter au provider des symboles qui vont forcer son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
+Il s'agit uniquement d'une appréciation personnelle.
 
-%\subsection{Pas de suggestion}
-%TODO :
-%No suggestion :
-%quand un espace précède un nouveau mot alors c'est simple pour le placer
-%quand il est colé c'est + compliqué. Il faut calculer la position du début et de fin du nouveau mot car VS Code peut trigger l'autocomplete n'importe quand et du coup
-%avec du texte colé il peut pas savoir à partir de ou le texte en train d'etre ecrit est un mot du lnagage...mais utilité de faire ça ???
+\subsection{Pas de suggestion}
+
+Le message "no suggestion" peut survenir lorsque le provider n'arrive pas à retourner des suggestions.
+Mais, il est possible d'avoir ce message alors même que le moteur retourne des candidats. Cela vient du fait
+que si le curseur se trouve collé à du texte, VS Code n'a pas la capacité de savoir qu'elle est l'étendu de la chaine de texte que le curseur touche,
+qui doit être remplacer et s'il doit même le faire.
+
+Par exemple : { key(|) }.
+On pourrait recevoir la suggestion "description:" mais l'on ne recevra rien. Car VS Code ne sait pas comment réagir.
+
+Il est possible de résoudre ce problème mais cela nécessite de définir la position pour la suggestion (range).
+Cela implique de gérer pleins de cas particulier de la grammaire depuis l'application. Il n'a pas été jugé pertinent de traiter ce cas, car n'apportant pas réelement un intérêt.
+
+
+
+\subsection{Mécanisme automatique}
 
 %TODO : quick-suggest-setting (par défaut ?) : https://github.com/microsoft/vscode/issues/101333}
 
-\subsection{Mécanisme automatique}
+%Quand est-ce que ça trigger tout seul
+%On peut modifier le comportement
+% "editor.acceptSuggestionOnCommitCharacter": true in settings.json?
+
+%On doit aller dans le ficheir settings.json
+% on voit 3paramètre utiles :  Acceptsuggestion on commit caracter
+% DocumentSelector
+% https://github.com/Microsoft/vscode/issues/18372
+% https://github.com/ChristianKohler/PathIntellisense/issues/52
+% https://code.visualstudio.com/api/references/vscode-api#CompletionItem
+
+L'éditeur va trigger automatiquement l'autocomplétions en appelant le provider lorsque l'on saisit plusieurs caractères.
+Par défaut, il Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
+
+
 VS Code va automatiquement filtrer les suggestions pendant la saisie à l'aide d'un algorithme de fuzzing search.
 Pour rappel le fuzzy search (ou recherche approximative) permet de trouver une chaine de caractère en fournissant une chaine qui n'a besoin d'avoir une correspondance exacte
 avec le texte que l'on cherche.
@@ -1597,6 +1597,8 @@ Par défaut la complétion proposée par VS Code porte sur les symboles déjà e
 Ce type de complétion est nommé "word based completion" dans VS Code.
 
 \section{Outline view}
+
+%tourne en continue ?
 
 La outline view est une représentation de la structure d'un fichier actuellement ouvert par l'éditeur. On appelle généralement cette structure le "document outlining" ou "code outlining".
 
@@ -1762,7 +1764,7 @@ dans un objet de type \emph{DocumentSymbol}.
 
 \subsection{La position}
 
-Généralement un noeud nous permet de nous rediriger sur l'élément du fichier lorsqu'on le sélectionne depuis la sidebar ou depuis la search bar. %todo reference
+Généralement un noeud nous permet de nous rediriger sur l'élément du fichier lorsqu'on le sélectionne depuis la sidebar ou depuis la search bar.
 Il faut donc pouvoir être capable de récupérer la position d'un élément du fichier.
 
 Heursement on peut récupérer cette information lors d'un parcours d'un noeud terminal du parse tree.
@@ -1934,11 +1936,15 @@ Ce quickfix permet de supprimer le token qui pose problème en se basant sur les
 À l'heure actuelle , il n'y a pas encore de suggestions. L'idée serait de pouvoir proposer un ou plusieurs tokens qui aurait du sens pour remplacer celui qui pose problème.
 Et l'idéal serait de prendre en compte le texte venant après le curseur. % TODO
 
+\subsection{Outline view}
+Le listener se trouve au niveau du code de la outline. Étant donné que c'est une fonctionnalité qui est souvent solliciter il a été jugé interessant
+de placer ce listener à cet emplacement.
+
 \section{Fonctionnalités triviales}
 Il s'agit de fonctionnalités couramment disponibles dans un support de langage. Leur implémentation est relativement simple et rapide et n'a donc pas été mentionnée dans le cahier des charges.
-Les suivantes ont été implémentées :
+Il s'agit concrètement du fichier \emph{language-configuration.json}. % https://github.com/redhat-developer/vscode-yaml/blob/main/language-configuration.json
 
-% TODO : fichier
+Les suivantes ont été implémentées :
 
 \textbf{Comment}
 \begin{itemize}
@@ -1957,20 +1963,10 @@ Les suivantes ont été implémentées :
     \item Cacher un bloc de code sur une ligne en fonction de son niveau d'indentation.
 \end{itemize}
 
-% TODO
-% Couplage de fonctionnalité - logique
-% Info on hover - autocompletion
-% lint - code outline
 
 \chapter{Planning}
 
-% TODO : Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ?
-% TODO : Des implémentations pas compliqué mais peu de documentation sur antlrts dans le cadre d'une extension + faut trouver comment faire en testant parfois
-% TODO :
-%    Difficulté :
-%    Regrouper toutes les sources.
-%    Grand projet personnel....
-%    Analyse des resultat
+% Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ?
 
 \subsection{Diagramme de gantt}
 Voici le diagramme de Gantt pour ce projet.
@@ -2052,6 +2048,12 @@ J'ai donc beaucoup appris et me servirais de ces leçons pour la suite. Travaill
 
 \section{Difficultés rencontrées}
 
+%  Des implémentations pas compliqué mais peu de documentation sur antlrts dans le cadre d'une extension + faut trouver comment faire en testant parfois
+%    Difficulté :
+%    Regrouper toutes les sources.
+%    Grand projet personnel....
+%    Analyse des resultat
+
 Même si des extensions fournissant du support de langage existent et sont facilement disponibles, j'ai remarqué en analysant leur code source qu'il n'y a pas de consensus sur la manière d'implémenter une fonctionnalité (ex : complétion).
 C'est donc difficile de savoir si on effectue la "bonne" méthodologie.
 
@@ -2116,7 +2118,6 @@ La liste des erreurs connues est la suivante :
 %% \let\cleardoublepage\clearpage
 %% \backmatter
 
-%% TODO : Ne fonctionne pas !!!
 \label{glossaire}
 \printnoidxglossary
 \addcontentsline{toc}{chapter}{Glossaire}
