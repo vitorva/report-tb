@@ -1098,7 +1098,7 @@ On peut redéployer une extension uniquement avec une version supérieure que la
 Quand le fichier de grammaire est écrit, il suffit de lancer le code suivant :
 
 \begin{lstlisting}[frame=single]
-    antlr4ts -visitor path/to/MyGrammar.g4
+    npm run antlr4ts
 \end{lstlisting}
 
 Il nous génère ces fichiers :
@@ -1111,6 +1111,8 @@ Il nous génère ces fichiers :
     \item UONParser.ts
 \end{itemize}
 
+Il faut exécuter cette commande à chaque fois que la grammaire est modifiée, pour répercuter les changements.
+
 \section{Syntax highlighting}
 
 La coloration syntaxique permet que chaque élément du texte soit affiché dans l'éditeur avec une coloration et un style en fonction de son type.
@@ -1120,31 +1122,24 @@ Il y a deux composantes principales.
     \item La thémisation (Theming) qui permet d'attribuer à un token une couleur et un style.
 \end{itemize}
 
-%TODO
-\begin{figure}[!h]
-    \begin{center}
-        \includegraphics[width=10cm]{assets/figures/example-uon-coloration.png}
-    \end{center}
-    \caption[Exemple de coloration d'un code UON]{\label{example-uon-coloration} Exemple de coloration d'un code UON}
-\end{figure}
-
-VS code utilise Textmate grammars comme le moteur de tokénisation de la syntaxe.
+VS Code utilise Textmate grammars comme le moteur de tokénisation de la syntaxe.
 Cette grammaire a été inventée par l'éditeur TextMate est a été adopté par de nombreux éditeurs et IDE.
 Elle contient une liste structurée d'expressions régulières qui permet d'associer un scope
 à un ou plusieurs tokens qui déclencherait l'activation d'une de ces expressions. \cite{syntax-highlight-guide}
 
-La grammaire TextMate du langage UON se trouve dans le fichier "uon.tmLanguage.json" dans le dossier "syntaxes" à la racine du projet.
-Ce fichier doit être référencé à travers du point de contribution "grammar" dans le package.json.
+La grammaire TextMate du langage UON se trouve dans le fichier \emph{uon.tmLanguage.json} dans le dossier \emph{syntaxes} à la racine du projet.
+Ce fichier doit être référencé à travers du point de contribution \emph{"grammar"} dans le package.json.
 
 \subsection{Scope}
 Un scope défini le contexte d'un groupe de token et peut-être considéré comme son type.
 
 Il s'agit d'un identifiant, c'est grâce au scope d'un token, qu'un fichier de thème peut attribuer une couleur avec un mécanisme de "clé-valeur".
 
-TextMate défnit des convention de nommage que de nombreux thèmes ciblent déjà et recommande de les utiliser.
+TextMate définit une convention de nommage que de nombreux thèmes ciblent déjà et recommande de l'utiliser.
 Ceci dans le but de permettre à notre langage d'être supporté le plus possible. \cite{textmate-grammars}
 
-Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée. La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créé (Thème par défaut de VS Code : Dark + ).
+Pour respecter au maximum les conventions attendues et s'assurer qu'une coloration automatique soit appliquée.
+La stratégie suivante a été adoptée : partir depuis un fichier de thème déjà créé (Thème par défaut de VS Code : Dark + ).
 Et de réutiliser les scopes définis dans ce fichier.
 
 Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
@@ -1167,15 +1162,15 @@ Ce procédé nous permet de profiter des thèmes de VS Code implémenté par dé
 \end{figure}
 
 \subsubsection{Example}
-Prenons un exemple simple du fichier "uon.tmLanguage.json", le scope pour les nombres : "constant.numeric.uon"
+Prenons un exemple simple du fichier \emph{uon.tmLanguage.json}, le scope pour les nombres : "constant.numeric.uon"
 
 La convention est d'avoir des mots clés séparés par un point pour spécifier chaque niveau de précision supplémentaire
-Il est aussi possible d'avoir plusieurs scope pour un élément : "string.uon support.type.property-name.uon". Ces scopes sont séparés par un espace.
-C'est celui le plus à droite est prioritaire. Cela peut-être utile si l'on souhaite maximiser les chances qu'un thème nous fournisse une coloration.
+Il est aussi possible d'avoir plusieurs mots clés dans le scope d'un élément : "string.uon support.type.property-name.uon". Ils sont séparés par un espace.
+C'est celui le plus à droite qui est prioritaire. Cela peut-être utile si l'on souhaite maximiser les chances qu'un thème nous fournisse une coloration.
 \cite{scopes-selectors}
 
-Les scopes sont donc souvent imbriqués et c'est le plus spécifique qui est utilisé pour le choix du thème.
-Il est possible d'analyser notre code à l'aide du "Scope Inspector", qui est un outil disponible dans l'éditeur depuis la command palette de VS Code.
+Les scopes s'imbriquent également et c'est le plus spécifique qui est utilisé pour le choix du thème.
+Il est possible d'analyser notre code à l'aide du \emph{Scope Inspector}, qui est un outil disponible dans l'éditeur depuis la command palette de VS Code.
 pour visualiser la hiérarchie des scopes pour un token.
 
 \begin{figure}[!h]
@@ -1185,7 +1180,7 @@ pour visualiser la hiérarchie des scopes pour un token.
     \caption[Scope inspector]{\label{basic-uon} Le scope inspector sur un exemple de code en UON}
 \end{figure}
 
-La section "textmate scopes" montre la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
+La section \emph{textmate scopes} affiche la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
 
 La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas gérée par la spécification LSP et par l'API de VS Code non plus.
 Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible
@@ -1193,7 +1188,7 @@ Une des raisons évoquées et que ce mécanisme doit être le plus rapide possib
 
 \subsection{Fonctionnement}
 
-La figure \ref{Textmate grammar} illustre un exemple très simplifié du fichier \emph{uon.tmLanguage.json}.
+La figure \ref{Textmate grammar} illustre une représentation très simplifié du fichier \emph{uon.tmLanguage.json}.
 
 \begin{listing}[!ht]
     \begin{minted}{json}
@@ -1252,21 +1247,7 @@ Ces règles peuvent être directement écrites à cet emplacement, mais il est a
 
 \textbf{"name"} : le nom d'un scope qui sera attribuer.
 
-On constate deux constructions possibles.
-La première règle applique le scope à un élément qui déclenche directement l'expression régulière.
-
-La deuxième définit un délimiteur de début et de fin.
-On peut "capturer" des parties et leur attribuer des scopes encore plus spécifique.
-Il est aussi possible de rajouter un objet "patterns" pour appliquer des règles plus spécifique à l'intérieur de ces délimiteurs.
-
-\subsubsection{Propriétés}
-
-La coloration syntaxique doit refléter au mieux cette grammaire. Il y a donc une coloration spécifique pour les propriétés appartenant à un type.
-Cela rend la coloration syntaxique fortement liée à la grammaire, mais on se rend compte d'un coup d'oeil si la propriété et correcte.
-
 \subsection{Capture}
-
-% exemple : !str(comment : "mon premier commentaire")
 
 Il y a globalement deux manières pour appliquer un scope.
 
@@ -1277,6 +1258,19 @@ a déclenché.
 
 Il s'agit d'un nombre mais l'option "Capture" nous permet d'appliquer un scope au groupe de sélection.
 Il n'est pas facile pour des expressions assez complexes de trouver ce nombre mais on peut s'aider du site \href{https://regex101.com/}{suivant}
+
+\subsubsection{Résultat}
+
+%TODO
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=10cm]{assets/figures/example-uon-coloration.png}
+    \end{center}
+    \caption[Exemple de coloration d'un code UON]{\label{example-uon-coloration} Exemple de coloration d'un code UON}
+\end{figure}
+
+La coloration syntaxique doit refléter au mieux cette grammaire. Il y a donc une coloration spécifique pour les propriétés appartenant à un type.
+Cela rend la coloration syntaxique un peu plus liée à la grammaire, mais on se rend compte d'un coup d'oeil si la propriété et correcte.
 
 \subsection{Semantic Highlight}
 
