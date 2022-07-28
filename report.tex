@@ -2025,6 +2025,44 @@ L'état actuel du projet sur Github (au moment de la rédaction de ce rapport) c
 
 L'extension est \href{https://marketplace.visualstudio.com/items?itemName=vitorva.vscode-uon}{disponible} sur le marketplace de VS Code.
 
+Passons maintenant en revue les tâches réalisées :
+
+\textbf{VSCode Extension} :
+\begin{itemize}
+    \item L'extension est publié sur le marketplace
+    \item Des tests sont effectué lors d'un push sur dev ou main et lors de la publication d'une release.
+    \item Lors de la publication, l'extension et publié automatiquement.
+\end{itemize}
+
+\textbf{Grammaire} :
+\begin{itemize}
+    \item Permet de créer des mappings et des séquences de type en un format proche de JSON et YAML, ainsi qu'un schéma de validation.
+\end{itemize}
+
+\textbf{Syntax highlighting} :
+\begin{itemize}
+    \item Une coloration syntaxique est appliqué aux éléments.
+\end{itemize}
+
+\textbf{Auto-complétion} :
+\begin{itemize}
+    \item Des éléments sont proposés si elles peuvent être écrit à l'emplacement souhaité.
+    \item Les éléments proposés à l'utilisateur sont des mots-clés (Les types et leurs propriétés associées, ainsi que des unités).
+    \item Les éléments peuvent aussi être des snippets.
+\end{itemize}
+
+\textbf{Outline view} :
+\begin{itemize}
+    \item Les éléments sont affichés dans l'outline d'une manière similaire à une outline de JSON ou de YAML.
+    \item Les propriétés des clés et des types sont affichés.
+\end{itemize}
+
+\textbf{Lint} :
+\begin{itemize}
+    \item Les erreurs de syntaxes sont affichés : elles indiquent si un éléments est faux ou manquant.
+    \item Un quick fix permet de supprimer l'élément qui cause l'erreur (comportement à améliorer).
+\end{itemize}
+
 \chapter{Conclusion}
 
 L'objectif de ce Travail de Bachelor était le support du langage UON au travers de l'implémentation d'une extension VS Code.
