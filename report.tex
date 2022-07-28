@@ -9,9 +9,6 @@
 
 \usepackage{titlesec}
 
-\titleformat{\chapter}[display]
-  {\normalfont\bfseries}{}{0pt}{\Huge}
-
 \usepackage[nooldvoltagedirection,european,americaninductors]{circuitikz}
 \usepackage{hyperref}
 \usepackage{fancyhdr}
@@ -89,7 +86,7 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-\titlespacing*{\chapter}{0pt}{-40pt}{20pt}
+\titlespacing{\chapter}{0pt}{-40pt}{20pt}
 
 %% Contenu
 \mainmatter
@@ -100,7 +97,7 @@
 Ce projet de Bachelor consiste à fournir du support pour le nouveau langage de sérialisation UON, sous VS Code.
 UON est un format de sérialisation qui vise à rassembler les meilleures caractéristiques des principaux formats de sérialisation disponibles sur internet.
 
-Ce projet consiste donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON dans l'éditeur VS Code.
+Ce support aura donc rôle de fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON dans l'éditeur VS Code.
 
 C'est un nouveau langage complexe et une spécification détaillée existe, mais elle n'est pas terminée. Il reste maintenant à construire les éléments permettant son utilisation.
 Un parser en Python a déjà été implémenté par Stéphane Selim durant son travail de bachelor "Parser for a serialization language UON" en 2020.
@@ -198,12 +195,13 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
 Le résultat de l'analyse syntaxique (parsing) nous permet d'obtenir une représentation de la structure d'un texte. Ce qui est très utile dans le cadre d'un support de langage.
 
 Il est donc important de rappeler le mécanisme général. Car avant la phase de l'analyse syntaxique, il y a habituellement une analyse lexicale.
-À cette étape, un input (du code ou texte) est décomposé en une liste de tokens à l'aide d'un lexer.
-
+À cette étape, un input (du code ou texte) est décomposé en une liste tokens à l'aide d'un outil appelé \emph{lexer}.
+Un token correspond à un segment de texte avec un type qui lui a été associé.
 Ce sont ces tokens qui seront ensuite utilisés lors de l'analyse syntaxique.
-L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire.
 
-Le résultat de cette analyse est un "Parse Tree" qui représente toutes les dérivations de notre input en fonction de la grammaire.
+L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire. Un grammaire étant habituellement un fichier qui décrit formellement le langage.
+
+Le résultat de cette analyse est un Parse Tree qui représente toutes les dérivations de notre input en fonction de la grammaire.
 Elle est souvent représentée sous forme d'un arbre hiérarchique.
 
 Généralement c'est cette structure finale qui sera interprétée ou compilée.
@@ -217,10 +215,10 @@ Ce processus peut être représenté par la figure \ref{Analayse du code source}
     \caption[Analayse du code source]{\label{Analayse du code source} Analayse du code source}
 \end{figure}
 
-Dans notre cas, nous utiliserons seulement l'arbre et uniquement lorsque cela sera nécessaire.
+Dans le cadre de ce projet, cette arbre sera utilisé lorsque cela sera nécessaire.
 
 \section{VS Code}
-Il a été choisi, car il fait partie des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déjà familier de son environnement.
+Cet éditeur a été choisi, car il fait partie des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déjà familier de son environnement.
 D'autres alternatives existent comme VIM et Atom pour ne citer qu'eux. Et chacun d'eux fournit également de quoi implémenter une extension.
 C'est donc un choix personnel.
 
@@ -232,7 +230,7 @@ Il est pensé pour être extensible (de L'UI à l'expérience utilisateur), pres
 On peut mentionner le theming, les fonctionnalités de langages, la publication de l'extension et les tests.
 
 VS Code fournit des documentations détaillées sur plein de sujets : étapes pour la création d'une extension, son déploiement continue ainsi que le support de langage en lui-même.
-Il est aussi possible facilement de trouver des guides, ainsi que \href{https://github.com/microsoft/vscode-extension-samples}{des exemples de codes} concernant les extensions.
+Il est aussi facilement possible de trouver des guides, ainsi que \href{https://github.com/microsoft/vscode-extension-samples}{des exemples de codes} concernant les extensions.
 Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cet éditeur.
 La communauté est aussi très active (stack overlow, gitter, issue github, etc.).
 
@@ -243,9 +241,10 @@ Nous choisirons le TypeScript car VS Code recommande ce langage. Mais certaines 
 \subsection{Command palette}\label{command-palette}
 
 La \href{https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette}{command palette}
-est le point d'accès à toutes les fonctionnalités de VS Code.
+est le point d'accès à toutes les fonctionnalités de VS Code. Et est un élément important à connaitre.
 
 Pour l'ouvrir il faut exécuter la combinaison suivante : "CTRL + SHIFT + p".
+
 
 \subsection{Extension Anatomy}
 Il y a trois concepts cruciaux à comprendre pour réaliser une extension \cite{extension-anatomy} .
@@ -253,7 +252,7 @@ Il y a trois concepts cruciaux à comprendre pour réaliser une extension \cite{
 \begin{itemize}
     \item \href{https://code.visualstudio.com/api/references/activation-events}{\textbf{Activation Events}}: des événements à partir desquels l'extension devient active.
     \item \href{https://code.visualstudio.com/api/references/contribution-points}{\textbf{Contribution Points}}: des déclarations statiques qui sont faites dans l'Extension Manifest \emph{package.json} pour étendre l'extension. Il s'agit d'un ensemble de déclarations JSON faites au travers du champ \emph{contributes}.
-    \item \href{https://code.visualstudio.com/api/references/vscode-api}{\textbf{VS Code API}}: un ensemble d'API JavaScript que nous pouvons invoquer dans le code.
+    \item \href{https://code.visualstudio.com/api/references/vscode-api}{\textbf{VS Code API}}: un ensemble d'API JavaScript qui peut être invoqué dans le code.
 \end{itemize}
 
 En général, l'extension est une combinaison de plusieurs \emph{Contribution Point} et l'utilisation de l'API pour étendre les fonctionnalités de VS Code.
@@ -284,20 +283,19 @@ La structure de base d'une extension est illustrée par la figure \ref{Squelette
 \end{figure}
 
 \textbf{Extension Manifest} :
-chaque extension doit contenir un fichier \emph{package.json}. En plus des champs propres à Node.js, on peut spécifier des scripts, dépendances de développement et des champs spécifiques à VS Code.
+chaque extension doit contenir un fichier \emph{package.json}. En plus des champs propres à Node.js, on peut spécifier des scripts, des dépendances de développement et des champs spécifiques à VS Code.
 
 \textbf{Extension Entry File} :
 il s'agit du fichier principal de l'extension (Extension.js).
+
 De base, il contient deux fonctions : \emph{activate} et \emph{deactivate}.
 La fonction activate est exécutée à l'activation de notre extension par un \emph{Activation Event}. On initialisera ici notre extension.
 La fonction \emph{deactivate} est exécutée lorsque l'application devient inactive et sert principalement à nettoyer le code avant la désactivation de l'extension
 
-\textbf{Remarque} : le niveau de customisation est assez élevé. La seule limitation indiquée et qu'il n'est pas possible d'accéder au DOM de l'éditeur.
+\textbf{Remarque} : le niveau de customisation est assez élevé. La seule limitation indiquée et qu'il n'est pas possible d'accéder au \Gls{dom} de l'éditeur.
 
-Nous avons donc vu les briques de bases pour la conception d'une extension. Mais cette base est suffisante pour commencer à travailler.
-
-Si vous souhaitez vous renseigner d'avantages sur l'élaboration d'une extension vous pouvez consulter la page \href{https://code.visualstudio.com/api}{suivante}.
-Concernant les fonctionnalités générales de l'éditeur VS Code vous pouvez consulter \href{https://code.visualstudio.com/docs}{la documentation officielle}.
+Pour se renseigner davantage sur l'élaboration d'une extension, la page \href{https://code.visualstudio.com/api}{suivante} peut être consultée.
+Concernant les fonctionnalités générales de l'éditeur VS Code, les informations se trouve sur \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \section{Support de langage}
 VS Code fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en deux catégories détaillées
@@ -335,11 +333,11 @@ Par exemple, les éléments suivants :
     \item auto completion
 \end{itemize}
 
-Il y a deux approches pour les implémenter que nous allons voir ci-dessous.
+Il y a deux approches possibles pour les implémenter. Elles sont détaillées ci-dessous.
 
 \subsubsection{VS Code API (Direct implementation)}
 La première solution est d'utiliser \href{https://code.visualstudio.com/api/references/vscode-api#languages}{l'API de VS Code} pour les fonctionnalités de langage.
-Cette API permet d'implémenter directement les fonctionnalités du langage sans devoir mettre en place l'infrastructure les supportant.
+Cette API permet d'implémenter directement ces fonctionnalités sans devoir mettre en place l'infrastructure les supportant.
 
 Beaucoup de fonctionnalités se font en s'inscrivant à des providers depuis notre application.
 L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera nécessaire.
@@ -347,7 +345,7 @@ L'éditeur de code fera ensuite les requêtes à ces providers lorsque cela sera
 \subsection{Language server}
 
 La seconde solution est de fournir nous-mêmes ces méthodes en respectant la spécification LSP \cite{lsp-specification} au travers d'un langage serveur.
-Les avantages souvent mentionnés ce cette approche sont que le langage server peut être écrit avec le langage que l'on souhaite et
+Les avantages souvent mentionnés de cette approche sont que le langage server peut être écrit avec le langage que l'on souhaite et
 que cela permet aussi à d'autres éditeurs de texte compatibles avec le langage server d'utiliser ces fonctionnalités sans devoir les implémenter de nouveau.
 
 Pour être utilisé sur VS Code, un langage server à deux parties :
@@ -368,7 +366,7 @@ Cette approche est aussi plus complexe à implémenter.
 
 \subsection{API vs LSP}\label{api vs lsp}
 
-Le schéma suivant \ref{API de VS Code vs méthodes LSP} montre la correspondance des méthodes entre la première et seconde approche.
+La figure \ref{API de VS Code vs méthodes LSP} montre la correspondance des méthodes entre la première et seconde approche.
 
 Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux solutions.
 
@@ -393,7 +391,7 @@ Mais l'on s'attend tout de même que certaines fonctionnalités continuent à fo
 Le parseur doit donc pouvoir générer au mieux un parse tree qui à du sens depuis du code erroné.
 
 On pourrait également se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expressions régulières.
-Cependant un problème majeur survient rapidement si on choisit cette approche, la récursivité devient extrêmement difficile à traiter. \cite{antlr-mega-tutorial}
+Cependant le problème majeur avec cette approche et que les imbrications deviennent extrêmement difficile à gérer. \cite{antlr-mega-tutorial}
 
 \section{Choix technologiques}
 Nous allons maintenant mentionner les technologies et approches choisies et expliquer les raisons.
@@ -1129,6 +1127,7 @@ Il y a deux composantes principales.
     \item La thémisation (Theming) qui permet d'attribuer à un token une couleur et un style.
 \end{itemize}
 
+%TODO
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/example-uon-coloration.png}
@@ -1957,7 +1956,8 @@ Voici le diagramme de Gantt pour ce projet.
 
 \subsection{État actuel du projet}
 
-L'état actuel du projet sur Github (au moment de la rédaction de ce rapport) correspond au commit sur la branche main, avec le hash : 584677bb5c5c215666dd7232ac4fa8fea0c453d4.
+L'état actuel du projet sur Github (au moment de la rédaction de ce rapport) correspond au commit sur la branche main, avec le hash :
+195d7eb6bdeee2ed8f67ea196adae874f2b1f443
 
 Actuellement l'extension est \href{https://marketplace.visualstudio.com/items?itemName=vitorva.vscode-uon}{disponible} sur le marketplace de VS Code.
 Elle fournit du support de langage sur une grammaire fonctionnelle UON qui est capable de traiter des mappings et des séquences de type JSON et YAML, ainsi qu'un schéma de validation.

@@ -4,11 +4,9 @@
 En 2018, le professeur Yves Chevallier a imaginé un nouveau format de sérialisation proche de YAML et JSON nommé \Gls{uon}.
 
 UON vise à rassembler toutes les caractéristiques utiles des formats de sérialisation les plus utilisés sur internet (XML, YAML et JSON),
-en un seul format qui les englobe.
+en un seul format qui les englobe. Ce qui le rend adapté à la communication \Gls{m2m} pour des dispositifs embarqués de faibles puissances, jusqu'aux plateformes haut de gamme basées sur le cloud.
 
-Cela afin de le rendre adapté à la communication \Gls{m2m} pour des dispositifs embarqués de faibles puissances, jusqu'aux plateformes haut de gamme basées sur le cloud.
-
-Il offre des fonctionnalités supplémentaires utiles pour accroître l'interopérabilité entre différents types d'appareils. Ses principaux avantages par rapport à d'autres langages similaires sont les suivants :
+Il offre donc des fonctionnalités supplémentaires utiles pour accroître l'interopérabilité entre différents types d'appareils. Ses principaux avantages par rapport à d'autres langages similaires sont les suivants :
 
 \begin{itemize}
     \item Typage fort
@@ -22,7 +20,7 @@ Il offre des fonctionnalités supplémentaires utiles pour accroître l'interop�
 \end{itemize}
 
 % • la problématique,
-Pour être utilisable, ce format de sérialisation devrait disposer de son propre support de langage afin qu'il soit utilisé par un plus grand nombre.
+Pour être utilisable, ce format de sérialisation doit disposer de son propre support de langage afin qu'il soit utilisé par un plus grand nombre.
 
 % • les objectifs du travail,
 % editeur de texte ou de code ?
@@ -33,9 +31,11 @@ Le support de langage consistera donc à fournir à l'utilisateur, les outils po
 % • la méthodologie utilisée,
 Les premières semaines ont été majoritairement consacrées à se renseigner.
 Puis un \Gls{PoC} a été rapidement réalisé pour s'assurer de la faisabilité de certaines fonctionnalités, avant de se consacrer à la réalisation du projet.
-Ce PoC testait surtout que le moteur de complétion retournait bien des candidats et fournissait une coloration syntaxique simple.
+Ce PoC testait surtout que le moteur de complétion retournait bien des candidats pour la fonctonnalité de l'auto-complétion.
 
-Des fonctionnalités ont connu des améliorations durant le long du projet.
+Puis les fonctionnalités ont été implémenté progressivement.
+
+Elles ont connu des améliorations durant le long du projet.
 Le support de langage traitait initialement uniquement une grammaire en UON qui permettait des constructions dans un format proche en JSON.
 avant d'ajouter le format YAML.
 Les propriétés n'étaient pas aussi considérées dans un premier temps dans l'outline view. Puis elles ont été rajoutées par la suite.
@@ -43,8 +43,9 @@ Les propriétés n'étaient pas aussi considérées dans un premier temps dans l
 Les principales ressources utilisées ont été :
 
 \begin{itemize}
-    \item Le site de VS Code a été directement la source principale pour se renseigner sur la mise en place et la gestion d'une extension.
+    \item Le site de VS Code comme source principale pour se renseigner sur la mise en place et la gestion d'une extension.
     \item Des articles en ligne concernant ANTLR et le moteur de complétion.
+    \item Les issues sur Github.
     \item Et bien évidemment stackoverflow pour tous types de questions.
 \end{itemize}
 
@@ -65,9 +66,9 @@ Au terme de ce projet, les points attendus du cahier des charges ont été effec
 \begin{itemize}
     \item Définir la grammaire du langage UON utilisée.
     \item Implémenter une intégration continue.
-    \item Implémenter de l'autocomplétion : les éléments proposés à l'utilisateur sont des mots-clés (le nom des structures, les types et leurs propriétés associées).
+    \item Implémenter de l'autocomplétion : les éléments proposés à l'utilisateur sont des mots-clés (le nom des structures, des unités et les types et leurs propriétés associées).
     \item Implémenter une outline view.
-    \item Implémenter la documentation on hover.
+    \item Implémenter l'affichage des informations au survol de la souris (documentation on hover).
     \item Commencer à implémenter un Linter simple pour signaler des erreurs.
 \end{itemize}
 
