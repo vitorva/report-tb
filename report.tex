@@ -220,14 +220,14 @@ Dans le cadre de ce projet, cette arbre sera utilisé lorsque cela sera nécessa
 \subsection{AST}
 Le parse tree contient toutes les informations et beaucoup d'entre elles ne nous intéressent pas.
 Typiquement les informations grammaticales et structurelles.
-C'est pourquoi on en extrait car un AST.
-Un AST est une représentation abstraite de notre input. Il ne contient généralement que les informations les plus pertinentes \cite{cst}.
+C'est pourquoi on en extrait généralement un \Gls{ast}.
+Il ne contient généralement que les informations les plus pertinentes \cite{cst}.
 
 Par exemple, le parse tree d'une opération arithmétique simple pourrait être représenté par la figure \ref{parse-tree}.
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=6cm]{assets/figures/parse-tree.PNG}}
+        \frame{\includegraphics[width=8cm]{assets/figures/parse-tree.PNG}}
     \end{center}
     \caption[Exemple d'un parse tree]{\label{parse-tree} Exemple d'un parse tree}
 \end{figure}
@@ -404,7 +404,6 @@ Cette liste est non exhaustive, mais permet de montrer l'équivalence des deux s
 \subsection{Fault tolerant Parser}
 Pour fournir des fonctionnalités de langue, un point souvent mentionné est l'utilisation d'un parser.
 Car l'arbre généré par celui-ci contient des informations concernant la structure du document utiles pour certaines fonctionnalités.
-Il s'agira souvent en pratique d'un \Gls{ast}.
 
 Des outils permettant la génération d'un parser existent à partir d'une grammaire et seront privilégiés.
 
@@ -702,12 +701,12 @@ Ces collections peuvent être imbriqué seulement par format, on ne peut pas avo
 \end{lstlisting}
 
 \begin{lstlisting}[frame=single,caption={Exemple d'un mapping en format YAML},captionpos=b,label={yaml-map}]
-ok :
-    -  ok
+key :
+    -  "text"
     - !float32 12
     -
-         - ok
-ok2 : -23
+         - tes
+key2 : -23
 \end{lstlisting}
 
 \begin{lstlisting}[frame=single,caption={Exemple d'une séquence en format JSON},captionpos=b,label={json-seq}]
@@ -853,6 +852,8 @@ Car encapsuler entre des caractères spécifiques, il n'y a pas d'ambiguïtés p
 Par contre un cas spécial a dû être traité. Si l'on veut pouvoir utiliser directement un mot sans guillemet, mais qu'il existe dans la grammaire.
 C'est pourquoi nous avons la règle de parser \emph{literal} pour pouvoir utiliser un de ces tokens comme string.
 
+Par exemple :
+
 \begin{lstlisting}[frame=single]
     {
         temperature : 10 C
@@ -872,7 +873,7 @@ comme possible clé alors on aura une erreur.
 
 \subsubsection{Unquoted}
 
-\begin{listing}[!ht]
+\begin{listing}[H]
     \begin{minted}{antlr}
     UNQUOTED_STRING: IDENTIFIER+;
 
@@ -890,7 +891,7 @@ comme possible clé alors on aura une erreur.
 
 \subsubsection{Quoted}
 
-\begin{listing}[!ht]
+\begin{listing}[H]
     \begin{minted}{antlr}
     QUOTED_STRING:
     '"' DOUBLE_QUOTE_CHAR* '"'
@@ -1422,10 +1423,12 @@ L'indexation est gérée de deux manières différentes comme illustré par la f
 Cela va dépendre si on décide d'ignorer ou non les espaces depuis la grammaire g4.
 Ce qui est fait actuellement c'est de récupérer ces tokens dans un canal mais sans le considérer dans le langage.
 
-\begin{listing}[!ht]
+\begin{listing}[H]
     \begin{minted}{antlr}
         WS: [ \n\r\t] -> channel(HIDDEN);
     \end{minted}
+    \caption{Règle pour ignorer les espaces}
+    \label{space-rule}
 \end{listing}
 
 C'est ce qui est recommandé dans la documentation du projet c3. Car cela permet de gérer plus de cas particuliers \cite{c3-example-soql}.
@@ -1635,14 +1638,14 @@ Voici un liste non exhaustive de complétions possibles.
 
 \begin{figure}[H]
     \begin{center}
-        \includegraphics[width=4cm]{assets/figures/completion.PNG}
+        \includegraphics[width=4cm]{assets/figures/property-completion.PNG}
     \end{center}
     \caption[Complétion de propriétés]{\label{property-completion} Complétion de propriétés}
 \end{figure}
 
 \begin{figure}[H]
     \begin{center}
-        \includegraphics[width=4cm]{assets/figures/completion.PNG}
+        \includegraphics[width=4cm]{assets/figures/type-completion.PNG}
     \end{center}
     \caption[Complétion de types]{\label{type-completion} Complétion de types}
 \end{figure}
@@ -1721,7 +1724,7 @@ Chacune de ses fonctions prend comme paramètre son contexte.
 La classe UonASTVisitor implémente cette interface qui étend la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html}{AbstractParseTreeVisitor}
 pour obtenir le comportement par défaut du pattern visitor. Elle gère le mécanisme de parcours et d’agrégation des résultats.
 
-Pour obtenir l'ASR, on doit donner le parse tree créé par le parser à la fonction d'entrée \emph{visit} de notre visitor.
+Pour obtenir l'AST, on doit donner le parse tree créé par le parser à la fonction d'entrée \emph{visit} de notre visitor.
 
 \begin{listing}[!ht]
     \begin{minted}{typescript}
@@ -1935,9 +1938,9 @@ Cela ne prend non plus pas en compte ce qu'il vient après et donc remplacer un 
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=3cm]{assets/figures/lint.PNG}}
+        \frame{\includegraphics[width=8cm]{assets/figures/lint.PNG}}
     \end{center}
-    \caption[Quick fix]{\label{quick-fix} Quick fix}
+    \caption[Signalement d'erreurs]{\label{lint} Signalement d'erreurs}
 \end{figure}
 
 \subsection{Suggestion}
@@ -1954,7 +1957,7 @@ Un petit quick fix a été implémenter pour en tester la mise en place. Il perm
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=3cm]{assets/figures/quickfix.PNG}}
+        \frame{\includegraphics[width=5cm]{assets/figures/quickfix.PNG}}
     \end{center}
     \caption[Quick fix]{\label{quick-fix} Quick fix}
 \end{figure}
@@ -1989,58 +1992,45 @@ Les suivantes ont été implémentées :
 
 \chapter{Planning}
 
-% Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ?
-
-\subsection{Diagramme de gantt}
+\section{Diagramme de gantt}
 Voici le diagramme de Gantt pour ce projet.
 
 \includepdf[page=1]{assets/planning/gantt.pdf}
 
-\subsection{État actuel du projet}
+\section{Discussion}
+% Ajouter discussion de l'avancée du travail. Êtes-vous à jour ? Avez-vous pris du retard ?
+
+Le projet s'est déroulé de la manière suivante :
+\begin{enumerate}
+    \item Analyser ce qui était possible de faire puis fournir un support minimal du langage.
+    \item Améliorer ensuite progressivement ce support.
+\end{enumerate}
+
+Le planning a donc été modifié à partir de la 15ème semaine pour tenir compte des tâches qui n'avaient pas été prévues.
+
+Il s'agissait de :
+
+\begin{itemize}
+    \item Se renseigner davantages sur VS Code et ANTLR pour comprendre certains comportements.
+    \item Étendre la grammaire au format YAML et donc la gestion des identations.
+    \item Gérer les propriétés dans la outline.
+\end{itemize}
+
+Concernant les tâches, ce qui a concentré le plus de temps ont été : la complétion, l'outline view et la gestion des indentations.
+
+\section{État actuel du projet}
 
 L'état actuel du projet sur Github (au moment de la rédaction de ce rapport) correspond au commit sur la branche main, avec le hash :
 195d7eb6bdeee2ed8f67ea196adae874f2b1f443
 
-Actuellement l'extension est \href{https://marketplace.visualstudio.com/items?itemName=vitorva.vscode-uon}{disponible} sur le marketplace de VS Code.
-Elle fournit du support de langage sur une grammaire fonctionnelle UON qui est capable de traiter des mappings et des séquences de type JSON et YAML, ainsi qu'un schéma de validation.
-
-Passons maintenant en revue les tâches convenues dans le cahier des charges :
-
-\begin{itemize}
-    \item Une intégration continue (tests et publications automatisées) a été implémentée.
-    \item Une coloration syntaxique a été implémenté
-    \item De l'auto-complétion a été implémenté
-    \item Une outline view a été implémenté
-    \item Afficher des informations au survol (information on hover) d'une souris a été implémenté
-\end{itemize}
-
-Il resterait à :
-
-\begin{itemize}
-    \item Corriger quelques erreurs encore existantes
-    \item Implémenter les fonctionnalités de la rubrique "si le temps le permet"
-\end{itemize}
+L'extension est \href{https://marketplace.visualstudio.com/items?itemName=vitorva.vscode-uon}{disponible} sur le marketplace de VS Code.
 
 \chapter{Conclusion}
-
-% Restate your thesis.
-% Synthesize or summarize your major points.
-% Make the context of your argument clear.
-
-% recherche
-% UON
-% parser
-% ANTLR
-% VS Code
-%   CI/CD
-% Scope de la grammaire
-% YAML / JSON
-% Fonctionnalites
 
 L'objectif de ce Travail de Bachelor était le support du langage UON au travers de l'implémentation d'une extension VS Code.
 
 L'idée principale de ce support était qu'il devait mettre à disposition dans l'éditeur, les éléments pour permettre aux mieux la rédaction d'un fichier UON.
-Pour éviter de devoir consulter la documentation régulièrement.
+Pour éviter par exemple de devoir consulter la documentation régulièrement.
 
 Il a donc fallu découvrir et analyser un nouveau langage.
 Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouvant s'avérer utile pour ce langage.
@@ -2048,24 +2038,24 @@ Découvrir les technologies permettant leur implémentation et ensuite pouvoir l
 
 Lors de la phase de recherche, il a été appris qu'un parser est un élément important pour fournir du support de langage.
 Heursement, des outils existent pour en générer depuis une grammaire. Cela a pour intérêt majeur de faire gagner du temps de développement en accélérant grandement la mise en place d'un support de langage.
-ANTLR s'est donc avéré être une composante dominante du projet. De plus sa gestion des erreurs fournit par défaut permet d'avoir une meilleure tolérance concernant celles-ci
-qui sont fréquentes dans un éditeur.
+ANTLR s'est donc avéré être une composante dominante du projet. De plus sa gestion des erreurs fournit par défaut permet d'avoir une meilleure tolérance concernant celles-ci.
+Ce qui est avantageux car les erreurs sont relativement fréquentes dans un éditeur.
 
-Nous avons fait le choix de travailler uniquement dans un environnement VS Code mais fournissant toutes les clés pour des extensibilités futures
+Nous avons fait le choix de travailler uniquement dans un environnement VS Code mais fournissant toutes les clés pour des extensibilités futures.
 VS Code est un environnement riche et complexe, mais qui est extrêmement bien documenter et agréable à utiliser.
-Par exemple, sur la mise en place d'une intégration continue (tests et déploiement automatisé).
-Une constatation générale et qu'il est parfois difficile de savoir ce que peut faire cet éditeur par défaut ou non.
+Cependant, Il est quand même parfois difficile de savoir ce que peut faire cet éditeur par défaut ou non.
 
-Pour pouvoir fournir du support pour un langage, on est obligé de connaitre la grammaire sur laquelle ces fonctionnalités porteront.
+La grammaire a aussi été un élément important.
+Pour pouvoir fournir du support pour un langage, on est obligé de connaitre l'étendu du langage sur laquelle ces fonctionnalités porteront.
 Heursement pour nous nous avons pu reprendre une implémentation concrète que nous avons adaptée pour couvrir nos besoins.
+
+L'outil de complétion c3 a aussi été une très bonne découverte et se couplait bien avec notre environnement.
 
 Chaque langage ayant ses spécificités, les besoins peuvent varier les uns des autres.
 Les mêmes fonctionnalités entre deux langages peuvent avoir des comportements relativement différents.
 L'avantage d'avoir travaillé sur un langage de sérialisation comme UON est que cela est relativement moins complexe à gérer qu'un langage de programmation.
-Cela nous oblige à découvrir et prendre conscience ce qu'il est possible de faire plus généralement.
-Mais UON est aussi plus complexe que ces concurrents sur plein de points.
-
-L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi été une très bonne découverte.
+Mais, cela nous oblige à découvrir et prendre conscience ce qu'il est possible de faire plus généralement.
+UON étant plus complexe que ces concurrents sur plein de points.
 
 Pour finir, je dirais que c'est un des plus grands projets sur lequel j'ai été amené à travailler seul.
 J'ai donc beaucoup appris et me servirais de ces leçons pour la suite. Travailler sur ce projet s'est révélé être très intéressant.
@@ -2088,31 +2078,21 @@ Au début du projet, certaines règles de la grammaire étaient malformées est 
 De plus, comme c'est une implémentation en Typescript qui est utilisée, peu d'exemples existent et cela a compliqué le travail lorsque des erreurs survenaient.
 
 Adapter la grammaire a été un challenge. Il a été nécessaire de modifier certaines règles, car le comportement par défaut posait parfois problème. ANTLR étant différent de Lark.
-
-La gestion des deux formats (JSON et YAML) c'est révélé être assez complexe, dû à la gestion des indentations à traiter.
-
-Du temps a été passé pour essayer d'améliorer le comportement des erreurs sans succès. Le comportement par défaut n'étant jamais réellement amélioré.
+Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
+Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci et j'ai malheureusement perdu du temps à corriger ce genre d'erreurs.
+La gestion des deux formats (JSON et YAML) c'est aussi révélé être assez complexe, dû à la gestion des indentations à traiter.
 
 Les fonctionnalités qui ont requis le plus de travail ont été la complétion et l'outline view.
-Pour la complétion, même si le moteur est extrêmement puissant et qu'un usage basique convient très bien pour notre utilisation.
-Il a été nécessaire d'analyser son fonctionnement pour comprendre ce qu'il était possible de faire.
-Un point complexe a été la manière de trouver le bon indice car des situations particulières pouvait fausser le résultat attendu.
-
+Pour la complétion, il a été nécessaire d'analyser le fonctionnement du moteur pour comprendre ce qu'il était possible de faire.
+Même si un usage assez basique s'est révélé adapté pour notre utilisation, il est important de savoir comment étendre une solution.
+Un autre point complexe a été la manière de trouver le bon indice car des situations particulières pouvait fausser le résultat attendu.
 Pour l'outline view, il a fallu comprendre comment construire un objet en cours d'un parcours DFS. Et ajouter la gestion des propriétés avait rajouté une couche de complexité supplémentaire.
 
-Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
-Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci.
-J'ai malheureusement, je pense, perdu du temps à corriger ce genre d'erreurs.
+Du temps a aussi été passé pour essayer d'améliorer le comportement des erreurs à l'aide du fichier \emph{UonCompletionErrorStrategy.ts} sans succès. Le comportement par défaut n'étant jamais réellement amélioré.
 
 La rédaction du rapport a aussi représenté un challenge. Il s'agit d'un travail conséquent étant donné l'ampleur d'un tel projet.
 
 \section{Amélioration possible}
-
-La grammaire peut-être modifié ou étendue davantage selon les besoins des utilisateurs.
-Un point intéressant serait d'avoir la possiblité d'avoir un schéma de validation directement intégré au collection pour éviter de devoir travailler sur deux fichiers différents.
-
-Il serait intéressant de déplacer la logique des fonctionnalités de l'extension dans un langage server. Cela pour ne plus dépendre de l'API VS Code et pour permettre de réutiliser ce travail
-dans des extensions d'autres éditeurs plus facilement.
 
 Le linter a partiellement été implémenté et se base sur la détection des erreurs d'ANTLR.
 Les messages d'erreurs sont ceux qu'ANTLR affiche en cas d'erreur et ne sont très "user-friendly". Il faudrait donc adapter ces messages.
@@ -2128,7 +2108,6 @@ La liste des erreurs connues est la suivante :
     \item Imbriquer des mapping ou sequences en format YAML ne fonctionne pas correctement. Cela vient de la gestion des indentations qu'il faudrait corriger.
     \item L'éditeur affiche un caractère erroné (ondulation rouge) au début du document lorsque le fichier est vide. Cela vient aussi de la gestion des indentations.
 \end{itemize}
-
 
 
 %% \vfil
