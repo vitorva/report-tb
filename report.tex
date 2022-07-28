@@ -201,7 +201,7 @@ Ce sont ces tokens qui seront ensuite utilisés lors de l'analyse syntaxique.
 L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire.
 Une grammaire étant habituellement un fichier qui décrit formellement le langage.
 
-Le résultat de cette analyse est un Parse Tree qui représente toutes les dérivations de notre input en fonction de la grammaire.
+Le résultat de cette analyse est un \emph{parse Tree} (aussi nommé CST) qui représente toutes les dérivations conrète de notre input en fonction de la grammaire.
 Elle est souvent représentée sous forme d'un arbre hiérarchique.
 
 Généralement c'est cette structure finale qui sera interprétée ou compilée.
@@ -216,6 +216,30 @@ Ce processus peut être représenté par la figure \ref{Analayse du code source}
 \end{figure}
 
 Dans le cadre de ce projet, cette arbre sera utilisé lorsque cela sera nécessaire.
+
+\subsection{AST}
+Le parse tree contient toutes les informations et beaucoup d'entre elles ne nous intéressent pas.
+Typiquement les informations grammaticales et structurelles.
+C'est pourquoi on en extrait car un AST.
+Un AST est une représentation abstraite de notre input. Il ne contient généralement que les informations les plus pertinentes \cite{cst}.
+
+Par exemple, le parse tree d'une opération arithmétique simple pourrait être représenté par la figure \ref{parse-tree}.
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=6cm]{assets/figures/parse-tree.PNG}}
+    \end{center}
+    \caption[Exemple d'un parse tree]{\label{parse-tree} Exemple d'un parse tree}
+\end{figure}
+
+Son AST pourrait être, par exemple, ce que l'on voit à la figure \ref{ast}.
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=6cm]{assets/figures/ast.PNG}}
+    \end{center}
+    \caption[Exemple d'un AST]{\label{ast} Exemple d'un AST}
+\end{figure}
 
 \section{VS Code}
 Cet éditeur a été choisi, car il fait partie des éditeurs les plus populaires. C'est également l'éditeur que j'utilise le plus personnellement et donc je suis déjà familier de son environnement.
@@ -1662,31 +1686,7 @@ Mais cette approche n'est pas optimale et il serait difficile de représenter la
 
 Nous allons donc utiliser notre parser.
 
-Le résulat du parser est un "parse tree" (aussi nommé CST) qui est une représentation concrète de notre input.
-Le parse tree contient toutes les informations et beaucoup d'entre elles ne nous intéressent pas.
-Typiquement les informations grammaticales et structurelles.
-C'est pourquoi il faut pouvoir le parcourir pour en extraire un AST.
-Un AST est une représentation abstraite de notre input. Il ne contient généralement que les informations les plus pertinentes \cite{cst}.
-
-Par exemple, le parse tree d'une opération arithmétique simple pourrait être représenté par la figure \ref{parse-tree}.
-
-\begin{figure}[!h]
-    \begin{center}
-        \frame{\includegraphics[width=8cm]{assets/figures/parse-tree.PNG}}
-    \end{center}
-    \caption[Exemple d'un parse tree]{\label{parse-tree} Exemple d'un parse tree}
-\end{figure}
-
-Son AST pourrait être, par exemple, ce que l'on voit à la figure \ref{ast}.
-
-\begin{figure}[!h]
-    \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/ast.PNG}}
-    \end{center}
-    \caption[Exemple d'un AST]{\label{ast} Exemple d'un AST}
-\end{figure}
-
-Donc pour générer une telle structure, il va falloir parcourir le parse tree pour récupérer uniquement les informations utiles pendant le parcours.
+Donc pour générer une telle structure, il va falloir parcourir le parse tree pour récupérer un AST qui contiendra uniquement les informations utiles pendant le parcours.
 
 Pour parcourir un arbre, deux approches sont possibles : Le pattern \emph{Listener} ou \emph{Visitor}.
 La première consiste à écouter les types de noeuds traversés qui nous intéressent. Le problème et que cette approche ne nous permet pas de manipuler un objet en cours de route ni gérer le flux d'exécution.
