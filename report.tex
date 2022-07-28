@@ -444,7 +444,7 @@ Il y a seulement un outil qui permet de générer le code dans les langages cibl
 Pour pouvoir utiliser cet outil dans un environnement autre que Java, il est nécessaire de l'utiliser dans un runtime (environnement d'exécution) propre au langage souhaité.
 
 Le runtime ainsi que les fichiers générés doivent être dans le même langage. La liste se trouve \href{https://github.com/antlr/antlr4/blob/master/doc/targets.md}{ici}.
-Malheursement, le typscript n'en fait pas partie.
+Malheureusement, le typscript n'en fait pas partie.
 
 \subsubsection{antlr4ts}
 C'est \emph{antlr4ts} qui sera finalement choisi. C'est un outil permettant d'utiliser ANTLR dans environnement d'exécution en typescript et donc parfaitement adapté pour VS Code.
@@ -511,7 +511,7 @@ Au pire des cas il s'agira d'un token de retour à la ligne \Gls{eof}.
 C'est grâce à ce mécanisme qui fait que si nous utilisons le \emph{DefaultErrorStrategy} nous obtiendrons un parse tree dans tous les cas.
 Le résultat du parsing n'a pas besoin d'être correct. Il est possible de travailler avec du code incomplet ou malformé, ce qui est relativement fréquent dans un éditeur.
 
-Malheursement, je n'ai pas pu explorer plus en profondeur ce mécanisme complexe de resynchronisation.
+Malheureusement, je n'ai pas pu explorer plus en profondeur ce mécanisme complexe de resynchronisation.
 Cela pourrait se révéler intéressant pour tolérer plus d'erreurs au lieu d'une seul pour l'instant.
 
 \section{UON}\label{UON}
@@ -1797,7 +1797,7 @@ dans un objet de type \emph{DocumentSymbol}.
 Généralement un noeud nous permet de nous rediriger sur l'élément du fichier lorsqu'on le sélectionne depuis la sidebar ou depuis la search bar.
 Il faut donc pouvoir être capable de récupérer la position d'un élément du fichier.
 
-Heursement on peut récupérer cette information lors d'un parcours d'un noeud terminal du parse tree.
+Heureusement on peut récupérer cette information lors d'un parcours d'un noeud terminal du parse tree.
 Il suffit d'observer le token associé au symbole de ce noeud et plus particulièrement les
 propriétés \emph{line} et \emph{charPositionInLine} (qui est la position que l'on qualifierait généralement de colonne).
 Il faut toutefois juste corriger la position de la ligne en soustrayant la valeur d'une unité, car l'indice d'une ligne commence à 0 sur VS Code et 1 pour ANLTR.
@@ -2023,7 +2023,7 @@ Concernant les tâches, ce qui a concentré le plus de temps ont été : la comp
 
 \section{État actuel du projet}
 
-L'état actuel du projet sur Github (au moment de la rédaction de ce rapport) correspond au commit sur la branche main, avec le hash :
+L'état actuel du projet sur Github correspond au commit sur la branche main, avec le hash :
 195d7eb6bdeee2ed8f67ea196adae874f2b1f443
 
 Pour rappel, le projet est disponible à l'adresse suivante : \url{https://github.com/vitorva/vscode-uon}.
@@ -2080,7 +2080,7 @@ Définir quelles sont les fonctionnalités à implémenter dans un éditeur pouv
 Découvrir les technologies permettant leur implémentation et ensuite pouvoir les utiliser en sein de notre application.
 
 Lors de la phase de recherche, il a été appris qu'un parser est un élément important pour fournir du support de langage.
-Heursement, des outils existent pour en générer depuis une grammaire. Cela a pour intérêt majeur de faire gagner du temps de développement en accélérant grandement la mise en place d'un support de langage.
+Heureusement, des outils existent pour en générer depuis une grammaire. Cela a pour intérêt majeur de faire gagner du temps de développement en accélérant grandement la mise en place d'un support de langage.
 ANTLR s'est donc avéré être une composante dominante du projet. De plus sa gestion des erreurs fournit par défaut permet d'avoir une meilleure tolérance concernant celles-ci.
 Ce qui est avantageux car les erreurs sont relativement fréquentes dans un éditeur.
 
@@ -2089,8 +2089,8 @@ VS Code est un environnement riche et complexe, mais qui est extrêmement bien d
 Cependant, Il est quand même parfois difficile de savoir ce que peut faire cet éditeur par défaut ou non.
 
 La grammaire a aussi été un élément important.
-Pour pouvoir fournir du support pour un langage, on est obligé de connaitre l'étendu du langage sur laquelle ces fonctionnalités porteront.
-Heursement pour nous nous avons pu reprendre une implémentation concrète que nous avons adaptée pour couvrir nos besoins.
+Pour pouvoir fournir du support pour un langage, on est obligé de connaitre l'étendue du langage sur laquelle ces fonctionnalités porteront.
+Nous avons pu reprendre une implémentation concrète et l'avons adaptée pour couvrir nos besoins.
 
 L'outil de complétion c3 a aussi été une très bonne découverte et se couplait bien avec notre environnement.
 
@@ -2103,7 +2103,7 @@ UON étant plus complexe que ces concurrents sur plein de points.
 Pour finir, je dirais que c'est un des plus grands projets sur lequel j'ai été amené à travailler seul.
 J'ai donc beaucoup appris et me servirais de ces leçons pour la suite.
 
-Pour toute ces raisons, travailler sur ce projet s'est révélé être très intéressant.
+Pour toutes ces raisons, travailler sur ce projet s'est révélé être très intéressant.
 
 %passer trop de temps sur la coloration....
 
@@ -2125,16 +2125,16 @@ De plus, comme c'est une implémentation en Typescript qui est utilisée, peu d'
 Adapter la grammaire a été un challenge. Il a été nécessaire de modifier certaines règles, car le comportement par défaut posait parfois problème. ANTLR étant différent de Lark.
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
 Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci et j'ai malheureusement perdu du temps à corriger ce genre d'erreurs.
-La gestion des deux formats (JSON et YAML) c'est aussi révélé être assez complexe, dû à la gestion des indentations à traiter.
+La gestion des deux formats (JSON et YAML) s’est aussi révélée être assez complexe, due à la gestion des indentations à traiter.
 
 Les fonctionnalités qui ont requis le plus de travail ont été la complétion et l'outline view.
 Pour la complétion, il a été nécessaire d'analyser le fonctionnement du moteur pour comprendre ce qu'il était possible de faire.
 Même si un usage assez basique s'est révélé adapté pour notre utilisation, il est important de savoir comment étendre une solution.
-Un autre point complexe a été la manière de trouver le bon indice car des situations particulières pouvait fausser le résultat attendu.
+Un autre point complexe a été la manière de trouver le bon indice, car des situations particulières pouvaient fausser le résultat attendu.
 Pour l'outline view, il a fallu comprendre comment construire un objet en cours d'un parcours DFS. Et ajouter la gestion des propriétés avait rajouté une couche de complexité supplémentaire.
 
-Plus globalement, implémenter des fonctionnalités s'est averé plus complexe que ce que je pensais. Car on est sens cesse confronté à des cas que l'on aurait pas penser et il est difficle de tout prévoir.
-Il est aussi difficile de savoir quelle comportement est acceptable ou non et quand il faudrait s'arrêter.
+Plus globalement, implémenter des fonctionnalités s'est avéré assez complexe. Car on est constamment confronté à des cas que l'on n’a pas pensé, il est compliqué de tout prévoir.
+Il est aussi difficile de savoir quel comportement est acceptable ou non et quand il faudrait s'arrêter d'apporter des ajustements.
 
 Du temps a également été passé pour essayer d'améliorer le comportement des erreurs à l'aide du fichier \emph{UonCompletionErrorStrategy.ts} sans succès. Le comportement par défaut n'étant jamais réellement amélioré.
 
