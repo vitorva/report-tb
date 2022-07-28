@@ -506,6 +506,7 @@ Lorsqu'on sérialise des données, elles se retrouvent soit sous forme binaire o
 Ce projet se focalisera naturellement uniquement sur le format textuel, car c'est le seul format, humainement interprétable, que l'on manipulera dans un éditeur.
 Le rôle d'un format de sérialisation et de pouvoir représenter des données sous une autre forme pour être ensuite manipulé.
 
+UON est un langage comprenant plusieurs composantes est particularités qui ne peuvent pas toutes être traité dans un simple éditeur de texte.
 Un éditeur ne traite généralement que des fichiers statiques.
 Les étapes de sérialisation et désérialisation ne se feront donc pas à notre niveau.
 Car pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un environnement de programmation (ex : Python).
@@ -625,7 +626,7 @@ C'est un langage complexe et qui pourrait encore, être amener à évoluer.
 Heureusement, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim.
 Cette grammaire se trouve à l'adresse suivante : \url{https://github.com/uon-language/uon-parser/tree/master/grammar}.
 
-Elle a été convertie en format ANTLR. Des modifications ont été apportées et seront expliquées par la suite.
+Elle a été convertie en format ANTLR. Des modifications ont été apportées et seront expliquées par la suite à la section \ref{modification}.
 
 Les fonctionnalités se baseront sur celle-ci. Dans le but de rester cohérents entre elles.
 
@@ -635,7 +636,6 @@ La version finale est écrite dans le fichier \emph{UON.g4}.
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
 
 Ci-dessous se trouveront des exemples de ce qu'il est possible de faire.
-Les points concernant une adaptation particulière ou des modifications seront expliqués à la section \ref{modification}.
 
 \textbf{Remarque} : La grammaire qui a été adaptée dans le format d'ANTLR sera utilisée pour illustrer nos exemples.
 
@@ -658,13 +658,13 @@ Un fichier UON peut contenir comme élément racine trois structures différente
 \end{listing}
 
 \subsection{Collections}
-La grammaire actuelle nous permet de définir des collections. Ces collections sont des mapping et séquences soit dans un format proche de json ou de yaml.
+Ces collections sont des mapping et séquences dans un format proche de json ou de yaml.
 
-UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à un certain degré (reduced set), il est naturel de penser qu'un format YAML soit supporté même recommandé que son alternative.
+UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à un certain degré (reduced set). Il est naturel de penser qu'un format YAML soit supporté, même si son utilisation est moins recommandé que son alternative.
 
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
-% exemple de map
+% todo
 \begin{lstlisting}[frame=single,caption={Exemple d'un mapping en format JSON},captionpos=b,label={json-map}]
     {
         "name" ( description : a12 ) :  !str(optional: False) paul,
@@ -701,7 +701,8 @@ ok2 : -23
 \subsection{Schéma}
 On peut définir également un schéma de validation.
 
-Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus.
+Ce schéma doit se trouver dans un autre document que les deux structures ci-dessus. Cela correspond à la stratégie \emph{Separated schema}.
+
 Cette séparation permet d'éviter des ambiguïtés. On incite comme ça à l'utilisateur à séparer la logique entre différents fichiers.
 
 \begin{lstlisting}[frame=single,caption={Exemple d'un schéma de validation},captionpos=b,label={schema}]
@@ -717,18 +718,16 @@ Les types dans un schéma de validation peuvent posséder des propriétés de va
 
 \section{Modification}\label{modification}
 
-UON est un langage comprenant plusieurs composantes est particularités qui ne peuvent pas toutes être traité dans un simple éditeur de texte.
+La structure de départ a été gardé, car cette grammaire regroupe déjà des éléments importants du langage UON.
 
-Nous allons garder presque la même structure, car cette grammaire regroupe déjà des éléments importants du langage UON.
+Cependant quelques points concernant la structure générale et les règles concernant les terminaux (string, nombre, etc.) ont été modifiés.
 
-Cependant quelques points concernant la structure générale ont été modifiés.
-
-Pour commencer il a fallu convertir la grammaire dans à la main car aucun convertisseur n'existe. Heureusement, ANTLR et Lark se basent sur une notation EBNF.
+Pour commencer il a fallu convertir la grammaire à la main car aucun convertisseur n'existe. Heureusement, ANTLR et Lark se basent sur une notation EBNF.
 Ce qui fait que la structure de la grammaire reste relativement semblable.
 
 Le seul point de divergence a été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci varie légèrement. Et sur la gestion de l'indentation.
 
-Concernant la structure d'un fichier de grammaire ANTLR .g4 il y a quelques subtilités à connaitre :
+Concernant la structure d'un fichier de grammaire ANTLR \emph{.g4}, il y a quelques subtilités à connaitre :
 
 \begin{itemize}
     \item Le fichier doit comporter le même nom que la règle de départ.
@@ -749,12 +748,13 @@ Contrairement au parser lark, la gestion des indentations n'est pas gérée auto
 Ce mécanisme doit malheureusement être traité par nos soins.
 
 Mais avant de résoudre ce problème, il est nécessaire de rappeler que notre grammaire n'est pas uniforme concernant la gestion des retours à la ligne.
-Et c'est là où se trouve la vraie problématique. En effet, UON peut être écrit sous une forme proche de JSON ou de YAML. Le premier ne tient pas compte des indentations contrairement à la seconde.
+Et c'est là où se trouve la vraie problématique.
+Le format proche de JSON ne tient pas compte des indentations contrairement à celle de YAML.
 Et la gestion des indentations nécessite de prendre en compte les retours à la ligne.
 
 Il y a donc trois solutions qui ont été envisagées :
 
-La première est de rajouter des tokens de retour ou il serait jugé bon de les avoir dans la grammaire, et de les rendre optionnels.
+La première est de rajouter des tokens de retour à la ligne ou il serait jugé possible de les avoir dans les règles propre au format JSON, et de les rendre optionnels.
 Mais ce n'est pas très propre et on risque d'en placer énormément.
 
 Le deuxième serait d'ignorer tout simplement les erreurs.  C'est-à-dire que si on à un token de retour à la ligne qui ne devrait pas être là, alors l'ignorer tout simplement.
@@ -769,8 +769,8 @@ pour pouvoir gérer les imbrications correctement.
 Pour ce faire, à chaque fois qu'un espace qu'un retour à la ligne est détecté par le lexer, nous prenons compte de la taille de l'espacement qu'il contient (ex : "\\r\\n    ")
 Cet espacement nous permettra de savoir si l'on doit rajouter des INDENT ou DEDENT.
 
-Il est possible de placer le code permettant ce mécanisme dans le fichier grammaire, en l'écrivant dans le block \emph{lexer:@member{}}.
-Lors de la génération, le code est placé dans le lexer. Cependant lors de la génération les imports seront manquants, il est nécessaire d'aller les rajouter manuellement.
+Il est possible de placer le code permettant ce mécanisme dans le fichier de grammaire, en l'écrivant dans le block \emph{lexer:@member{}}.
+Lors de la génération, le code est placé dans le lexer.
 
 Le code permettant est une adaptation d'une solution déjà existante pour du YAML dans une grammaire ANTLR, elle se trouve \href{https://github.com/umaranis/FastYaml}{ici}
 
@@ -784,9 +784,12 @@ Il est maintenant possible d'avoir par exemple la règle suivante :
     \label{ex-indentation-rule}
 \end{listing}
 
-Les tokens INDENT et DEDENT seront créés par le lexer si nécessaire.
+Les tokens INDENT et DEDENT seront créés donc par le lexer.
 
 \subsubsection{Minus}
+
+Le caractère "-" est utilisé pour définir une séquence en format yaml.
+Il a fallu forcer le caractère directement dans l'expression régulière définissant un nombre.
 
 \begin{listing}[!ht]
     \begin{minted}{antlr}
@@ -802,11 +805,6 @@ Les tokens INDENT et DEDENT seront créés par le lexer si nécessaire.
     \label{number-rule}
 \end{listing}
 
-Le caractère "-" étant utilisé pour définir une séquence en format yaml.
-Il a fallu forcer le caractère directement dans l'expression régulière définissant un nombre.
-
-\textbf{Remarque} : cette solution n'est pas optimale, car si on modifie la grammaire il faudra modifier ce code.
-
 \subsection{String}
 
 \begin{listing}[!ht]
@@ -820,16 +818,15 @@ Il a fallu forcer le caractère directement dans l'expression régulière défin
     \label{string-rule}
 \end{listing}
 
-Une valeur textuelle peut soit être entre guillemets ou non.
+Chaque valeur textuelle peut écrite directement ou être placé entre guillemets ou accolades.
 
-C'est donc aussi le cas pour la clé d'une map.
-
-Cela se rapproche par exemple, un peu plus de ce que fait \href{https://json5.org/}{JSON5} par exemple.
-Aussi cela permet d'avoir des clés qui peuvent contenir exactement ce que l'on veut.
-Car encapsuler entre des caractères spécifiques, il n'y a pas d'ambiguïtés possibles. Alors que sans on est contraint de limiter la forme de la clé.
+C'est aussi le cas pour la clé d'une map.
+Cela se rapproche par exemple, un peu plus de ce que fait \href{https://json5.org/}{JSON5}.
+Cela permet d'avoir des clés qui peuvent contenir exactement ce que l'on veut.
+Car encapsuler entre des caractères spécifiques, il n'y a pas d'ambiguïtés possibles. Alors que sans, on est contraint de limiter la forme de la clé.
 
 Par contre un cas spécial a dû être traité. Si l'on veut pouvoir utiliser directement un mot sans guillemet, mais qu'il existe dans la grammaire.
-Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" pour pouvoir utiliser un de ces tokens comme string.
+C'est pourquoi nous avons la règle de parser \emph{literal} pour pouvoir utiliser un de ces tokens comme string.
 
 \begin{lstlisting}[frame=single]
     {
@@ -839,7 +836,7 @@ Il faut ajouter ce cas, c'est pourquoi nous avons la règle de parser "literal" 
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=8cm]{assets/figures/literal-key-uon.PNG}}
+        \frame{\includegraphics[width=6cm]{assets/figures/literal-key-uon.PNG}}
     \end{center}
     \caption[Utilisation d'un token de type literal comme clé]{\label{literal-key-uon}Utilisation d'un token de type literal comme clé}
 \end{figure}
@@ -866,11 +863,6 @@ comme possible clé alors on aura une erreur.
     \label{unquoted-rule}
 \end{listing}
 
-%REGEX
-% utilisation d'outils en ligne : ex : https://regex101.com/
-% référence officielle : https://www.regular-expressions.info/
-% https://www.regular-expressions.info/anchors.html
-
 \subsubsection{Quoted}
 
 \begin{listing}[!ht]
@@ -890,12 +882,12 @@ comme possible clé alors on aura une erreur.
     \label{quoted-rule}
 \end{listing}
 
-N'importe quelle caractère peut se trouver entre guillement sauf un autre guillement et pareillement pour les apostrophe.
+N'importe quelle caractère peut se trouver entre guillement sauf un autre guillement et pareillement pour les apostrophes.
 Il est possible d'avoir des multilines strings.
 
 \subsection{Propriétés}
 
-Des propriétés de présentation ont été rajoutées en reprenant les constructions utilisées pour définir des propriétés pour les clés ainsi que de validation.
+Des propriétés de présentation pour les types ont été rajoutées.
 
 \begin{listing}[!ht]
     \begin{minted}{antlr}
@@ -964,9 +956,7 @@ la figure.
     \label{project-structure}
 \end{figure}
 
-Le code de l'implémentation est disponible sur le dépôt public \href{https://github.com/vitorva/vscode-uon}{suivant}.
-
-\textbf{Remarque} : L'implémentation détaillée dans ce rapport pourrait ne plus représenter l'état du dépôt, car ce projet est sujet à évoluer.
+Le code de du projet est disponible sur le dépôt à l'adresse suivante : \url{https://github.com/vitorva/vscode-uon}.
 
 \section{Extension}
 Nous allons voir maintenant, l'essentiel de la procédure pour créer et publier son extension.
@@ -1006,7 +996,7 @@ Et de compléter ce qui est attendu dans le terminal pour créer notre extension
     \caption[Générateur Yo Code]{\label{yo-code}Générateur Yo Code}
 \end{figure}
 
-Cela nous créera l'arborescence mentionnée précédemment au point \hyperref[Extension File Structure]{Extension File Structure}.
+Cela créera l'arborescence mentionnée précédemment au point \hyperref[Extension File Structure]{Extension File Structure}.
 
 \subsection{Lancement de l'extension}
 On peut lancer notre application en mode debug avec la touche F5. Cela va ouvrir une nouvelle fenêtre VS Code qui va contenir notre extension.
@@ -1036,7 +1026,7 @@ Pour cela, il faut modifier \emph{l'activation events} dans le fichier package.j
 
 \textbf{Prérequis} : Posséder un compte Azure.
 
-Il faut d'abord récupérer un Personal Access Token. Pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
+Il faut d'abord récupérer un \Gls{pat}. Pour ce faire, il faut créer une \href{https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops}{organisation}.
 Puis, créer un access token avec ces paramètres :
 \begin{figure}[!h]
     \begin{center}
@@ -1045,9 +1035,9 @@ Puis, créer un access token avec ces paramètres :
     \caption[Access Token]{\label{access-token}Access Token}
 \end{figure}
 
-Ce token va nous permettre publier notre extension sur un Publisher. Celui-ci nous permettra de gérer notre extension en ligne.
+Ce token va nous permettre de publier l'extension sur un publisher. Celui-ci permettra de gérer l'extension en ligne.
 
-Pour créer un publisher, il faut se connecter avec le même compte qui a créé l'organisation et le token ci-dessus via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}.
+Pour créer un publisher, il faut se connecter avec le même compte qui a été utilisé pour créé l'organisation et le token via la \href{https://marketplace.visualstudio.com/manage/publishers/}{management page}.
 
 Quand cela est fait, il faut ensuite ajouter la propriété "publisher" et saisir l'id de celui-ci dans le package.json de notre extension.
 
@@ -1096,11 +1086,11 @@ Elle consiste à exécuter la commande vsce publish depuis un github action pour
 
 \href{https://www.npmjs.com/package/vsce}{vsce} est le gestionnaire d'extension de VS Code.
 
-Il est nécessaire d'ajouter le token (PAT) comme secret dans notre dépôt github.
+Il est requis d'ajouter le token (PAT) comme secret dans notre dépôt github.
 
 \textbf{Remarque } :
 À chaque nouvelle publication de l'extension, il est nécessaire d'incrémenter la valeur du champ \emph{version} du package.json
-On peut redéployer une extension qu'avec une version supérieure que la précédente.
+On peut redéployer une extension uniquement avec une version supérieure que la précédente.
 
 \section{Génération du parser ANTLR}
 \subsubsection{Grammaire}
@@ -1381,8 +1371,14 @@ L'indexation est gérée de deux manières différentes comme illustré par la f
 \end{figure}
 
 Cela va dépendre si on décide d'ignorer ou non les espaces depuis la grammaire g4.
-
 Ce qui est fait actuellement c'est de récupérer ces tokens dans un canal mais sans le considérer dans le langage.
+
+\begin{listing}[!ht]
+    \begin{minted}{antlr}
+        WS: [ \n\r\t] -> channel(HIDDEN);
+    \end{minted}
+\end{listing}
+
 C'est ce qui est recommandé dans la documentation du projet c3. Car cela permet de gérer plus de cas particuliers \cite{c3-example-soql}.
 % https://neuroning.com/post/implementing-code-completion-for-vscode-with-antlr/
 
