@@ -283,7 +283,7 @@ En général, l'extension est une combinaison de plusieurs \emph{Contribution Po
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 
-La structure de base d'une extension est illustrée par la figure \ref{Squelette de base d'une extension VS Code}.
+La squelette de base d'une extension est illustrée par la figure \ref{basic-structure}.
 
 % https://tex.stackexchange.com/questions/98703/framebox-and-subfigure-with-dirtree-package
 \begin{figure}[H] % \begin{figure}[!h]
@@ -520,8 +520,8 @@ Il cherche à regrouper les meilleures caractéristiques des formats de sériali
 Il fournit également des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs, valider les données ainsi que pour diminuer le payload.
 
 Uniquement les points essentiels dans le cadre d'un support de langage seront abordés.
-La spécification se trouve sur :
-\url{https://github.com/uon-language/specification/blob/master/spec.md}.
+
+La spécification se trouve sur le lien suivant : \url{https://github.com/uon-language/specification/blob/master/spec.md}.
 
 \subsection{Format de sérialisation}
 
@@ -872,7 +872,7 @@ Sur la figure \ref{literal-key-uon}, on voit que la clé et bien un token de typ
 Ce token \emph{temperature} existe comme token car c'est une valeur utilisée comme quantité, mais si on ne précise pas explicitement que l'on souhaite avoir cette valeur
 comme possible clé alors on aura une erreur.
 
-\subsubsection{Unquoted}
+\subsubsection{Unquoted string}
 
 \begin{listing}[H]
     \begin{minted}{antlr}
@@ -890,7 +890,7 @@ comme possible clé alors on aura une erreur.
     \label{unquoted-rule}
 \end{listing}
 
-\subsubsection{Quoted}
+\subsubsection{Quoted string}
 
 \begin{listing}[H]
     \begin{minted}{antlr}
@@ -1198,13 +1198,13 @@ C'est celui le plus à droite qui est prioritaire. Cela peut-être utile si l'on
 
 Les scopes s'imbriquent également et c'est le plus spécifique qui est utilisé pour le choix du thème.
 Il est possible d'analyser notre code à l'aide du \emph{Scope Inspector}, qui est un outil disponible dans l'éditeur depuis la command palette de VS Code.
-pour visualiser la hiérarchie des scopes pour un token.
+pour visualiser la hiérarchie des scopes pour un token. Comme illustré par la figure \ref{scope-inspector}.
 
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/scope-inspector.png}
     \end{center}
-    \caption[Scope inspector]{\label{basic-uon} Le scope inspector sur un exemple de code en UON}
+    \caption[Scope inspector]{\label{scope-inspector} Le scope inspector sur un exemple de code en UON}
 \end{figure}
 
 La section \emph{textmate scopes} affiche la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
@@ -1632,21 +1632,21 @@ Voici un liste non exhaustive de complétions possibles.
 
 \begin{figure}[H]
     \begin{center}
-        \includegraphics[width=4cm]{assets/figures/completion.PNG}
+        \includegraphics[width=8cm]{assets/figures/completion.PNG}
     \end{center}
     \caption[Complétion d'unités]{\label{unit-completion} Complétion d'unités}
 \end{figure}
 
 \begin{figure}[H]
     \begin{center}
-        \includegraphics[width=4cm]{assets/figures/property-completion.PNG}
+        \includegraphics[width=6cm]{assets/figures/property-completion.PNG}
     \end{center}
     \caption[Complétion de propriétés]{\label{property-completion} Complétion de propriétés}
 \end{figure}
 
 \begin{figure}[H]
     \begin{center}
-        \includegraphics[width=4cm]{assets/figures/type-completion.PNG}
+        \includegraphics[width=10cm]{assets/figures/type-completion.PNG}
     \end{center}
     \caption[Complétion de types]{\label{type-completion} Complétion de types}
 \end{figure}
@@ -1958,10 +1958,12 @@ Un petit quick fix a été implémenter pour en tester la mise en place. Il perm
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=5cm]{assets/figures/quickfix.PNG}}
+        \frame{\includegraphics[width=6cm]{assets/figures/quickfix.PNG}}
     \end{center}
     \caption[Quick fix]{\label{quick-fix} Quick fix}
 \end{figure}
+
+\textbf{Remarque } : le comportement n'est pas complètement operationnelle. Il s'affiche pour chaque erreur (même quand il manque un token).
 
 \subsection{Outline view}
 Le listener se trouve au niveau du code de la outline. Étant donné que c'est une fonctionnalité qui est souvent solliciter il a été jugé interessant
@@ -2024,15 +2026,17 @@ Concernant les tâches, ce qui a concentré le plus de temps ont été : la comp
 L'état actuel du projet sur Github (au moment de la rédaction de ce rapport) correspond au commit sur la branche main, avec le hash :
 195d7eb6bdeee2ed8f67ea196adae874f2b1f443
 
+Pour rappel, le projet est disponible à l'adresse suivante : \url{https://github.com/vitorva/vscode-uon}.
+
 L'extension est \href{https://marketplace.visualstudio.com/items?itemName=vitorva.vscode-uon}{disponible} sur le marketplace de VS Code.
 
-Passons maintenant en revue les tâches réalisées :
+Passons maintenant en revue les tâches réalisées en lien avec le cahier des charges:
 
 \textbf{VSCode Extension} :
 \begin{itemize}
     \item L'extension est publié sur le marketplace
-    \item Des tests sont effectué lors d'un push sur dev ou main et lors de la publication d'une release.
-    \item Lors de la publication, l'extension et publié automatiquement.
+    \item Des tests sont effectué lors d'un push sur les branches \emph{dev} ou \emph{main} et lors de la publication d'une release.
+    \item Lors d'une release, l'extension et publiée automatiquement.
 \end{itemize}
 
 \textbf{Grammaire} :
@@ -2047,21 +2051,21 @@ Passons maintenant en revue les tâches réalisées :
 
 \textbf{Auto-complétion} :
 \begin{itemize}
-    \item Des éléments sont proposés si elles peuvent être écrit à l'emplacement souhaité.
-    \item Les éléments proposés à l'utilisateur sont des mots-clés (Les types et leurs propriétés associées, ainsi que des unités).
-    \item Les éléments peuvent aussi être des snippets.
+    \item Des suggestions sont proposés si elles peuvent être écrit à l'emplacement souhaité.
+    \item Les suggestions proposés à l'utilisateur sont des mots-clés (Les types et leurs propriétés associées, ainsi que des unités).
+    \item Les suggestions peuvent aussi être des snippets.
 \end{itemize}
 
 \textbf{Outline view} :
 \begin{itemize}
     \item Les éléments sont affichés dans l'outline d'une manière similaire à une outline de JSON ou de YAML.
-    \item Les propriétés des clés et des types sont affichés.
+    \item Les propriétés des clés et des types sont affichés comme enfant de l'élément.
 \end{itemize}
 
 \textbf{Lint} :
 \begin{itemize}
-    \item Les erreurs de syntaxes sont affichés : elles indiquent si un éléments est faux ou manquant.
-    \item Un quick fix permet de supprimer l'élément qui cause l'erreur (comportement à améliorer).
+    \item Les erreurs de syntaxes sont affichés : elles indiquent si un élément est faux ou manquant.
+    \item Un quick fix permet de supprimer l'élément qui cause l'erreur.
 \end{itemize}
 
 \chapter{Conclusion}
