@@ -21,8 +21,7 @@
 
 
 %https://www.overleaf.com/project/62b06d8b8257fff1974999df
-%\signature{mbernasconi.svg} TODO : Gérer la taille
-\signature{va_signature.png}
+\signature{va_signature.svg}
 
 \makenomenclature
 \makenoidxglossaries
@@ -664,7 +663,6 @@ UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à un
 
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
-% todo
 \begin{lstlisting}[frame=single,caption={Exemple d'un mapping en format JSON},captionpos=b,label={json-map}]
     {
         "name" ( description : a12 ) :  !str(optional: False) paul,
@@ -715,6 +713,9 @@ Cette séparation permet d'éviter des ambiguïtés. On incite comme ça à l'ut
 \subsection{Propriétés}
 Les clés des mapping peuvent posséder des propriétés de présentation.
 Les types dans un schéma de validation peuvent posséder des propriétés de validation.
+
+\subsection{Terminaux}
+Les terminaux traité par la grammaire couvrent certains types, des nombres, des strings et des unités (temperature, kilogram, etc...).
 
 \section{Modification}\label{modification}
 
@@ -1151,14 +1152,14 @@ Ce procédé nous permet de profiter des thèmes de VS Code implémenté par dé
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/vscode-dark-theme.PNG}
     \end{center}
-    \caption[Thème vscode dark]{\label{vscode-dark-theme} vscode-dark-theme}
+    \caption[UON en Thème vscode dark]{\label{vscode-dark-theme} vscode-dark-theme}
 \end{figure}
 
 \begin{figure}[!h]
     \begin{center}
         \includegraphics[width=10cm]{assets/figures/vscode-kimbi-dark-theme.PNG}
     \end{center}
-    \caption[Thème vscode kimbi dark]{\label{vscode-kimbi-dark-theme} vscode kimbi dark theme}
+    \caption[UON en Thème vscode kimbi dark]{\label{vscode-kimbi-dark-theme} vscode kimbi dark theme}
 \end{figure}
 
 \subsubsection{Example}
@@ -1247,30 +1248,60 @@ Ces règles peuvent être directement écrites à cet emplacement, mais il est a
 
 \textbf{"name"} : le nom d'un scope qui sera attribuer.
 
+On constate qu'il y a globalement deux manières pour appliquer un scope.
+
+La première règle applique le scope à un élément qui déclenche directement l'expression régulière.
+La seconde et de définir un caractère de départ et un autre de fin. Puis définir les patterns que l'on appliquera aux éléments se trouvant à l'intérieur.
+
 \subsection{Capture}
 
-Il y a globalement deux manières pour appliquer un scope.
-
-La première et de définir un caractère de départ et un autre de fin. Puis définir les patterns que l'on appliquera aux éléments se trouvant à l'intérieur.
-
-Mais dans certains cas, il n'y a pas de délimiteur et on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
+On peut attribuer un scope à une partie d'un élément capturé avec une regex à l'aide des propriétés de capture.
+Ce niveau de précision permet de gérer certain cas. Par exemple quand il n'y a pas de délimiteur et que l'on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
 a déclenché.
 
-Il s'agit d'un nombre mais l'option "Capture" nous permet d'appliquer un scope au groupe de sélection.
+C'est le cas pour les nombres en UON. Pour la séquence : 12 kg on voudrait que les deux composantes soit colorier differement.
+
+On aura donc les capture illustré par la figure \ref{capture}.
+
+\begin{listing}[!ht]
+    \begin{minted}{json}
+        "number": {
+            "match": "[+-]?((0|[1-9]\\d*)(\\.\\d*)?([Ee][+-]?\\d*)?|
+            (.\\d+([Ee][+-]?\\d*)?)|(0[xX][0-9a-fA-F]+)|(0[oO][0-9a-fA-F]+))( *)
+            (kg|min|m|k|m|g|s|C|K)?",
+            "captures": {
+                "0": {
+                    "name": "constant.numeric.uon"
+                },
+                "10": {
+                    "name": "constant.language.uon"
+                }
+            }
+        }
+    \end{minted}
+    \caption{Capture}
+    \label{capture}
+\end{listing}
+
 Il n'est pas facile pour des expressions assez complexes de trouver ce nombre mais on peut s'aider du site \href{https://regex101.com/}{suivant}
 
-\subsubsection{Résultat}
+\subsubsection{Approches}
+La coloration essaye globalement se se calquer à la grammaire d'ANTLR. Mais ce n'est pas forcément toujours possible.
+Des composants ont donc des structures et imbrications différentes.
 
-%TODO
+Il y a coloration spécifique pour les propriétés appartenant à un type.
+Cela rend la coloration syntaxique un peu plus liée à la grammaire.
+C'est un choix d'implémentation qui peut rapidement modifié.
+
+Mais cela permet de savoir qu'une propriété n'est pas valide (En complément avec les erreurs).
+
 \begin{figure}[!h]
     \begin{center}
-        \includegraphics[width=10cm]{assets/figures/example-uon-coloration.png}
+        \includegraphics[width=10cm]{assets/figures/uon-unkown-type.PNG}
     \end{center}
-    \caption[Exemple de coloration d'un code UON]{\label{example-uon-coloration} Exemple de coloration d'un code UON}
+    \caption[Propriété non connue pour un type]{\label{example-uon-coloration} Propriété non connue pour un type}
 \end{figure}
 
-La coloration syntaxique doit refléter au mieux cette grammaire. Il y a donc une coloration spécifique pour les propriétés appartenant à un type.
-Cela rend la coloration syntaxique un peu plus liée à la grammaire, mais on se rend compte d'un coup d'oeil si la propriété et correcte.
 
 \subsection{Semantic Highlight}
 
@@ -1297,7 +1328,7 @@ Par exemple avec du code Typescript :
 \end{figure}
 
 On voit à la ligne 10 que la colorisation de la fonction a changé et correspond maintenant à un paramètre d'une fonction.
-Cela est donc intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas.
+Cela est intéressant pour des langages plus complexes dans leur nature qu'un langage de sérialisation. Une coloration syntaxe suffit amplement dans notre cas.
 Car se baser sur la structure du document nous donne déjà toutes les informations nécessaires.
 
 \section{Auto-completion}
@@ -1506,14 +1537,6 @@ Ce qui n'est pas possible avec le moteur.
     \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
 \end{figure}
 
-% TODO : exemple concret, remplacer image
-\begin{figure}[!h]
-    \begin{center}
-        \includegraphics[width=10cm]{assets/figures/snippet-suggestion.png}
-    \end{center}
-    \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
-\end{figure}
-
 Ce modèle de snippet permet d'afficher une chaine de caractères avec des case vides à remplir.
 Il est possible de passer à la case suivante à l'aide de la touche \emph{tab}.
 
@@ -1575,11 +1598,37 @@ avec le texte que l'on cherche.
 Par défaut la complétion proposée par VS Code porte sur les symboles déjà existants dans le code.
 Ce type de complétion est nommé "word based completion" dans VS Code.
 
+\subsection{Résultat}
+
+Voici un liste non exhaustive de complétions possibles.
+
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=4cm]{assets/figures/completion.PNG}
+    \end{center}
+    \caption[Complétion d'unités]{\label{unit-completion} Complétion d'unités}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=4cm]{assets/figures/completion.PNG}
+    \end{center}
+    \caption[Complétion de propriétés]{\label{property-completion} Complétion de propriétés}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=4cm]{assets/figures/completion.PNG}
+    \end{center}
+    \caption[Complétion de types]{\label{type-completion} Complétion de types}
+\end{figure}
+
+
 \section{Outline view}
 
-%tourne en continue ?
-
 La outline view est une représentation de la structure d'un fichier actuellement ouvert par l'éditeur. On appelle généralement cette structure le "document outlining" ou "code outlining".
+
+Elle est actualisé en continu pour refléter les changements.
 
 En analysant la spécification \href{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/}{LSP} ou le \href{https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol}{DocumentSymbolProvider} de l'api VS Code, on constate que l'outline peut être représenté sous deux formes :
 
@@ -1612,7 +1661,7 @@ Il est possible obtenir la structure d'un fichier en analysant manuellement le t
 Mais cette approche n'est pas optimale et il serait difficile de représenter la structure hiérarchique du document à l'aide de regex \cite{antlr-mega-tutorial}.
 
 Nous allons donc utiliser notre parser.
-% TODO
+
 Le résulat du parser est un "parse tree" (aussi nommé CST) qui est une représentation concrète de notre input.
 Le parse tree contient toutes les informations et beaucoup d'entre elles ne nous intéressent pas.
 Typiquement les informations grammaticales et structurelles.
@@ -1727,7 +1776,7 @@ Pour rappel un parcours DFS est effectué dans l'ordre affiché à la figure \re
 
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=10cm]{assets/figures/DFS.PNG}}
+        \frame{\includegraphics[width=6cm]{assets/figures/DFS.PNG}}
     \end{center}
     \caption[Algorithme de parcours en profondeur (DFS)]{\label{Algorithme de parcours en profondeur (DFS)} Algorithme de parcours en profondeur (DFS)}
 \end{figure}
@@ -1769,7 +1818,7 @@ Nous obtiendrons l'outline suivant :
 % capture
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=6cm]{assets/figures/uon-payload-outline-without-properties.PNG}}
+        \frame{\includegraphics[width=4cm]{assets/figures/uon-payload-outline-without-properties.PNG}}
     \end{center}
     \caption[Outline UON sans propriétés]{\label{uon-payload-outline-without-properties} Outline UON sans propriétés}
 \end{figure}
@@ -1795,7 +1844,7 @@ Nous obtiendrons l'outline suivante :
 %capture
 \begin{figure}[!h]
     \begin{center}
-        \frame{\includegraphics[width=6cm]{assets/figures/uon-payload-outline-with-properties.PNG}}
+        \frame{\includegraphics[width=4cm]{assets/figures/uon-payload-outline-with-properties.PNG}}
     \end{center}
     \caption[Outline UON avec propriétés]{\label{uon-payload-outline-with-properties} Outline UON avec propriétés}
 \end{figure}
@@ -1836,9 +1885,6 @@ Le code est déjà réutilisé pour fournir la documentation des types lors des 
 Les informations affichées au survol de la souris d’un élément sont directement tirées de la spécification.
 
 \section{Lint}
-%On affiche les erreurs trouvé avec antlr -> avantages positions
-%Les erreurs sont liés au placement des tokens (manque un éléments du langages, mauvais token ou leur "ortographe").
-%Message trop technique. mais ok pour voir d'ou viens la faute.
 Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et les problèmes de syntaxe.
 
 Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
@@ -1846,7 +1892,6 @@ Il est donc nécessaire de pouvoir exploiter correctement les erreurs.
 Il est possible de créer un listener qui aura pour rôle d'observer les erreurs lors du parsing avec ANLTR.
 Pour cela il faut créer une classe qui implémente l'interface "ANTLRErrorListener" et attribuer ce listener à notre parser
 avec la commande :
-%#parser.addErrorListener(errorListener);
 
 Cette interface définit la fonction \emph{syntaxError}.
 
@@ -1869,13 +1914,6 @@ Ces paramètres sont illustrés par la figure \ref{syntax}.
     \label{syntaxError}
 \end{listing}
 
-% https://www.antlr.org/api/Java/org/antlr/v4/runtime/ANTLRErrorListener.html#syntaxError(org.antlr.v4.runtime.Recognizer,java.lang.Object,int,int,java.lang.String,org.antlr.v4.runtime.RecognitionException)
-
-%Upon syntax error, notify any interested parties.
-%This is not how to recover from errors or compute error messages.
-%ANTLRErrorStrategy specifies how to recover from syntax errors and how to compute error messages.
-%This listener's job is simply to emit a computed message, though it has enough information to create its own message in many cases.
-
 Comme pour la outline, il est possible de récupérer la position du token. Il suffit de récupérer les valeurs des propriétés \emph{line} et \emph{charPositionInLine}.
 Il s'agira ici d'un token qui a posé problème et l'on voudra afficher à son emplacement l'indication visuelle (soulignement ondulé rouge) ainsi que le message d'erreur associé, lorsque l'utilisateur passe
 sa souris dessus.
@@ -1893,22 +1931,33 @@ Et on actualisera à chaque fois l'objet \emph{DiagnosticCollection} avec cette 
 Cependant, le parser ne pas se rendre compte si ce n'est pas plutôt le token précédent qui pourrait amener à une erreur.
 Cela ne prend non plus pas en compte ce qu'il vient après et donc remplacer un token par un de ceux proposés peut se se révéler contre-productif.
 
+\subsection{Résultat}
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=3cm]{assets/figures/lint.PNG}}
+    \end{center}
+    \caption[Quick fix]{\label{quick-fix} Quick fix}
+\end{figure}
+
 \subsection{Suggestion}
+À l'heure actuelle  il n'y a pas encore de réelles suggestions.
 Certains messages d'erreurs nous informes parfois des tokens qui devrait se situer à la place de celui qui a causé l'erreur.
 Une idée serait donc de pouvoir remplacer ce token erronées par ceux suggérés.
-Le problème est que cette information ne se trouve pas sous forme textuelle.
-Il faudrait donc pouvoir analyser les fichiers de stratégie et les modifier pour en récupérer la liste des tokens....
+Le problème est que certains des ces tokens ne corrige pas toujours les problèmes, il faudrait donc appliquer un traitement particulier.
 
-% TODO surcharger des méthodes pour pouvoir être notifié des tokens manquant
+\subsubsection{Quick fick}
 
-\subsection{Quick fick}
+L'implémentation des suggestions peut se faire à l'aide d'un quickfick qui va permettre à l'utilisateur d'intéragir avec l'éditeur.
 
-Actuellement il y a un seul quick fix qui a été implémenté, et cela à titre de découverte.
+Un petit quick fix a été implémenter pour en tester la mise en place. Il permet de supprimer le token qui pose problème en se basant sur les ranges fourni lors de la création d'un objet Diagnostic depuis le listener.
 
-Ce quickfix permet de supprimer le token qui pose problème en se basant sur les ranges fourni lors de la création d'un objet Diagnostic depuis le listener.
-
-À l'heure actuelle , il n'y a pas encore de suggestions. L'idée serait de pouvoir proposer un ou plusieurs tokens qui aurait du sens pour remplacer celui qui pose problème.
-Et l'idéal serait de prendre en compte le texte venant après le curseur. % TODO
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=3cm]{assets/figures/quickfix.PNG}}
+    \end{center}
+    \caption[Quick fix]{\label{quick-fix} Quick fix}
+\end{figure}
 
 \subsection{Outline view}
 Le listener se trouve au niveau du code de la outline. Étant donné que c'est une fonctionnalité qui est souvent solliciter il a été jugé interessant
@@ -2020,6 +2069,8 @@ L'outil de complétion c3, qui peut-être utilisé avec un parseur ANTLR a aussi
 
 Pour finir, je dirais que c'est un des plus grands projets sur lequel j'ai été amené à travailler seul.
 J'ai donc beaucoup appris et me servirais de ces leçons pour la suite. Travailler sur ce projet s'est révélé être très intéressant.
+
+%passer trop de temps sur la coloration....
 
 \section{Difficultés rencontrées}
 
