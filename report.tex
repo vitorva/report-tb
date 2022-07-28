@@ -520,7 +520,8 @@ Il cherche à regrouper les meilleures caractéristiques des formats de sériali
 Il fournit également des fonctionnalités supplémentaires utiles pour augmenter l'interopérabilité entre différents types de dispositifs, valider les données ainsi que pour diminuer le payload.
 
 Uniquement les points essentiels dans le cadre d'un support de langage seront abordés.
-La spécification se trouve sur : \url{https://github.com/uon-language/specification/blob/master/spec.md}.
+La spécification se trouve sur :
+\url{https://github.com/uon-language/specification/blob/master/spec.md}.
 
 \subsection{Format de sérialisation}
 
@@ -2096,7 +2097,9 @@ Mais, cela nous oblige à découvrir et prendre conscience ce qu'il est possible
 UON étant plus complexe que ces concurrents sur plein de points.
 
 Pour finir, je dirais que c'est un des plus grands projets sur lequel j'ai été amené à travailler seul.
-J'ai donc beaucoup appris et me servirais de ces leçons pour la suite. Travailler sur ce projet s'est révélé être très intéressant.
+J'ai donc beaucoup appris et me servirais de ces leçons pour la suite.
+
+Pour toute ces raisons, travailler sur ce projet s'est révélé être très intéressant.
 
 %passer trop de temps sur la coloration....
 
@@ -2126,11 +2129,14 @@ Même si un usage assez basique s'est révélé adapté pour notre utilisation, 
 Un autre point complexe a été la manière de trouver le bon indice car des situations particulières pouvait fausser le résultat attendu.
 Pour l'outline view, il a fallu comprendre comment construire un objet en cours d'un parcours DFS. Et ajouter la gestion des propriétés avait rajouté une couche de complexité supplémentaire.
 
-Du temps a aussi été passé pour essayer d'améliorer le comportement des erreurs à l'aide du fichier \emph{UonCompletionErrorStrategy.ts} sans succès. Le comportement par défaut n'étant jamais réellement amélioré.
+Plus globalement, implémenter des fonctionnalités s'est averé plus complexe que ce que je pensais. Car on est sens cesse confronté à des cas que l'on aurait pas penser et il est difficle de tout prévoir.
+Il est aussi difficile de savoir quelle comportement est acceptable ou non et quand il faudrait s'arrêter.
+
+Du temps a également été passé pour essayer d'améliorer le comportement des erreurs à l'aide du fichier \emph{UonCompletionErrorStrategy.ts} sans succès. Le comportement par défaut n'étant jamais réellement amélioré.
 
 La rédaction du rapport a aussi représenté un challenge. Il s'agit d'un travail conséquent étant donné l'ampleur d'un tel projet.
 
-\section{Amélioration possible}
+\section{Améliorations possibles}
 
 Le linter a partiellement été implémenté et se base sur la détection des erreurs d'ANTLR.
 Les messages d'erreurs sont ceux qu'ANTLR affiche en cas d'erreur et ne sont très "user-friendly". Il faudrait donc adapter ces messages.
