@@ -1276,16 +1276,16 @@ Ces règles peuvent être directement écrites à cet emplacement, mais il est a
 
 On constate qu'il y a globalement deux manières pour appliquer un scope.
 
-La première règle applique le scope à un élément qui déclenche directement l'expression régulière.
+La première manière de faire et d'appliquer le scope à un élément qui déclenche directement l'expression régulière. ("match")
 La seconde et de définir un caractère de départ et un autre de fin. Puis définir les patterns que l'on appliquera aux éléments se trouvant à l'intérieur.
 
 \subsection{Capture}
 
 On peut attribuer un scope à une partie d'un élément capturé avec une regex à l'aide des propriétés de capture.
-Ce niveau de précision permet de gérer certain cas. Par exemple quand il n'y a pas de délimiteur et que l'on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
+Ce niveau de précision permet de gérer certains cas. Par exemple, quand il n'y a pas de délimiteur et que l'on voudrait appliquer une coloration différente aux éléments qui composent le groupe de caractère qu'une expression régulière
 a déclenché.
 
-C'est le cas pour les nombres en UON. Pour la séquence : 12 kg on voudrait que les deux composantes soit colorier differement.
+C'est le cas pour les nombres en UON. Pour la séquence : 12 kg on voudrait que les deux composantes soient coloriées différemment.
 
 On aura donc les capture illustré par la figure \ref{capture}.
 
@@ -1548,7 +1548,7 @@ C'est ce qui peut être fait de la manière suivante :
     \item Étape 4 : relancer la phase de la création du parser en lui donnant le texte modifié.
 \end{enumerate}
 
-Mais cette approche nécessite de traiter énormément de cas particulier et mais le problème et que l'on couple la logique du moteur avec l'application et donc n'est pas une très bonne pratique.
+Mais cette approche nécessite de traiter énormément de cas particulier et le problème et que l'on couple la logique du moteur avec l'application et donc n'est pas une très bonne pratique.
 Car si on modifie la grammaire, il faudra répercuter les changements dans l'application.
 C'est pourquoi actuellement on ne supprime que la première ligne qui pose problème et qu'il n'a pas été jugé nécessaire d'aller plus loin.
 
@@ -1590,7 +1590,7 @@ Par exemple : { key(|) }.
 On pourrait recevoir la suggestion "description:" mais l'on ne recevra rien. Car VS Code ne sait pas comment réagir.
 
 Il est possible de résoudre ce problème mais cela nécessite de définir la position pour la suggestion (range).
-Cela implique de gérer pleins de cas particulier de la grammaire depuis l'application. Il n'a pas été jugé pertinent de traiter ce cas, car n'apportant pas réelement un intérêt.
+Cela implique de gérer pleins de cas particulier de la grammaire depuis l'application. Il n'a pas été jugé pertinent de traiter ce cas, car n'apportant pas réellement un intérêt.
 
 \subsection{Mécanisme automatique}
 
@@ -2005,7 +2005,7 @@ Voici le diagramme de Gantt pour ce projet.
 
 Le projet s'est déroulé de la manière suivante :
 \begin{enumerate}
-    \item Analyser ce qui était possible de faire puis fournir un support minimal du langage.
+    \item Analyser ce qu’il était possible de faire puis fournir un support minimal du langage.
     \item Améliorer ensuite progressivement ce support.
 \end{enumerate}
 
@@ -2015,7 +2015,7 @@ Il s'agissait de :
 
 \begin{itemize}
     \item Se renseigner davantages sur VS Code et ANTLR pour comprendre certains comportements.
-    \item Étendre la grammaire au format YAML et donc la gestion des identations.
+    \item Étendre la grammaire au format YAML et donc la gestion des indentations.
     \item Gérer les propriétés dans la outline.
 \end{itemize}
 
@@ -2034,7 +2034,7 @@ Passons maintenant en revue les tâches réalisées en lien avec le cahier des c
 
 \textbf{VSCode Extension} :
 \begin{itemize}
-    \item L'extension est publié sur le marketplace
+    \item L'extension est publiée sur le marketplace
     \item Des tests sont effectué lors d'un push sur les branches \emph{dev} ou \emph{main} et lors de la publication d'une release.
     \item Lors d'une release, l'extension et publiée automatiquement.
 \end{itemize}
@@ -2082,7 +2082,7 @@ Découvrir les technologies permettant leur implémentation et ensuite pouvoir l
 Lors de la phase de recherche, il a été appris qu'un parser est un élément important pour fournir du support de langage.
 Heureusement, des outils existent pour en générer depuis une grammaire. Cela a pour intérêt majeur de faire gagner du temps de développement en accélérant grandement la mise en place d'un support de langage.
 ANTLR s'est donc avéré être une composante dominante du projet. De plus sa gestion des erreurs fournit par défaut permet d'avoir une meilleure tolérance concernant celles-ci.
-Ce qui est avantageux car les erreurs sont relativement fréquentes dans un éditeur.
+Ce qui est avantageux, car les erreurs sont relativement fréquentes dans un éditeur.
 
 Nous avons fait le choix de travailler uniquement dans un environnement VS Code mais fournissant toutes les clés pour des extensibilités futures.
 VS Code est un environnement riche et complexe, mais qui est extrêmement bien documenter et agréable à utiliser.
@@ -2146,7 +2146,7 @@ Le linter a partiellement été implémenté et se base sur la détection des er
 Les messages d'erreurs sont ceux qu'ANTLR affiche en cas d'erreur et ne sont très "user-friendly". Il faudrait donc adapter ces messages.
 Il faudrait aussi pouvoir proposer des corrections d'erreurs (ex : quickfix) plus avancées.
 
-Le fichier \emph{UonCompletionErrorStrategy.ts} ne fait que surchager le comportement par défaut. Si le comportement doit être amélioré, c'est ce fichier qui doit être modifié.
+Le fichier \emph{UonCompletionErrorStrategy.ts} ne fait que surcharger le comportement par défaut. Si le comportement doit être amélioré, c'est ce fichier qui doit être modifié.
 
 \section{Erreurs existantes}
 
