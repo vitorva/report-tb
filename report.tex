@@ -199,7 +199,8 @@ Il est donc important de rappeler le mécanisme général. Car avant la phase de
 Un token correspond à un segment de texte avec un type qui lui a été associé.
 Ce sont ces tokens qui seront ensuite utilisés lors de l'analyse syntaxique.
 
-L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire. Un grammaire étant habituellement un fichier qui décrit formellement le langage.
+L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire.
+Une grammaire étant habituellement un fichier qui décrit formellement le langage.
 
 Le résultat de cette analyse est un Parse Tree qui représente toutes les dérivations de notre input en fonction de la grammaire.
 Elle est souvent représentée sous forme d'un arbre hiérarchique.
@@ -397,8 +398,8 @@ Cependant le problème majeur avec cette approche et que les imbrications devien
 Nous allons maintenant mentionner les technologies et approches choisies et expliquer les raisons.
 
 \subsection{Direct implementation}
-L'implémentation d'un langage serveur n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, la solution de contacter directement l'API de VS Code a été privilégiée.
-Si le temps le permet, toute la logique du code concernant les fonctionnalités riches (voir section \ref{Programmatic language features}) pourrait être déplacée dans un langage server.
+L'implémentation d'un langage server n'étant pas une priorité et pour se concentrer sur la réalisation des fonctionnalités, la solution de contacter directement l'API de VS Code a été privilégiée.
+Les fonctionnalités riches (voir section \ref{Programmatic language features}) pouvant toujours être déplacées dans un langage server par la suite.
 
 Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs lsp]{API vs LSP}, les providers utilisés sont les suivants :
 \begin{itemize}
@@ -412,12 +413,12 @@ Beaucoup de possibilités existent comme mentionné au point \hyperref[api vs ls
 \Gls{antlr} est un générateur de parser qui est actuellement dans sa quatrième version.
 Il a été créé par Terence Parr à l'Université de San Francisco et est très utilisé, autant dans le monde académique que professionnel \cite{antlr}.
 
-Le générateur prend en entrée une grammaire, qui est un fichier décrivant formellement un langage. La grammaire d'ANTLR est décrite en utilisant la notation \Gls{ebnf}.
+Le générateur prend en entrée une grammaire. La grammaire d'ANTLR est décrite en utilisant la notation \Gls{ebnf}.
 
-ANTLR est composé de deux parties principales. Il y a l'outil en java qui permet de générer le lexer et le parser, donc le code permettant de reconnaitre un langage comme mentionné dans la section \ref{parsing}.
+ANTLR est composé de deux parties principales. Il y a l'outil en java qui permet de générer le lexer et le parser. Il s'agit donc du code permettant de reconnaitre un langage comme mentionné dans la section \ref{parsing}.
 Ainsi que l'environnement d'exécution (runtime) qui permet leur exécution.
 
-Il y a donc, seulement un seul outil qui permet de générer le code dans les langages cibles. Et il est écrit en Java.
+Il y a seulement un outil qui permet de générer le code dans les langages cibles. Et il est écrit en Java.
 Pour pouvoir utiliser cet outil dans un environnement autre que Java, il est nécessaire de l'utiliser dans un runtime (environnement d'exécution) propre au langage souhaité.
 
 Le runtime ainsi que les fichiers générés doivent être dans le même langage. La liste se trouve \href{https://github.com/antlr/antlr4/blob/master/doc/targets.md}{ici}.
@@ -505,8 +506,9 @@ Lorsqu'on sérialise des données, elles se retrouvent soit sous forme binaire o
 Ce projet se focalisera naturellement uniquement sur le format textuel, car c'est le seul format, humainement interprétable, que l'on manipulera dans un éditeur.
 Le rôle d'un format de sérialisation et de pouvoir représenter des données sous une autre forme pour être ensuite manipulé.
 
-Un éditeur ne manipulant qu'un fichier statique, les étapes de sérialisation et désérialisation ne se feront pas à notre niveau.
-Pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un environnement de programmation (ex : Python).
+Un éditeur ne traite généralement que des fichiers statiques.
+Les étapes de sérialisation et désérialisation ne se feront donc pas à notre niveau.
+Car pour pouvoir profiter de ces fonctionnalités, cela nécessite d'avoir un environnement de programmation (ex : Python).
 
 \subsection{Pourquoi ?}
 Son rôle est d'être utilisé dans l'industrie 4.0. Plus particulièrement dans la communication \Gls{m2m} ainsi que pour l'\Gls{IoT}.
@@ -521,7 +523,7 @@ Lorsque deux appareils veulent échanger des informations en UON, ils disposent 
 
 \vspace{\parskip}
 
-À la figure \ref*{data-exchange}, on a à gauche deux dispositifs : un capteur de température à faible consommation
+À la figure \ref{data-exchange}, on a à gauche deux dispositifs : un capteur de température à faible consommation
 et une puissante passerelle domotique. Pour réduire la taille du payload, les deux dispositifs peuvent convenir d'un schéma qui décrit le format des données.
 
 \begin{figure}[H]
@@ -546,7 +548,7 @@ Il peut être décomposé au travers de 4 niveaux de complexités :
 \end{itemize}
 
 \subsection{Modèle d'information}
-Chaque élément qui compose l'arbre d'objets UON est un Type qui peut avoir plusieurs propriétés qui lui sont attachées.
+
 Le contenu peut être soit un scalaire, soit une collection d'éléments, comme montré à la figure \ref{information-model}.
 
 \begin{figure}[H]
@@ -556,8 +558,10 @@ Le contenu peut être soit un scalaire, soit une collection d'éléments, comme 
     \caption[Le modèle d'information]{\label{information-model}Le modèle d'information}
 \end{figure}
 
+Chaque élément qui compose l'arbre d'objets UON est un \emph{Type} qui peut avoir plusieurs propriétés qui lui sont attachées.
+
 \subsection{Types}
-Une caractéristique importante en UON est que tout type d'information appartient à un type. Les types sont organisés en différentes catégories.
+Une caractéristique importante en UON est que tout valeur appartient à un type. Les types sont organisés en différentes catégories.
 Ces catégories sont illustrées par la figure \ref{type-base}.
 
 \begin{figure}[H]
@@ -571,9 +575,8 @@ La liste complète des types supportés se trouve dans la spécification.
 
 \subsection{Propriétés}\label{properties}
 C'est là que UON devient plus complexe que les autres langages de sérialisation.
-Il offre des propriétés au type permettant de contraindre, documenter ou affiner une valeur. Les propriétés sont associées à un type, pas à une valeur.
+Il offre des propriétés au type permettant de contraindre, documenter ou affiner une valeur. Les propriétés sont associées à un type et pas directement à une valeur.
 
-Chaque élément a un type. Et chacun de ces types peut avoir des propriétés.
 3 types de propriétés existent :
 \begin{itemize}
     \item \textbf{Presentation properties} : elles influencent la présentation d'une valeur.
@@ -604,7 +607,7 @@ UON propose 4 différents types de stratégies pour le définir.
     \item \textbf{Embedded schema} : inclus dans le dataset, les informations sont mélangé avec les contraintes.
     \item \textbf{Included schema} : inclus dans le dataset, les informations et contraintes sont séparés.
     \item \textbf{Linked schema} : inclus dans le dataset en précisant la signature du schéma.
-    \item \textbf{Separated schema} : les informations et contraintes sont séparés et non liés.
+    \item \textbf{Separated schema} : n'est pas inclus dans le dataset, les informations et contraintes sont séparés et non liés.
 \end{itemize}
 
 Chaque solution présente des avantages et des inconvénients.
@@ -616,17 +619,17 @@ Le dépôt du projet se trouve à l'adress suivante : \url{https://github.com/uo
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
 Il est donc important de préciser sur quels éléments du langage nous nous focaliserons.
 
-Une spécification d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et donc des points sont sujets à interprétation.
-C'est un langage complexe et qui pourrait encore, être amener à évoluer. Les propositions et les suggestions sont les bienvenues.
+Une spécification d'UON existe, elle couvre énormément d'aspects. Cependant, tout n'est pas détaillé et des points sont sujets à interprétation.
+C'est un langage complexe et qui pourrait encore, être amener à évoluer.
 
 Heureusement, une grammaire concrète avait déjà été écrite en Lark par l'ancien élève Stéphane Selim.
-Cette grammaire se trouve \href{https://github.com/uon-language/uon-parser/tree/master/grammar}{ici}
+Cette grammaire se trouve à l'adresse suivante : \url{https://github.com/uon-language/uon-parser/tree/master/grammar}.
 
-Cette grammaire a été convertie en format ANTLR. Des modifications ont été apportées et seront expliquées par la suite.
+Elle a été convertie en format ANTLR. Des modifications ont été apportées et seront expliquées par la suite.
 
 Les fonctionnalités se baseront sur celle-ci. Dans le but de rester cohérents entre elles.
 
-La grammaire finale est écrite dans le fichier UON.g4.
+La version finale est écrite dans le fichier \emph{UON.g4}.
 
 \section{Résumé}
 Pour commencer, il est nécessaire de préciser ce que permet cette grammaire initialement.
