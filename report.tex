@@ -1494,7 +1494,7 @@ La map \emph{tokens} fait le lien entre le prochain token possible et une liste 
 Nous allons principalement utiliser les clés de cette map pour proposer nos suggestions.
 Cette clé est juste l'id d'un token. On va utiliser cet id et le parseur pour retrouver la valeur du token qu'il représente. C'est ce qui sera finalement affiché dans l'éditeur comme suggestion.
 
-La liste est aussi utilisé à une moindre mesure pour obtenir par exemple des suggestions suivantes : "descripton : "
+La liste est aussi utilisé à une moindre mesure pour obtenir par exemple des suggestions suivantes : "descripton: "
 On obtient deux tokens d'un coup "description" et ":"
 
 Cependant cela nécessite que les tokens se suivent obligatoirement et sans alternatives possibles dans la grammaire.
@@ -2046,18 +2046,20 @@ Pour rappel, le projet est disponible à l'adresse suivante : \url{https://githu
 
 L'extension est \href{https://marketplace.visualstudio.com/items?itemName=vitorva.vscode-uon}{disponible} sur le marketplace de VS Code.
 
-Passons maintenant en revue les tâches réalisées en lien avec le cahier des charges:
+Passons maintenant en détail les tâches réalisées en lien avec le cahier des charges:
 
 \textbf{VSCode Extension} :
 \begin{itemize}
-    \item L'extension est publiée sur le marketplace
+    \item L'extension est publiée sur le marketplace.
     \item Des tests simples sont effectués lors d'un push sur les branches \emph{dev} ou \emph{main} et lors de la publication d'une release.
-    \item Lors d'une release, l'extension et publiée automatiquement.
+    \item Lors d'une release, l'extension et publiée automatiquement sur le markeplace.
 \end{itemize}
 
 \textbf{Grammaire} :
 \begin{itemize}
-    \item Permet de créer des mappings et des séquences de type en un format proche de JSON et YAML, ainsi qu'un schéma de validation.
+    \item La grammaire actuelle permet de créer des mappings et des séquences de type en un format proche de JSON et YAML, ainsi qu'un schéma de validation.
+    \item Gère un certain nombre de valeurs (strings, nombres et unités).
+    \item Les clés des mappings et les types peuvent avoir des propriétés.
 \end{itemize}
 
 \textbf{Syntax highlighting} :
@@ -2068,8 +2070,8 @@ Passons maintenant en revue les tâches réalisées en lien avec le cahier des c
 \textbf{Auto-complétion} :
 \begin{itemize}
     \item Des suggestions sont proposées si elles peuvent être écrit à l'emplacement souhaité.
-    \item Les suggestions proposées à l'utilisateur sont des mots-clés (Les types et leurs propriétés associées, ainsi que des unités).
-    \item Les suggestions peuvent aussi être des snippets.
+    \item Les suggestions proposées à l'utilisateur sont les tokens suivants: (Les types et leurs propriétés associées, ainsi que des unités).
+    \item Les suggestions peuvent aussi être un ensemble d'éléments (snippets).
 \end{itemize}
 
 \textbf{Outline view} :

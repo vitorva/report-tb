@@ -29,19 +29,11 @@ Sa syntaxe devra être prise en charge à terme par les principaux éditeurs de 
 Le support de langage consistera donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON.
 
 % • la méthodologie utilisée,
-Les premières semaines ont été majoritairement consacrées à se renseigner.
-Puis un \Gls{PoC} a été rapidement réalisé pour s'assurer de la faisabilité de certaines fonctionnalités, avant de se consacrer à la réalisation du projet.
+Les premières semaines ont été majoritairement consacrées à se renseigner et à la réalisation d'un \Gls{PoC} pour s'assurer de la faisabilité de certaines fonctionnalités, avant de se consacrer à la réalisation du projet.
 Ce PoC testait surtout que le moteur de complétion retournait bien des candidats pour la fonctionnalité de l'auto-complétion.
-
 Puis les fonctionnalités ont été implémentées progressivement.
 
-Elles ont connu des améliorations durant le long du projet.
-Le support de langage traitait initialement uniquement une grammaire en UON qui permettait des constructions dans un format proche en JSON.
-avant d'ajouter le format YAML.
-Les propriétés n'étaient pas aussi considérées dans un premier temps dans l'outline view. Puis elles ont été rajoutées par la suite.
-
 Les principales ressources utilisées ont été :
-
 \begin{itemize}
     \item Le site de VS Code comme source principale pour se renseigner sur la mise en place et la gestion d'une extension.
     \item Des articles en ligne concernant ANTLR et le moteur de complétion.
@@ -62,12 +54,13 @@ Les principales ressources utilisées ont été :
 %   des résultats,
 Au terme de ce projet, les points attendus du cahier des charges ont été effectués. Il s'agit de :
 \begin{itemize}
-    \item Définir la grammaire du langage UON utilisée.
-    \item Implémenter une intégration continue.
-    \item Implémenter de l'autocomplétion
-    \item Implémenter une outline view.
-    \item Implémenter l'affichage des informations au survol de la souris (Hover Information).
-    \item Commencer à implémenter un Linter simple pour signaler des erreurs.
+    \item Disposer d'une grammaire du langage UON utilisable
+    \item Implémenter une intégration continue
+    \item Implémenter une coloration syntaxique
+    \item Implémenter de l'auto-complétion
+    \item Implémenter une outline view
+    \item Implémenter l'affichage des informations au survol de la souris (Hover Information)
+    \item Implémenter un Linter simple pour signaler des erreurs
 \end{itemize}
 
 % • perspectives et recommandations
@@ -80,4 +73,3 @@ Les perspectives concernant ce sujet sont vastes, mais des améliorations possib
 
 Étant donné l'étendue d'un tel sujet, le travail s'est focalisé sur une partie de ce qu'il est possible de faire.
 Une extension pouvant être étendue selon les besoins, chacun pourrait ajouter ce qu'il trouve pertinent pour améliorer le support du langage UON.
-
