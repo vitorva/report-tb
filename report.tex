@@ -685,7 +685,7 @@ Un fichier UON peut contenir comme élément racine trois structures différente
 \subsection{Collections}
 Ces collections sont des mapping et séquences dans un format proche de json ou de yaml.
 
-UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à un certain degré (reduced set). Il est naturel de penser qu'un format YAML soit supporté, même si son utilisation est moins recommandé que son alternative.
+UON est par nature proche du format JSON. Mais UON étant "YAML compliant" à un certain degré (reduced set). Il est naturel de penser qu'un format YAML soit supporté, même si son utilisation est moins recommandée que son alternative.
 
 Ces collections peuvent être imbriqué seulement par format, on ne peut pas avoir dans un fichier une collection en format json et yaml en même temps.
 
@@ -741,18 +741,18 @@ Les clés des mapping peuvent posséder des propriétés de présentation.
 Les types dans un schéma de validation peuvent posséder des propriétés de validation.
 
 \subsection{Terminaux}
-Les terminaux traité par la grammaire couvrent certains types, des nombres, des strings et des unités (temperature, kilogram, etc...).
+Les terminaux traités par la grammaire couvrent certains types, des nombres, des strings et des unités (temperature, kilogram, etc...).
 
 \section{Modification}\label{modification}
 
-La structure de départ a été gardé, car cette grammaire regroupe déjà des éléments importants du langage UON.
+La structure de départ a été gardée, car cette grammaire regroupe déjà des éléments importants du langage UON.
 
 Cependant quelques points concernant la structure générale et les règles concernant les terminaux (string, nombre, etc.) ont été modifiés.
 
-Pour commencer il a fallu convertir la grammaire à la main car aucun convertisseur n'existe. Heureusement, ANTLR et Lark se basent sur une notation EBNF.
+Pour commencer, il a fallu convertir la grammaire à la main, car aucun convertisseur n'existe. Heureusement, ANTLR et Lark se basent sur une notation EBNF.
 Ce qui fait que la structure de la grammaire reste relativement semblable.
 
-Le seul point de divergence a été sur l'utilisation d'expressions régulières car la syntaxe de celle-ci varie légèrement. Et sur la gestion de l'indentation.
+Le seul point de divergence a été sur l'utilisation d'expressions régulières, car la syntaxe de celle-ci varie légèrement. Et sur la gestion de l'indentation.
 
 Concernant la structure d'un fichier de grammaire ANTLR \emph{.g4}, il y a quelques subtilités à connaitre :
 
@@ -781,7 +781,7 @@ Et la gestion des indentations nécessite de prendre en compte les retours à la
 
 Il y a donc trois solutions qui ont été envisagées :
 
-La première est de rajouter des tokens de retour à la ligne ou il serait jugé possible de les avoir dans les règles propre au format JSON, et de les rendre optionnels.
+La première est de rajouter des tokens de retour à la ligne ou il serait jugé possible de les avoir dans les règles propres au format JSON, et de les rendre optionnels.
 Mais ce n'est pas très propre et on risque d'en placer énormément.
 
 Le deuxième serait d'ignorer tout simplement les erreurs.  C'est-à-dire que si on à un token de retour à la ligne qui ne devrait pas être là, alors l'ignorer tout simplement.
@@ -941,9 +941,9 @@ Ce travail reflète uniquement mon approche personnelle sur la matière. Et ne d
 \section{Code}
 
 Par rapport à la figure \ref{basic-structure}
-les points suivants au été rajouté à la figure \ref{project-structure}
+les points suivants ont été rajoutés à la figure \ref{project-structure}
 
-\textbf{Remarque} : Les "..." signifie qu'il y a des sous fichiers et/ou répertoire mais ont été ignoré pous ne pas surcharger
+\textbf{Remarque} : Les "..." signifie qu'il y a des sous fichiers et/ou répertoire, mais ont été ignoré pour ne pas surcharger
 la figure.
 
 \begin{figure}[!h]
@@ -1100,7 +1100,7 @@ C'est l'API \href{https://mochajs.org/api/}{mocha} qui est utilisé pour exécut
 Actuellement on teste de cette façon les fonctionnalités de la complétion et de l'outline view.
 
 Concernant les tests pour la coloration syntaxique, le module \href{https://www.npmjs.com/package/vscode-tmgrammar-test?activeTab}{vscode-tmgrammar-test} a été choisi.
-Car depuis mocha, on a pas moyen de le faire.
+Car depuis mocha, il n'y a pas moyen de le faire.
 
 Quelques tests unitaires simples ont été implémenté, mais qui permet toutefois de s'assurer qu'un changement ne vient pas modifier le comportement d'une manière inattendue.
 
@@ -1118,7 +1118,7 @@ Elle consiste à exécuter la commande vsce publish depuis un github action pour
 Il est requis d'ajouter le token (PAT) comme secret dans notre dépôt github.
 
 \textbf{Remarque } :
-À chaque nouvelle publication de l'extension, il est nécessaire d'incrémenter la valeur du champ \emph{version} du package.json
+À chaque nouvelle publication de l'extension, il est nécessaire d'incrémenter la valeur du champ \emph{version} du package.json.
 On peut redéployer une extension uniquement avec une version supérieure que la précédente.
 
 \section{Génération du parser ANTLR}
@@ -1174,7 +1174,7 @@ Et de réutiliser les scopes définis dans ce fichier.
 Ce fichier se trouve sur le dépôt \href{https://github.com/microsoft/vscode/blob/main/extensions/theme-defaults/themes/dark_vs.json}{suivant}.
 Mais peut être également généré depuis le command palette.
 
-Ce procédé nous permet de profiter des thèmes de VS Code implémenté par défaut dans l'éditeur. Par exemple, illustrée par les figures \ref{vscode-dark-theme} et \ref{vscode-kimbi-dark-theme}.
+Ce procédé nous permet de profiter des thèmes de VS Code implémenté par défaut dans l'éditeur. Par exemple, illustrées par les figures \ref{vscode-dark-theme} et \ref{vscode-kimbi-dark-theme}.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1209,7 +1209,7 @@ pour visualiser la hiérarchie des scopes pour un token. Comme illustré par la 
     \caption[Scope inspector]{\label{scope-inspector} Le scope inspector sur un exemple de code en UON}
 \end{figure}
 
-La section \emph{textmate scopes} affiche la liste des scopes utilisés pour le token qu'on séléctionne. Le scope le plus spécialisé se trouve au sommet.
+La section \emph{textmate scopes} affiche la liste des scopes utilisés pour le token qu'on sélectionne. Le scope le plus spécialisé se trouve au sommet.
 
 La coloration syntaxique n'est pas considérée comme un "programmatic language feature" et donc n'est pas gérée par la spécification LSP et par l'API de VS Code non plus.
 Une des raisons évoquées et que ce mécanisme doit être le plus rapide possible. Et que le faire directement depuis le client garantit une latence faible
@@ -1440,7 +1440,7 @@ C'est ce qui est recommandé dans la documentation du projet c3. Car cela permet
 
 Même si l'on n'en profite pas actuellement, cela pourrait permettre une meilleur extensibilité du code si nécessaire.
 
-% La documentation du projet indique bien que ce n'est pas un problème trivial �� résoudre.
+% La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
 
 \subsubsection{Trouver l'indice}
 
