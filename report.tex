@@ -1217,7 +1217,7 @@ Une des raisons évoquées et que ce mécanisme doit être le plus rapide possib
 
 \subsection{Fonctionnement}
 
-La figure \ref{Textmate grammar} illustre une représentation très simplifié du fichier \emph{uon.tmLanguage.json}.
+La figure \ref{Textmate grammar} illustre une représentation très simplifiée du fichier \emph{uon.tmLanguage.json}.
 
 \begin{listing}[!ht]
     \begin{minted}{json}
@@ -1260,21 +1260,21 @@ La figure \ref{Textmate grammar} illustre une représentation très simplifié d
     \label{Textmate grammar}
 \end{listing}
 
-Dans cette exemple, la coloration n'est appliqué que sur les commentraires et les clés sans guillemets du langage UON.
-Tout n'est pas couvert dans cette exemple, mais cela permet de bien comprendre le mécanisme général utilisé.
+Dans cet exemple, la coloration n'est appliquée que sur les commentaires et les clés sans guillemets du langage UON.
+Tout n'est pas couvert dans cet exemple, mais cela permet de bien comprendre le mécanisme général utilisé.
 
 Les points importants sont les suivants :
 
 \textbf{"scopeName"} (ligne 3) : Scope racine du fichier. C'est le scope de base appliqué sur chaque élément.
 
 \textbf{"patterns"} (ligne 4) :
-C'est un tableau contenant les règles actuelles utilisées pour parser le document en sein du scope courrant.
+C'est un tableau contenant les règles actuelles utilisées pour parser le document en sein du scope courant.
 Elles sont appliquées dans l'ordre.
 Ces règles peuvent être directement écrites à cet emplacement, mais il est aussi possible de les définir dans un objet devant être nommé "repository". Puis de les inclure, comme fait actuellement.
 
 \textbf{"repository"} (ligne 12) : Un dictionnaire (clé-valeur) de règles.
 
-\textbf{"name"} : le nom d'un scope qui sera attribuer.
+\textbf{"name"} : le nom d'un scope qui sera attribué.
 
 On constate qu'il y a globalement deux manières pour appliquer un scope.
 
@@ -1289,7 +1289,7 @@ a déclenché.
 
 C'est le cas pour les nombres en UON. Pour la séquence : 12 kg on voudrait que les deux composantes soient coloriées différemment.
 
-On aura donc les capture illustré par la figure \ref{capture}.
+On aura donc deux captures différentes, illustré par la figure \ref{capture}.
 
 \begin{listing}[!ht]
     \begin{minted}{json}
@@ -1311,7 +1311,7 @@ On aura donc les capture illustré par la figure \ref{capture}.
     \label{capture}
 \end{listing}
 
-Il n'est pas facile pour des expressions assez complexes de trouver ce nombre mais on peut s'aider du site \href{https://regex101.com/}{suivant}
+Il n'est pas facile pour des expressions assez complexes de trouver ce nombre, mais on peut s'aider du site \href{https://regex101.com/}{suivant}
 
 \subsubsection{Approches}
 La coloration essaye globalement se se calquer à la grammaire d'ANTLR. Mais ce n'est pas forcément toujours possible.
@@ -1321,7 +1321,7 @@ Il y a coloration spécifique pour les propriétés appartenant à un type.
 Cela rend la coloration syntaxique un peu plus liée à la grammaire.
 C'est un choix d'implémentation qui peut rapidement modifié.
 
-Mais cela permet de savoir qu'une propriété n'est pas valide (En complément avec les erreurs).
+Mais cela permet de savoir qu'une propriété n'est pas valide (en complément avec les messages d'erreurs).
 
 \begin{figure}[!h]
     \begin{center}
@@ -1365,14 +1365,14 @@ Cette fonctionnalité fait parti de ce qu'on appelle plus communément "IntelliS
 Le terme "auto-complétion" existe également sous d'autres appellations (ex : autocomplétion, complétion automatique, complétion, etc.).
 
 L'intérêt est de proposer des suggestions de saisie au fur est à mesure qu'un utilisateur écrit une chaine de caractères.
-Ces suggestions sont des compléments qui pourraient convenir à la chaine de caractère saisit. Cela va donc dépendre principalement du langage traité.
+Ces suggestions sont des compléments qui pourraient convenir à la chaine de caractère saisie. Cela va donc dépendre principalement du langage traité.
 Car en JSON ou en YAML, l'auto complétion n'existe pas vraiment dû à la syntaxe même de ces langages de sérialisation.
 Il n'y a pas de mots clés comme on pourrait en trouver dans un langage de programmation.
-Il n'aurait donc rien de base à proposer pour ces deux langages, sans utiliser une source d'infomation externe comme les "JSON-schéma".
-À la limite, seules les clés ou valeurs précédemment saisies peuvent éventuellement être reproposées mais cela est fait par défaut sous VS Code pour n'importe quel type de langage
+Il n'aurait donc rien de base à proposer pour ces deux langages, sans utiliser une source d'information externe comme les "JSON-schéma".
+À la limite, seules les clés ou valeurs précédemment saisies peuvent éventuellement être reproposées, mais cela est fait par défaut sous VS Code pour n'importe quel type de langage
 avec le type de complétion nommé "word based completion" \cite{word-based-completions}.
 
-C'est pourquoi lorsqu'il faut implémenter une telle fonctionnalités, il faut savoir quoi proposer et quand le faire.
+C'est pourquoi lorsqu'il faut implémenter une telle fonctionnalité, il faut savoir quoi proposer et quand le faire.
 Pour cela, Il est nécessaire d'analyser le langage UON et de voir ce qu'il est pertinent de proposer comme suggestion de complétion.
 La syntaxe UON peut être exprimée par la figure \ref{syntax} dans la section \hyperref[UON]{UON}.
 
@@ -1383,13 +1383,13 @@ Les suggestions se baseront donc sur les types et leurs propriétés.
 \subsection{antlr4-c3}
 
 Une approche typique pour implémenter de la complétion est d'utiliser un parser du langage.
-Mais en complément, nous allons aussi utilisé \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
+Mais en complément, nous allons aussi utiliser \href{https://github.com/mike-lischke/antlr4-c3}{"antlr4-c3"} (également simplement nommé c3).
 Il s'agit d'un moteur de complétion pour les parsers basés sur ANTL4. Le moteur c3 est capable de fournir des candidats de complétions.
-Les suggestions proposées dans l'éditeur sera majoritairement des candidats fournis par le moteur. C'est donc un outil relativement puissant, qui simplifie grandement la tâche du développeur.
+Les suggestions proposées dans l'éditeur seront majoritairement des candidats fournis par le moteur. C'est donc un outil relativement puissant, qui simplifie grandement la tâche du développeur.
 
-Il a été conçue par \href{https://github.com/mike-lischke}{Mike Lischke}. Cet outil est écrit en Typescript et est disponible comme node module. Il existe aussi en version \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/java}{JAVA} et \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/c%23}{C\#}.
+Il a été conçu par \href{https://github.com/mike-lischke}{Mike Lischke}. Cet outil est écrit en Typescript et est disponible comme node module. Il existe aussi en version \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/java}{JAVA} et \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/c%23}{C\#}.
 
-Le moteur de complétion n'utilise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream. Pour rappel, un exemple d'utilisation du parser est illustré précédement par la figure \ref{Utilisation du parser d'ANTLR}.
+Le moteur de complétion n'utilise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream. Pour rappel, un exemple d'utilisation du parser est illustré précédemment par la figure \ref{Utilisation du parser d'ANTLR}.
 Ce flux de tokens contient tous les tokens qui ont été reconnu lors de l'analyse lexicale produit par le lexer.
 Le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état d'ANTLR4 disponible dans le parser \cite{antlr-mega-tutorial}.
 
@@ -1415,7 +1415,7 @@ Un candidat est un token qui pourrait se situer à une position donnée dans l'i
 Cette position correspond à un indice donné au moteur.
 
 \subsubsection{Indexation}
-L'indexation est gérée de deux manières différentes comme illustré par la figure \ref{candidat-index}, tiré de la documentation de c3.
+L'indexation est gérée de deux manières différentes comme illustrée par la figure \ref{candidat-index}, tirée de la documentation de c3.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1438,7 +1438,7 @@ Ce qui est fait actuellement c'est de récupérer ces tokens dans un canal mais 
 C'est ce qui est recommandé dans la documentation du projet c3. Car cela permet de gérer plus de cas particuliers \cite{c3-example-soql}.
 % https://neuroning.com/post/implementing-code-completion-for-vscode-with-antlr/
 
-Même si l'on n'en profite pas actuellement, cela pourrait permettre une meilleur extensibilité du code si nécessaire.
+Même si l'on n'en profite pas actuellement, cela pourrait permettre une meilleure extensibilité du code si nécessaire.
 
 % La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
 
@@ -1532,7 +1532,7 @@ Les tokens peuvent être classé en deux catégories.
     \item Ceux dans leur valeur dépendent de la saisie d'un utilisateur au travers d'expression régulière.
 \end{enumerate}
 
-Les tokens qui sont utiliser comme suggestions sont ceux issue de a première catégorie. Mais quelques tokens sont ignorés : comme les parenthèse, accolades car ce n'est pas vraiment pertinent. % et les deux-points
+Les tokens qui sont utiliser comme suggestions sont ceux issus de a première catégorie. Mais quelques tokens sont ignorés : comme les parenthèses et accolades, car ce n'est pas vraiment pertinent. % et les deux-points
 La seconde n'est pas intéressante, car le moteur ne fera que retourner le nom du token ce qui est inutile. Par exemple "NUMBER", lorsqu'il est possible d'avoir un nombre.
 
 \subsection{Gestion des erreurs }\label{error handle}
@@ -1544,7 +1544,7 @@ Mais ce mécanisme n'est utilisé que pour générer un parse tree, cela est don
 Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
 Parce que l'on pourrait avoir dans le stream de token des éléments qui ne seront pas compris par le moteur et l'on n'obtiendra pas de candidats.
 
-Une explication fournit par le créateur du moteur dans la rubrique "issues" du dépot du \href{ https://github.com/mike-lischke/antlr4-c3/issues/29}{projet}.
+Une explication fournit par le créateur du moteur dans la rubrique "issues" du dépôt du \href{ https://github.com/mike-lischke/antlr4-c3/issues/29}{projet}.
 % https://github.com/mike-lischke/antlr4-c3/issues/29
 
 est que dès le moment où le moteur est confronté à une erreur de syntaxe (token inattendu ou invalide), il n'a plus moyen de trouver un chemin valide.
@@ -1582,18 +1582,18 @@ Ce qui n'est pas possible avec le moteur.
     \caption[Suggestion d'un snippet]{\label{snippet-suggestion} Suggestion d'un snippet}
 \end{figure}
 
-Ce modèle de snippet permet d'afficher une chaine de caractères avec des case vides à remplir.
+Ce modèle de snippet permet d'afficher une chaine de caractères avec des cases vides à remplir.
 Il est possible de passer à la case suivante à l'aide de la touche \emph{tab}.
 
 Cependant il est nécessaire de proposer ces suggestions au bon moment. La solution envisagée et de vérifier que le token du type possédant
-ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas de schéma en controlant dans le stream de token que le token \emph{!schema} ne s'y trouve pas.
+ces propriétés ce trouve dans les candidats du moteur et qu'il ne s'agit pas de schéma en contrôlant dans le stream de token que le token \emph{!schema} ne s'y trouve pas.
 
 Les snippets sont simples et utiles, mais liés à l'application. Il ne faudrait donc pas trop en utiliser.
 
 \subsection{Triggers}
 Par défaut, il Il aussi possible de l'activer manuellement en exécutant la commande "ctrl + space".
 
-Il est possible d'ajouter au provider des symboles (triggerCharacters) qui vont forcer son activation. Les symboles espace " " et de retour à la ligne (\\rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
+Il est possible d'ajouter au provider des symboles (triggerCharacters) qui vont forcer son activation. Les symboles \emph{espace} " " et de \emph{retour à la ligne} (\textbackslash rn) ont été définis comme triggers, car cela semble assez naturel dans ce langage.
 Il s'agit uniquement d'une appréciation personnelle.
 
 \subsection{Pas de suggestion}
