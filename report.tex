@@ -1601,18 +1601,18 @@ Il s'agit uniquement d'une appréciation personnelle.
 Le message "no suggestion" peut survenir lorsque le provider n'arrive pas à retourner des suggestions.
 Mais, il est possible d'avoir ce message alors même que le moteur retourne des candidats. Cela vient du fait
 que si le curseur se trouve collé à du texte, VS Code n'a pas la capacité de savoir qu'elle est l'étendu de la chaine de texte que le curseur touche,
-qui doit être remplacer et s'il doit même le faire.
+qui doit être remplacé et s'il doit même le faire.
 
 Par exemple : { key(|) }.
 On pourrait recevoir la suggestion "description:" mais l'on ne recevra rien. Car VS Code ne sait pas comment réagir.
 
 Il est possible de résoudre ce problème mais cela nécessite de définir la position pour la suggestion (range).
-Cela implique de gérer pleins de cas particulier de la grammaire depuis l'application. Il n'a pas été jugé pertinent de traiter ce cas, car n'apportant pas réellement un intérêt.
+Cela implique de gérer plein de cas particuliers de la grammaire depuis l'application. Il n'a pas été jugé pertinent de traiter ce cas, car n'apportant pas réellement un intérêt.
 
 \subsection{Mécanisme automatique}
 
-Il est parfois difficle de savoir ce que VS Code fourni par défaut ou à quel point un comportement peut être modifié.
-C'est le cas pour la complétion. Il est nécessaire d'aller regarder dans les paramètres (le fichier \emph{settings.json} dans VS Code) pour voir d'ou vienne certain comportement.
+Il est parfois difficile de savoir ce que VS Code fournit par défaut ou à quel point un comportement peut être modifié.
+C'est le cas pour la complétion. Il est nécessaire d'aller regarder dans les paramètres (le fichier \emph{settings.json} dans VS Code) pour voir d'ou viennent certains comportements.
 
 \subsubsection{Quick suggest}
 
@@ -1645,7 +1645,7 @@ Ce type de complétion est nommé "word based completion" dans VS Code.
 
 \subsection{Résultat}
 
-Voici un liste non exhaustive de complétions possibles.
+Voici une liste non exhaustive de complétions possibles.
 
 \begin{figure}[H]
     \begin{center}
@@ -1673,7 +1673,7 @@ Voici un liste non exhaustive de complétions possibles.
 
 La outline view est une représentation de la structure d'un fichier actuellement ouvert par l'éditeur. On appelle généralement cette structure le "document outlining" ou "code outlining".
 
-Elle est actualisé en continu pour refléter les changements.
+Elle est actualisée en continu pour refléter les changements.
 
 En analysant la spécification \href{https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/}{LSP} ou le \href{https://code.visualstudio.com/api/references/vscode-api#DocumentSymbol}{DocumentSymbolProvider} de l'api VS Code, on constate que l'outline peut être représenté sous deux formes :
 
@@ -1740,7 +1740,7 @@ Cela va nous créer un fichier qui contiendra une interface définissant une fon
 Chacune de ses fonctions prend comme paramètre son contexte.
 
 La classe UonASTVisitor implémente cette interface qui étend la classe \href{https://www.antlr.org/api/Java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.html}{AbstractParseTreeVisitor}
-pour obtenir le comportement par défaut du pattern visitor. Elle gère le mécanisme de parcours et d’agrégation des résultats.
+pour obtenir le comportement par défaut du pattern visitor. Elle gère le mécanisme de parcours et d'agrégation des résultats.
 
 Pour obtenir l'AST, on doit donner le parse tree créé par le parser à la fonction d'entrée \emph{visit} de notre visitor.
 
@@ -1805,7 +1805,7 @@ Pour rappel un parcours DFS est effectué dans l'ordre affiché à la figure \re
 Ce qui est agréable en utilisant cet algorithme et qu'il nous permet de commencer à construire l'information à partir des noeuds terminaux
 de l'arbre et de remonter naturellement au parent le plus proche.
 
-Un parent va pouvoir obtenir la liste des enfants dans un ordre que l'on s'attendrait à recevoir. Car ils apparaissent comme ils ont été défini dans les règles grâce au parcours DFS.
+Un parent va pouvoir obtenir la liste des enfants dans un ordre que l'on s'attendrait à recevoir. Car ils apparaissent comme ils ont été définis dans les règles grâce au parcours DFS.
 Cela rend la manipulation dans un parent plus simple concernant les modifications à effectuer pour représenter ces informations en un objet de type \emph{DocumentSymbol}.
 
 \subsection{La position}
@@ -1902,7 +1902,7 @@ Ce dictionnaire est un fichier.json qui est importé comme module. Il a été n�
 Même si son implémentation est relativement simple, il n'en reste pas moins un élément fortement utile et pouvant être étendu par la suite.
 Le code est déjà réutilisé pour fournir la documentation des types lors des suggestions de complétions.
 
-Les informations affichées au survol de la souris d’un élément sont directement tirées de la spécification.
+Les informations affichées au survol de la souris d'un élément sont directement tirées de la spécification.
 
 \section{Lint}
 Un Linter est un outil d'analyse de code qui permet de détecter les erreurs et les problèmes de syntaxe.
@@ -1968,9 +1968,9 @@ Le problème est que certains des ces tokens ne corrige pas toujours les problè
 
 \subsubsection{Quick fick}
 
-L'implémentation des suggestions peut se faire à l'aide d'un quickfick qui va permettre à l'utilisateur d'intéragir avec l'éditeur.
+L'implémentation des suggestions peut se faire à l'aide d'un quickfick qui va permettre à l'utilisateur d'interagir avec l'éditeur.
 
-Un petit quick fix a été implémenter pour en tester la mise en place. Il permet de supprimer le token qui pose problème en se basant sur les ranges fourni lors de la création d'un objet Diagnostic depuis le listener.
+Un petit quick fix a été implémenté pour en tester la mise en place. Il permet de supprimer le token qui pose problème en se basant sur les ranges fourni lors de la création d'un objet Diagnostic depuis le listener.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1982,7 +1982,7 @@ Un petit quick fix a été implémenter pour en tester la mise en place. Il perm
 \textbf{Remarque } : le comportement n'est pas complètement operationnelle. Il s'affiche pour chaque erreur (même quand il manque un token).
 
 \subsection{Outline view}
-Le listener se trouve au niveau du code de la outline. Étant donné que c'est une fonctionnalité qui est souvent solliciter il a été jugé interessant
+Le listener se trouve au niveau du code de la outline. Étant donné que c'est une fonctionnalité qui est souvent sollicitée, il a été jugé interessant
 de placer ce listener à cet emplacement.
 
 \section{Fonctionnalités triviales}
@@ -2021,7 +2021,7 @@ Voici le diagramme de Gantt pour ce projet.
 
 Le projet s'est déroulé de la manière suivante :
 \begin{enumerate}
-    \item Analyser ce qu’il était possible de faire puis fournir un support minimal du langage.
+    \item Analyser ce qu'il était possible de faire puis fournir un support minimal du langage.
     \item Améliorer ensuite progressivement ce support.
 \end{enumerate}
 
@@ -2030,7 +2030,7 @@ Le planning a donc été modifié à partir de la 15ème semaine pour tenir comp
 Il s'agissait de :
 
 \begin{itemize}
-    \item Se renseigner davantages sur VS Code et ANTLR pour comprendre certains comportements.
+    \item Se renseigner davantage sur VS Code et ANTLR pour comprendre certains comportements.
     \item Étendre la grammaire au format YAML et donc la gestion des indentations.
     \item Gérer les propriétés dans la outline.
 \end{itemize}
@@ -2051,7 +2051,7 @@ Passons maintenant en revue les tâches réalisées en lien avec le cahier des c
 \textbf{VSCode Extension} :
 \begin{itemize}
     \item L'extension est publiée sur le marketplace
-    \item Des tests sont effectué lors d'un push sur les branches \emph{dev} ou \emph{main} et lors de la publication d'une release.
+    \item Des tests simples sont effectués lors d'un push sur les branches \emph{dev} ou \emph{main} et lors de la publication d'une release.
     \item Lors d'une release, l'extension et publiée automatiquement.
 \end{itemize}
 
@@ -2062,25 +2062,25 @@ Passons maintenant en revue les tâches réalisées en lien avec le cahier des c
 
 \textbf{Syntax highlighting} :
 \begin{itemize}
-    \item Une coloration syntaxique est appliqué aux éléments.
+    \item Une coloration syntaxique est appliquée aux éléments.
 \end{itemize}
 
 \textbf{Auto-complétion} :
 \begin{itemize}
-    \item Des suggestions sont proposés si elles peuvent être écrit à l'emplacement souhaité.
-    \item Les suggestions proposés à l'utilisateur sont des mots-clés (Les types et leurs propriétés associées, ainsi que des unités).
+    \item Des suggestions sont proposées si elles peuvent être écrit à l'emplacement souhaité.
+    \item Les suggestions proposées à l'utilisateur sont des mots-clés (Les types et leurs propriétés associées, ainsi que des unités).
     \item Les suggestions peuvent aussi être des snippets.
 \end{itemize}
 
 \textbf{Outline view} :
 \begin{itemize}
     \item Les éléments sont affichés dans l'outline d'une manière similaire à une outline de JSON ou de YAML.
-    \item Les propriétés des clés et des types sont affichés comme enfant de l'élément.
+    \item Les propriétés des clés et des types sont affichées comme enfant de l'élément.
 \end{itemize}
 
 \textbf{Lint} :
 \begin{itemize}
-    \item Les erreurs de syntaxes sont affichés : elles indiquent si un élément est faux ou manquant.
+    \item Les erreurs de syntaxes sont affichées : elles indiquent si un élément est faux ou manquant.
     \item Un quick fix permet de supprimer l'élément qui cause l'erreur.
 \end{itemize}
 
@@ -2097,7 +2097,7 @@ Découvrir les technologies permettant leur implémentation et ensuite pouvoir l
 
 Lors de la phase de recherche, il a été appris qu'un parser est un élément important pour fournir du support de langage.
 Heureusement, des outils existent pour en générer depuis une grammaire. Cela a pour intérêt majeur de faire gagner du temps de développement en accélérant grandement la mise en place d'un support de langage.
-ANTLR s'est donc avéré être une composante dominante du projet. De plus sa gestion des erreurs fournit par défaut permet d'avoir une meilleure tolérance concernant celles-ci.
+ANTLR s'est donc avéré être une composante dominante du projet. De plus sa gestion des erreurs fournie par défaut permet d'avoir une meilleure tolérance concernant celles-ci.
 Ce qui est avantageux, car les erreurs sont relativement fréquentes dans un éditeur.
 
 Nous avons fait le choix de travailler uniquement dans un environnement VS Code mais fournissant toutes les clés pour des extensibilités futures.
@@ -2141,7 +2141,7 @@ De plus, comme c'est une implémentation en Typescript qui est utilisée, peu d'
 Adapter la grammaire a été un challenge. Il a été nécessaire de modifier certaines règles, car le comportement par défaut posait parfois problème. ANTLR étant différent de Lark.
 Un point contraignant lorsque l'on développe un support de langage, et que la grammaire est intrinsèquement liée à certaines fonctionnalités.
 Un changement peut donc avoir des répercussions sur l'ensemble de celles-ci et j'ai malheureusement perdu du temps à corriger ce genre d'erreurs.
-La gestion des deux formats (JSON et YAML) s’est aussi révélée être assez complexe, due à la gestion des indentations à traiter.
+La gestion des deux formats (JSON et YAML) s'est aussi révélée être assez complexe, due à la gestion des indentations à traiter.
 
 Les fonctionnalités qui ont requis le plus de travail ont été la complétion et l'outline view.
 Pour la complétion, il a été nécessaire d'analyser le fonctionnement du moteur pour comprendre ce qu'il était possible de faire.
@@ -2149,7 +2149,7 @@ Même si un usage assez basique s'est révélé adapté pour notre utilisation, 
 Un autre point complexe a été la manière de trouver le bon indice, car des situations particulières pouvaient fausser le résultat attendu.
 Pour l'outline view, il a fallu comprendre comment construire un objet en cours d'un parcours DFS. Et ajouter la gestion des propriétés avait rajouté une couche de complexité supplémentaire.
 
-Plus globalement, implémenter des fonctionnalités s'est avéré assez complexe. Car on est constamment confronté à des cas que l'on n’a pas pensé, il est compliqué de tout prévoir.
+Plus globalement, implémenter des fonctionnalités s'est avéré assez complexe. Car on est constamment confronté à des cas que l'on n'a pas pensé, il est compliqué de tout prévoir.
 Il est aussi difficile de savoir quel comportement est acceptable ou non et quand il faudrait s'arrêter d'apporter des ajustements.
 
 Du temps a également été passé pour essayer d'améliorer le comportement des erreurs à l'aide du fichier \emph{UonCompletionErrorStrategy.ts} sans succès. Le comportement par défaut n'étant jamais réellement amélioré.
@@ -2169,8 +2169,8 @@ Le fichier \emph{UonCompletionErrorStrategy.ts} ne fait que surcharger le compor
 La liste des erreurs connues est la suivante :
 
 \begin{itemize}
-    \item Imbriquer des mapping ou sequences en format YAML ne fonctionne pas correctement. Cela vient de la gestion des indentations qu'il faudrait corriger.
-    \item L'éditeur affiche un caractère erroné (ondulation rouge) au début du document lorsque le fichier est vide. Cela vient aussi de la gestion des indentations.
+    \item Imbriquer des mappings ou sequences en format YAML ne fonctionne pas correctement. Cela vient de la gestion des indentations qu'il faudrait corriger.
+    \item L'éditeur affiche un caractère erroné au début du document lorsque le fichier est vide. Cela vient aussi de la gestion des indentations.
 \end{itemize}
 
 
