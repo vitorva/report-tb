@@ -1447,19 +1447,19 @@ Même si l'on n'en profite pas actuellement, cela pourrait permettre une meilleu
 L'indice devrait correspondre à l'emplacement du curseur dans l'input.
 
 À priori, il serait nécessaire de convertir la position du curseur dans un indice.
-Mais cela est n'est pas réelement nécessaire, si on ne prend pas en compte tout le code.
+Mais cela est n'est pas réellement nécessaire, si on ne prend pas en compte tout le code.
 
-La méthode actuellement appliquée et que l'on va extraire le code saisie jusqu'à la position du curseur.
+La méthode actuellement appliquée et que l'on va extraire le code saisi jusqu'à la position du curseur.
 C'est ce code qui sera l'input que l'on va donner au parser lorsque la complétion sera trigger par VS Code.
 
-Il sera ensuite possible de déduire l'indice du prochain candidats en se basant sur le tableau de tokens que le token stream contient ainsi que sa taille.
+Il sera ensuite possible de déduire l'indice du prochain candidat en se basant sur le tableau de tokens que le token stream contient ainsi que sa taille.
 
-Car on remarque que chaque indice à la figure \ref{candidat-index} représente l'emplacament d'un token et un espace (si gardé). Et c'est ce que l'on retrouve dans le token stream.
+Car on remarque que chaque indice à la figure \ref{candidat-index} représente l'emplacement d'un token et un espace (si gardé). Et c'est ce que l'on retrouve dans le token stream.
 
 L'indice sera donc un élément en fin de token stream.
 
 Par exemple sur la figure \ref{token-stream} qui représente l'état d'un stream de token après une demande de suggestion pour obtenir des propriétés dans une clé.
-un indices valide serait le 10.
+Le numéro 10 serait un indice valide.
 
 \begin{figure}[!h]
     \begin{center}
@@ -1468,7 +1468,7 @@ un indices valide serait le 10.
     \caption[Représentation textuelles du token stream]{\label{token-stream} Représentation textuelles du token stream}
 \end{figure}
 
-L'indice est calculé en soustrayant simplement la taille du tableau par 3 lorsque l'indentation n'est pas gérée. Car il a été constaté que le token stream ajoute systématiquement les mêmes deux éléments de fin (\textbackslash n et <EOF>)
+L'indice est calculé en soustrayant simplement la taille du tableau par 3 lorsque l'indentation n'est pas gérée. Car il a été constaté que le token stream ajoute systématiquement les mêmes deux éléments de fin (\textbackslash n et <EOF>).
 Lorsque l'indentation est gérée le traitement est différent. Des tokens de type DEDENT pouvant se trouver après un \textbackslash n. On va donc prendre l'indice du premier élément qui n'est pas un token de type DEDENT ou un \textbackslash n en commençant depuis la fin du token stream.
 
 \subsection{CandidatesCollection}
@@ -1542,7 +1542,7 @@ Mais ce mécanisme n'est utilisé que pour générer un parse tree, cela est don
 
 %Donc comme déjà mentionner, pour que le moteur puisse retourner des candidats, la syntaxe se trouvant avant la position du curseur doit être valide.
 Cependant une contrainte pour que le moteur propose des candidats est qu'il est nécessaire que tout le code se trouvant avant le curseur soit correct.
-Car sinon on pourrait avoir dans le stream de token des éléments qui ne seront pas compris par le moteur et l'on n'obtiendra pas de candidats.
+Parce que l'on pourrait avoir dans le stream de token des éléments qui ne seront pas compris par le moteur et l'on n'obtiendra pas de candidats.
 
 Une explication fournit par le créateur du moteur dans la rubrique "issues" du dépot du \href{ https://github.com/mike-lischke/antlr4-c3/issues/29}{projet}.
 % https://github.com/mike-lischke/antlr4-c3/issues/29
@@ -1566,7 +1566,7 @@ C'est ce qui peut être fait de la manière suivante :
 \end{enumerate}
 
 Mais cette approche nécessite de traiter énormément de cas particulier et le problème et que l'on couple la logique du moteur avec l'application et donc n'est pas une très bonne pratique.
-Car si on modifie la grammaire, il faudra répercuter les changements dans l'application.
+Parce que si l'on modifie la grammaire, il faudra répercuter les changements dans l'application.
 C'est pourquoi actuellement on ne supprime que la première ligne qui pose problème et qu'il n'a pas été jugé nécessaire d'aller plus loin.
 
 \subsection{Snippets}
@@ -1785,7 +1785,7 @@ Elle est illustrée par la figure \ref{visitChildren}.
 Le résultat par défaut est une liste vide. Lors du parcours de la remontée dans un noeud parent, nous allons rassembler les enfants dans une liste.
 
 Pourquoi manipuler une liste au lieu d'un objet \emph{DocumentSymbol} directement ?
-Tout simplement, car sinon on aurait du le faire dans la fonction d'agrégation et l'on préféra ici déléguer la logique dans le noeud parent concerné
+Tout simplement, car on aurait du le faire dans la fonction d'agrégation et l'on préféra ici déléguer la logique dans le noeud parent concerné
 qui pourra utiliser les valeurs récupérer pour construire l'information voulue par exemple dans une séquence ou un mapping.
 C'est un choix d'implémentation pour faciliter la construction d'un objet \emph{DocumentSymbol}.
 
