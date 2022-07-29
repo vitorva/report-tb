@@ -1755,7 +1755,7 @@ Pour obtenir l'AST, on doit donner le parse tree créé par le parser à la fonc
 De plus note classe \emph{UONVisitor} étant générique, c'est ce qui nous permet de manipuler un objet VS code.
 Actuellement la classe surchargée est de type \emph{any} car pendant le parcours un élément peut être de deux natures différentes (un objet représentant un noeud terminal ou un DocumentSymbol).
 Ce noeud terminal contient simplement la valeur textuelle du noeud et sa position.
-Cette séparation est faite pour simplifier des étapes de constructions et de filtrage des éléments.
+Cette séparation a été faite pour simplifier des étapes de constructions et de filtrage des éléments.
 
 \subsection{visitChildren}
 La fonction \emph{visitChildren} permet la traversée de l'arbre.
@@ -1787,7 +1787,6 @@ Le résultat par défaut est une liste vide. Lors du parcours de la remontée da
 Pourquoi manipuler une liste au lieu d'un objet \emph{DocumentSymbol} directement ?
 Tout simplement, car sinon on aurait du le faire dans la fonction d'agrégation et l'on préféra ici déléguer la logique dans le noeud parent concerné
 qui pourra utiliser les valeurs récupérer pour construire l'information voulue par exemple dans une séquence ou un mapping.
-
 C'est un choix d'implémentation pour faciliter la construction d'un objet \emph{DocumentSymbol}.
 
 \subsection{Parcours}
@@ -1806,9 +1805,8 @@ Pour rappel un parcours DFS est effectué dans l'ordre affiché à la figure \re
 Ce qui est agréable en utilisant cet algorithme et qu'il nous permet de commencer à construire l'information à partir des noeuds terminaux
 de l'arbre et de remonter naturellement au parent le plus proche.
 
-Un parent va pouvoir obtenir la liste des enfants dans un ordre que l'on s'attendrait à recevoir.
-Cela rend la manipulation dans un parent plus simple concernant des modifications que l'on voudrait effectuer pour représenter ces informations
-dans un objet de type \emph{DocumentSymbol}.
+Un parent va pouvoir obtenir la liste des enfants dans un ordre que l'on s'attendrait à recevoir. Car ils apparaissent comme ils ont été défini dans les règles grâce au parcours DFS.
+Cela rend la manipulation dans un parent plus simple concernant les modifications à effectuer pour représenter ces informations en un objet de type \emph{DocumentSymbol}.
 
 \subsection{La position}
 
