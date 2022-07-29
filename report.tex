@@ -471,6 +471,8 @@ La figure \ref{Utilisation du parser d'ANTLR} illustre un exemple simple d'utili
     \label{Utilisation du parser d'ANTLR}
 \end{listing}
 
+On remarque que le code suit le processus d'écrit dans la section \ref{parsing}.
+
 \subsubsection{ATN}
 
 La version 4 de ANTLR a comme avantage sur son ancienne version (ANTLR3) d'avoir la structure de la grammaire directement disponible dans le parser via
@@ -1387,8 +1389,9 @@ Les suggestions proposées dans l'éditeur sera majoritairement des candidats fo
 
 Il a été conçue par \href{https://github.com/mike-lischke}{Mike Lischke}. Cet outil est écrit en Typescript et est disponible comme node module. Il existe aussi en version \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/java}{JAVA} et \href{https://github.com/mike-lischke/antlr4-c3/tree/master/ports/c%23}{C\#}.
 
-Le moteur de complétion n'utilise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream comme illustré précédement par la figure \ref{Utilisation du parser d'ANTLR}.
-Car le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état d'ANTLR4 disponible dans le parser. \cite{antlr-mega-tutorial}
+Le moteur de complétion n'utilise pas le parse tree pour proposer des candidats. Mais l'exécution du parser est nécessaire pour remplir le token stream. Pour rappel, un exemple d'utilisation du parser est illustré précédement par la figure \ref{Utilisation du parser d'ANTLR}.
+Ce flux de tokens contient tous les tokens qui ont été reconnu lors de l'analyse lexicale produit par le lexer.
+Le moteur s'appuyera sur ce flux de tokens et également du mécanisme de machine à état d'ANTLR4 disponible dans le parser \cite{antlr-mega-tutorial}.
 
 Pourquoi un tel moteur ?
 Car connaitre tous les types de tokens qu'un utilisateur serait amené à saisir ne suffit pas. Pour que la complétion soit réellement intéressante, nous voudrions connaitre quelle règle de la grammaire pourrait être valide à une position donnée.
@@ -1449,10 +1452,24 @@ Mais cela est n'est pas réelement nécessaire, si on ne prend pas en compte tou
 La méthode actuellement appliquée et que l'on va extraire le code saisie jusqu'à la position du curseur.
 C'est ce code qui sera l'input que l'on va donner au parser lorsque la complétion sera trigger par VS Code.
 
-Il sera ensuite possible de déduire l'indice du prochain candidats en se basant sur la taille du tableau de tokens que le token stream contient.
+Il sera ensuite possible de déduire l'indice du prochain candidats en se basant sur le tableau de tokens que le token stream contient ainsi que sa taille.
 
-%Ce traitement a été choisi car le code se trouvant après le curseur n'a pas d'impact sur la génération des candidats.
-%Et que l'on pas dans la syntaxe de la grammaire actuellement, des cas à gérer concernant la position du curseur.
+Car on remarque que chaque indice à la figure \ref{candidat-index} représente l'emplacament d'un token et un espace (si gardé). Et c'est ce que l'on retrouve dans le token stream.
+
+L'indice sera donc un élément en fin de token stream.
+
+Par exemple sur la figure \ref{token-stream} qui représente l'état d'un stream de token après une demande de suggestion pour obtenir des propriétés dans une clé.
+un indices valide serait le 10.
+
+\begin{figure}[!h]
+    \begin{center}
+        \frame{\includegraphics[width=2cm]{assets/figures/tokenstream.PNG}}
+    \end{center}
+    \caption[Représentation textuelles du token stream]{\label{token-stream} Représentation textuelles du token stream}
+\end{figure}
+
+L'indice est calculé en soustrayant simplement la taille du tableau par 3 lorsque l'indentation n'est pas gérée. Car il a été constaté que le token stream ajoute systématiquement les mêmes deux éléments de fin (\textbackslash n et <EOF>)
+Lorsque l'indentation est gérée le traitement est différent. Des tokens de type DEDENT pouvant se trouver après un \textbackslash n. On va donc prendre l'indice du premier élément qui n'est pas un token de type DEDENT ou un \textbackslash n en commençant depuis la fin du token stream.
 
 \subsection{CandidatesCollection}
 
@@ -1736,8 +1753,9 @@ Pour obtenir l'AST, on doit donner le parse tree créé par le parser à la fonc
 \end{listing}
 
 De plus note classe \emph{UONVisitor} étant générique, c'est ce qui nous permet de manipuler un objet VS code.
-Actuellement la classe surchargée est de type \emph{any} car pendant le parcours un élément peut être de deux natures différentes (un noeud terminal ou un DocumentSymbol).
-Cette séparation est faite pour simplifier des étapes de constructions.
+Actuellement la classe surchargée est de type \emph{any} car pendant le parcours un élément peut être de deux natures différentes (un objet représentant un noeud terminal ou un DocumentSymbol).
+Ce noeud terminal contient simplement la valeur textuelle du noeud et sa position.
+Cette séparation est faite pour simplifier des étapes de constructions et de filtrage des éléments.
 
 \subsection{visitChildren}
 La fonction \emph{visitChildren} permet la traversée de l'arbre.
@@ -1874,7 +1892,7 @@ Nous aurons donc l'outline suivante :
     \caption[Outline d'un schéma]{\label{uon-schema-outline} Outline d'un schéma}
 \end{figure}
 
-\section{Info on Hover}
+\section{Hover Information}
 
 %https://stackoverflow.com/questions/57438198/typescript-element-implicitly-has-an-any-type-because-expression-of-type-st
 
