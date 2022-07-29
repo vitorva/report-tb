@@ -2,56 +2,18 @@
 
 % • le contexte,
 En 2018, le professeur Yves Chevallier a imaginé un nouveau format de sérialisation proche de YAML et JSON nommé \Gls{uon}.
-
 UON vise à rassembler toutes les caractéristiques utiles des formats de sérialisation les plus utilisés sur internet (XML, YAML et JSON),
 en un seul format qui les englobe. Cela dans le but de le rendre adapté à la communication \Gls{m2m} pour des dispositifs embarqués de faibles puissances, jusqu'aux plateformes haut de gamme basées sur le cloud.
 
-Il offre donc des fonctionnalités supplémentaires utiles pour accroître l'interopérabilité entre différents types d'appareils. Ses principaux avantages par rapport à d'autres langages similaires sont les suivants :
-
-\begin{itemize}
-    \item Typage fort
-    \item Schéma de validation
-    \item Forme canonique
-    \item Quantités et unités physiques
-    \item Références
-    \item API standard
-    \item Propriétés des types
-    \item Types d'utilisateurs
-\end{itemize}
-
 % • la problématique,
-Pour être utilisable, ce format de sérialisation doit disposer de son propre support de langage afin qu'il soit utilisé par un plus grand nombre.
+Ce Travail de Bachelor a pour objectif de permettre l'utilisation du langage UON dans l'éditeur de code VS Code, en créant une extension disponible depuis le Marketplace de Visual Studio Code.
+Cette extension doit fournir à l'utilisateur, le support de langage permettant une meilleure rédaction d'un fichier UON.
 
-% • les objectifs du travail,
-% editeur de texte ou de code ?
-Ce Travail de bachelor à l'objectif de répondre à ce besoin en permettant l'utilisation du langage UON dans un éditeur de code.
-Sa syntaxe devra être prise en charge à terme par les principaux éditeurs de code. Ce travail se focalisera uniquement sur VS Code.
-Le support de langage consistera donc à fournir à l'utilisateur, les outils pour lui permettre la rédaction la plus optimale d'un fichier UON.
+Le support est fourni sur une implémentation de la grammaire issue de la spécification UON.
+L'API de VS Code est directement contactée pour implémenter les fonctionnalités.
+ANTLR est le générateur de parser qui a été choisi.
+Le moteur de complétion antlr4-c3 est utilisé comme source principale des suggestions pour l'auto-complétion.
 
-% • la méthodologie utilisée,
-Les premières semaines ont été majoritairement consacrées à se renseigner et à la réalisation d'un \Gls{PoC} pour s'assurer de la faisabilité de certaines fonctionnalités, avant de se consacrer à la réalisation du projet.
-Ce PoC testait surtout que le moteur de complétion retournait bien des candidats pour la fonctionnalité de l'auto-complétion.
-Puis les fonctionnalités ont été implémentées progressivement.
-
-Les principales ressources utilisées ont été :
-\begin{itemize}
-    \item Le site de VS Code comme source principale pour se renseigner sur la mise en place et la gestion d'une extension.
-    \item Des articles en ligne concernant ANTLR et le moteur de complétion.
-    \item Les issues sur Github.
-    \item Et bien évidemment stackoverflow pour tous types de questions.
-\end{itemize}
-
-%méthodologie
-%odre
-%comment gérer le panning
-%ordonner tache
-%reagir a un problme
-%site consulter
-%premier long travail de longe allein
-%comment j'ai réagie face à ça
-
-% • les principaux résultats de la recherche ou, si confidentiel, au moins la nature
-%   des résultats,
 Au terme de ce projet, les points attendus du cahier des charges ont été effectués. Il s'agit de :
 \begin{itemize}
     \item Disposer d'une grammaire du langage UON utilisable
@@ -66,10 +28,7 @@ Au terme de ce projet, les points attendus du cahier des charges ont été effec
 % • perspectives et recommandations
 Les perspectives concernant ce sujet sont vastes, mais des améliorations possibles à ce projet sont les suivants :
 \begin{itemize}
-    \item Implémenter les points du CDC dans la partie "si le temps le permet"
-    \item Créer un langage server et déplacer, adapter le code pour pouvoir l'utiliser.
+    \item Implémenter les points du CDC dans la partie "si le temps le permet".
+    \item Utiliser un langage server au lieu de l'API VS Code.
     \item Continuer à améliorer la grammaire et adapter les fonctionnalités en conséquence.
 \end{itemize}
-
-Étant donné l'étendue d'un tel sujet, le travail s'est focalisé sur une partie de ce qu'il est possible de faire.
-Une extension pouvant être étendue selon les besoins, chacun pourrait ajouter ce qu'il trouve pertinent pour améliorer le support du langage UON.
