@@ -181,7 +181,7 @@ Puis si le temps le permet, de rajouter des fonctionnalités supplémentaires.
     \item Il est possible de formater le code au format canonique.
 \end{itemize}
 
-\subsubsection*{Converter (outil permettant de convetir du code)}
+\subsubsection*{Converter (outil permettant de convertir du code)}
 \begin{itemize}
     \item Du code JSON est capable d'être converti en UON et inversement.
     \item Du code YAML est capable d'être converti en UON et inversement.
@@ -201,7 +201,7 @@ Ce sont ces tokens qui seront ensuite utilisés lors de l'analyse syntaxique.
 L'analyse syntaxique consiste à regarder quelles sont les règles qui sont applicables pour une suite de tokens définie dans une grammaire.
 Une grammaire étant habituellement un fichier qui décrit formellement le langage.
 
-Le résultat de cette analyse est un \emph{parse Tree} (aussi nommé CST) qui représente toutes les dérivations conrète de notre input en fonction de la grammaire.
+Le résultat de cette analyse est un \emph{parse Tree} (aussi nommé CST) qui représente toutes les dérivations concrètes de notre input en fonction de la grammaire.
 Elle est souvent représentée sous forme d'un arbre hiérarchique.
 
 Généralement c'est cette structure finale qui sera interprétée ou compilée.
@@ -215,7 +215,7 @@ Ce processus peut être représenté par la figure \ref{Analayse du code source}
     \caption[Analayse du code source]{\label{Analayse du code source} Analayse du code source}
 \end{figure}
 
-Dans le cadre de ce projet, cette arbre sera utilisé lorsque cela sera nécessaire.
+Dans le cadre de ce projet, cet arbre sera utilisé lorsque cela sera nécessaire.
 
 \subsection{AST}
 Le parse tree contient toutes les informations et beaucoup d'entre elles ne nous intéressent pas.
@@ -256,7 +256,7 @@ On peut mentionner le theming, les fonctionnalités de langages, la publication 
 VS Code fournit des documentations détaillées sur plein de sujets : étapes pour la création d'une extension, son déploiement continue ainsi que le support de langage en lui-même.
 Il est aussi facilement possible de trouver des guides, ainsi que \href{https://github.com/microsoft/vscode-extension-samples}{des exemples de codes} concernant les extensions.
 Il s'agit donc évidemment de la source principale des explications données dans ce document concernant ce qui touche à cet éditeur.
-La communauté est aussi très active (stack overlow, gitter, issue github, etc.).
+La communauté est aussi très active (stack overflow, gitter, issue github, etc.).
 
 Le code source de VS Code de Microsoft est open source, sous licence MIT permissive.
 Il a été écrit en TypeScript et JavaScript. Une extension peut être également écrite dans ces deux langages.
@@ -267,7 +267,7 @@ Nous choisirons le TypeScript car VS Code recommande ce langage. Mais certaines 
 La \href{https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette}{command palette}
 est le point d'accès à toutes les fonctionnalités de VS Code. Et est un élément important à connaitre.
 
-Pour l'ouvrir il faut exécuter la combinaison suivante : "CTRL + SHIFT + p".
+Pour l'ouvrir, il faut exécuter la combinaison suivante : "CTRL + SHIFT + p".
 
 
 \subsection{Extension Anatomy}
@@ -283,7 +283,7 @@ En général, l'extension est une combinaison de plusieurs \emph{Contribution Po
 
 \subsubsection{Extension File Structure}\label{Extension File Structure}
 
-La squelette de base d'une extension est illustrée par la figure \ref{basic-structure}.
+Le squelette de base d'une extension est illustré par la figure \ref{basic-structure}.
 
 % https://tex.stackexchange.com/questions/98703/framebox-and-subfigure-with-dirtree-package
 \begin{figure}[H] % \begin{figure}[!h]
@@ -319,7 +319,7 @@ La fonction \emph{deactivate} est exécutée lorsque l'application devient inact
 \textbf{Remarque} : le niveau de customisation est assez élevé. La seule limitation indiquée et qu'il n'est pas possible d'accéder au \Gls{dom} de l'éditeur.
 
 Pour se renseigner davantage sur l'élaboration d'une extension, la page \href{https://code.visualstudio.com/api}{suivante} peut être consultée.
-Concernant les fonctionnalités générales de l'éditeur VS Code, les informations se trouve sur \href{https://code.visualstudio.com/docs}{la documentation officielle}.
+Concernant les fonctionnalités générales de l'éditeur VS Code, les informations se trouvent sur \href{https://code.visualstudio.com/docs}{la documentation officielle}.
 
 \section{Support de langage}
 VS Code fournit la possibilité d'ajouter du support pour un nouveau langage de programmation au travers d'implémentation de fonctionnalités. Ces fonctionnalités peuvent être classées en deux catégories détaillées
@@ -413,8 +413,8 @@ Mais l'on s'attend tout de même que certaines fonctionnalités continuent à fo
 
 Le parseur doit donc pouvoir générer au mieux un parse tree qui à du sens depuis du code erroné.
 
-On pourrait également se demander s'il est possible de se passer d'une telle strucutre et de n'utiliser à la place uniquement des expressions régulières.
-Cependant le problème majeur avec cette approche et que les imbrications deviennent extrêmement difficile à gérer. \cite{antlr-mega-tutorial}
+On pourrait également se demander s'il est possible de se passer d'une telle structure et de n'utiliser à la place uniquement des expressions régulières.
+Cependant le problème majeur avec cette approche et que les imbrications deviennent extrêmement difficiles à gérer. \cite{antlr-mega-tutorial}
 
 \section{Choix technologiques}
 Nous allons maintenant mentionner les technologies et approches choisies et expliquer les raisons.
@@ -488,7 +488,7 @@ La figure \ref{ATN d'une séquence} montre un atn d'une règle de parser.
 \end{figure}
 
 Cela permet de comprendre que le parser passe par plusieurs états lors d'une analyse syntaxique.
-Cette image a été généré en utilisant le plugin \href{https://marketplace.visualstudio.com/items?itemName=mike-lischke.vscode-antlr4}{ANTLR4 grammar syntax support}.
+Cette image a été générée en utilisant le plugin \href{https://marketplace.visualstudio.com/items?itemName=mike-lischke.vscode-antlr4}{ANTLR4 grammar syntax support}.
 
 \subsubsection{Gestion des erreurs}
 
@@ -503,7 +503,7 @@ On peut distinguer trois types d'erreurs \cite{ANTLRErrorStrategy} :
     \item Un prédicat évalué comme faux.
 \end{itemize}
 
-Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliquée et qui consiste à supprimer un token qui poserait problème ou en rajouter un s'il manquerait, avant de
+Par défaut c'est l'implémentation \emph{DefaultErrorStrategy} qui est appliquée et qui consiste à supprimer un token qui poserait problème ou en rajouter un s'il manquait, avant de
 se resynchronisation à l'ATN et de continuer le parsing. Cette resynchronisation permet de continuer dans la règle courante que traverse le parser. \cite{antlrs-error-handling-strategy}
 
 S'il ANTLR n'a pas pu se rétablir et qu'il a encore des erreurs, il va consommer tout les tokens qui suit celui qui a posé problème.
@@ -527,7 +527,7 @@ La spécification se trouve sur le lien suivant : \url{https://github.com/uon-la
 
 \subsection{Format de sérialisation}
 
-Lorsqu'on sérialise des données, elles se retrouvent soit sous forme binaire ou soit textuelle.
+Lorsqu'on sérialise des données, elles se retrouvent sous forme binaire ou textuelle.
 Ce projet se focalisera naturellement uniquement sur le format textuel, car c'est le seul format, humainement interprétable, que l'on manipulera dans un éditeur.
 Le rôle d'un format de sérialisation et de pouvoir représenter des données sous une autre forme pour être ensuite manipulé.
 
@@ -587,14 +587,14 @@ Le contenu peut être soit un scalaire, soit une collection d'éléments, comme 
 Chaque élément qui compose l'arbre d'objets UON est un \emph{Type} qui peut avoir plusieurs propriétés qui lui sont attachées.
 
 \subsection{Types}
-Une caractéristique importante en UON est que tout valeur appartient à un type. Les types sont organisés en différentes catégories.
+Une caractéristique importante en UON est que toute valeur appartient à un type. Les types sont organisés en différentes catégories.
 Ces catégories sont illustrées par la figure \ref{type-base}.
 
 \begin{figure}[H]
     \begin{center}
         \frame{\includegraphics[width=12cm]{assets/figures/type-base.png}}
     \end{center}
-    \caption[Les types de base en UON]{\label{type-base}Les types de base en UON}
+    \caption[Les types de bases en UON]{\label{type-base}Les types de bases en UON}
 \end{figure}
 
 La liste complète des types supportés se trouve dans la spécification.
@@ -630,16 +630,16 @@ Ce schéma est une structure qui décrit comment un fichier ou type doit être r
 UON propose 4 différents types de stratégies pour le définir.
 
 \begin{itemize}
-    \item \textbf{Embedded schema} : inclus dans le dataset, les informations sont mélangé avec les contraintes.
+    \item \textbf{Embedded schema} : inclus dans le dataset, les informations sont mélangés avec les contraintes.
     \item \textbf{Included schema} : inclus dans le dataset, les informations et contraintes sont séparés.
     \item \textbf{Linked schema} : inclus dans le dataset en précisant la signature du schéma.
-    \item \textbf{Separated schema} : n'est pas inclus dans le dataset, les informations et contraintes sont séparés et non liés.
+    \item \textbf{Separated schema} : n'est pas inclus dans le dataset, les informations et contraintes sont séparéss et non liées.
 \end{itemize}
 
 Chaque solution présente des avantages et des inconvénients.
 
 \subsection{Liens}
-Le dépôt du projet se trouve à l'adress suivante : \url{https://github.com/uon-language/specification}
+Le dépôt du projet se trouve à l'adresse suivante : \url{https://github.com/uon-language/specification}
 
 \chapter{Scope de la grammaire}\label{grammar scope}
 Pour pouvoir proposer du support pour un nouveau langage, il est nécessaire de savoir sur quoi celui-ci portera exactement.
@@ -888,7 +888,7 @@ comme possible clé alors on aura une erreur.
         | [\p{Pc}]//punctuation character such as an underscore that connects words.
         | '!';
     \end{minted}
-    \caption{Règle concernant les strings sans guillement}
+    \caption{Règle concernant les strings sans guillemet}
     \label{unquoted-rule}
 \end{listing}
 
@@ -907,11 +907,11 @@ comme possible clé alors on aura une erreur.
 
     fragment SINGLE_QUOTE_CHAR: ~['\\\r\n];
     \end{minted}
-    \caption{Règle concernant les strings avec guillement}
+    \caption{Règle concernant les strings avec guillemet}
     \label{quoted-rule}
 \end{listing}
 
-N'importe quelle caractère peut se trouver entre guillement sauf un autre guillement et pareillement pour les apostrophes.
+N'importe quelle caractère peut se trouver entre guillemet sauf un autre guillemet et pareillement pour les apostrophes.
 Il est possible d'avoir des multilines strings.
 
 \subsection{Propriétés}
@@ -1440,7 +1440,7 @@ C'est ce qui est recommandé dans la documentation du projet c3. Car cela permet
 
 Même si l'on n'en profite pas actuellement, cela pourrait permettre une meilleur extensibilité du code si nécessaire.
 
-% La documentation du projet indique bien que ce n'est pas un problème trivial à résoudre.
+% La documentation du projet indique bien que ce n'est pas un problème trivial �� résoudre.
 
 \subsubsection{Trouver l'indice}
 
